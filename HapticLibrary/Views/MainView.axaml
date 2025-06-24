@@ -11,6 +11,20 @@
          to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
     <vm:MainViewModel />
   </Design.DataContext>
-
-  <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+	<Panel>
+		<ExperimentalAcrylicBorder IsHitTestVisible="False">
+			<ExperimentalAcrylicBorder.Material>
+				<ExperimentalAcrylicMaterial
+					 BackgroundSource="Digger"
+					 TintColor="Black"
+					 TintOpacity="1"
+					 MaterialOpacity="0.65" />
+			</ExperimentalAcrylicBorder.Material>
+		</ExperimentalAcrylicBorder>
+		<Panel Margin="40">
+			<Button Content="Click Me!"
+					Command="{Binding AddAudioTextHapticsCommand}"
+					HorizontalAlignment="Right" VerticalAlignment="Top"/>
+		</Panel>
+	</Panel>
 </UserControl>

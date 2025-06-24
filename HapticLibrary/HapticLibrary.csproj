@@ -21,4 +21,10 @@
     </PackageReference>
     <PackageReference Include="CommunityToolkit.Mvvm" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Views\ATHStoreWindow.axaml.cs">
+      <DependentUpon>ATHStoreWindow.axaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
 </Project>
