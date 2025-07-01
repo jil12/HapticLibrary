@@ -1,12 +1,27 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="using:HapticLibrary"
+			 xmlns:vm="using:HapticLibrary.ViewModels"
+			 xmlns:views="using:HapticLibrary.Views"
              x:Class="HapticLibrary.App"
              RequestedThemeVariant="Default">
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
     <Application.DataTemplates>
         <local:ViewLocator/>
+
+		<DataTemplate DataType="{x:Type vm:LibraryPageViewModel}">
+			<views:LibraryPageView />
+		</DataTemplate>
+		<DataTemplate DataType="{x:Type vm:ReadingPageViewModel}">
+			<views:ReadingPageView />
+		</DataTemplate>
+		<DataTemplate DataType="{x:Type vm:SettingsPageViewModel}">
+			<views:SettingsPageView />
+		</DataTemplate>
+		<DataTemplate DataType="{x:Type vm:NavigationBarViewModel}">
+			<views:NavigationBarView />
+		</DataTemplate>
     </Application.DataTemplates>
 
     <Application.Styles>
