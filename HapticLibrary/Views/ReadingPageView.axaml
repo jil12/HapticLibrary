@@ -7,5 +7,10 @@
              x:Class="HapticLibrary.Views.ReadingPageView">
 	<StackPanel>
 		<TextBlock Text="This is the Reading Page" />
+		<Image Source="avares://HapticLibrary/Assets/temp-reading-image.jpg"
+			   Width="120"
+			   Height="120"
+			   HorizontalAlignment="Left"
+			   Margin="20, 0, 0, 0"/>
 	</StackPanel>
 </UserControl>

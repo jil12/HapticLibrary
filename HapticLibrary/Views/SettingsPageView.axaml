@@ -7,5 +7,10 @@
              x:Class="HapticLibrary.Views.SettingsPageView">
 	<StackPanel>
 		<TextBlock Text="This is the Settings Page" />
+		<Image Source="avares://HapticLibrary/Assets/temp-settings-image.png"
+			   Width="120"
+			   Height="120"
+			   HorizontalAlignment="Left"
+			   Margin="20, 0, 0, 0"/>
 	</StackPanel>
 </UserControl>

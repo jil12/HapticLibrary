@@ -8,7 +8,7 @@
 			 x:DataType="vm:NavigationBarViewModel">
 	<StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" VerticalAlignment="Center">
 		<Button Content="Library" Command="{Binding NavigateToLibraryPageCommand}" />
-		<Button Content="Reader" Command="{Binding NavigateToReadingPageCommand}" />
+		<Button Content="Reading" Command="{Binding NavigateToReadingPageCommand}" />
 		<Button Content="Settings" Command="{Binding NavigateToSettingsPageCommand}" />
 	</StackPanel>
 </UserControl>
