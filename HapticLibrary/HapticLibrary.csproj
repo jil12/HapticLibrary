@@ -20,6 +20,9 @@
       <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
     </PackageReference>
     <PackageReference Include="CommunityToolkit.Mvvm" />
+    <PackageReference Include="Datafeel" />
+    <PackageReference Include="Datafeel.NET.BLE" />
+    <PackageReference Include="Datafeel.NET.Serial" />
   </ItemGroup>
 
   <ItemGroup>

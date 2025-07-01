@@ -23,7 +23,7 @@
 		</ExperimentalAcrylicBorder>
 		<Panel Margin="40">
 			<Button Content="Click Me!"
-					Command="{Binding AddAudioTextHapticsCommand}"
+					Command="{Binding TestHapticsCommand}"
 					HorizontalAlignment="Right" VerticalAlignment="Top"/>
 		</Panel>
 	</Panel>
