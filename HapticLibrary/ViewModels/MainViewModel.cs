@@ -25,7 +25,7 @@ public partial class MainViewModel : ViewModelBase
     private async Task TestHapticsAsync()
     {
         HapticManager hapticManager = HapticManager.GetInstance();
-        
+        await hapticManager.StartManager();
         foreach (var d in hapticManager.DotManager.Dots)
         {
             d.LedMode = LedModes.GlobalManual;

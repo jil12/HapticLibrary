@@ -1,4 +1,5 @@
 ﻿using Datafeel;
+using Datafeel.NET.Serial;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,20 +15,23 @@ namespace HapticLibrary.Models
     {
         private static HapticManager _instance;
         private DotManager _dotManager;
+        private DatafeelModbusClient _datafeelModbusClient;
         public DotManager DotManager { get { return _dotManager; } }
 
 
         private HapticManager() 
         {
-            _dotManager = new DotManagerConfiguration().CreateDotManager();
+            _dotManager = new DotManagerConfiguration()
+                .AddDot<Dot_63x_xxx>(1)
+                .AddDot<Dot_63x_xxx>(2)
+                .AddDot<Dot_63x_xxx>(3)
+                .AddDot<Dot_63x_xxx>(4)
+                .CreateDotManager();
 
-            _dotManager.AddDot(new ManagedDot(_dotManager, 0));
-            _dotManager.AddDot(new ManagedDot(_dotManager, 1));
-            _dotManager.AddDot(new ManagedDot(_dotManager, 2));
-            _dotManager.AddDot(new ManagedDot(_dotManager, 3));
-            _dotManager.AddDot(new ManagedDot(_dotManager, 4));
-
-            _dotManager.Start();
+            _datafeelModbusClient = new DatafeelModbusClientConfiguration()
+                .UseWindowsSerialPortTransceiver()
+                //.UseSerialPort("COM3") // Uncomment this line to specify the serial port by name
+                .CreateClient();
         }
 
         public static HapticManager GetInstance()
@@ -37,6 +41,11 @@ namespace HapticLibrary.Models
                 _instance = new HapticManager();
             }
             return _instance;
+        }
+
+        public async Task StartManager()
+        {
+            await DotManager.Start(_datafeelModbusClient);
         }
     }
 }
