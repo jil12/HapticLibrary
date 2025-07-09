@@ -4,15 +4,17 @@
             "Text": "This is the first page.",
             "HapticTriggers": {
                 "first": {
-                    "props": {
-                        "address": 1,
-                        "ledMode": "GlobalManual",
-                        "globalLed": {
-                            "red": 50,
-                            "green": 0,
-                            "blue": 0
+                    "Props": [
+                        {
+                            "address": 1,
+                            "ledMode": "GlobalManual",
+                            "globalLed": {
+                                "red": 50,
+                                "green": 0,
+                                "blue": 0
+                            }
                         }
-                    }
+                    ]
                 }
             }
         },
@@ -20,15 +22,17 @@
             "Text": "This is the second page.",
             "HapticTriggers": {
                 "second": {
-                    "props": {
-                        "address": 2,
-                        "ledMode": "GlobalManual",
-                        "globalLed": {
-                            "red": 50,
-                            "green": 0,
-                            "blue": 0
+                    "Props": [
+                        {
+                            "address": 2,
+                            "ledMode": "GlobalManual",
+                            "globalLed": {
+                                "red": 50,
+                                "green": 0,
+                                "blue": 0
+                            }
                         }
-                    }
+                    ]
                 }
             }
         },
@@ -36,15 +40,17 @@
             "Text": "This is the third page.",
             "HapticTriggers": {
                 "third": {
-                    "props": {
-                        "address": 4,
-                        "ledMode": "GlobalManual",
-                        "globalLed": {
-                            "red": 50,
-                            "green": 0,
-                            "blue": 0
+                    "Props": [
+                        {
+                            "address": 4,
+                            "ledMode": "GlobalManual",
+                            "globalLed": {
+                                "red": 50,
+                                "green": 0,
+                                "blue": 0
+                            }
                         }
-                    }
+                    ]
                 }
             }
         },
@@ -52,15 +58,17 @@
             "Text": "This is the almost the last page.",
             "HapticTriggers": {
                 "last": {
-                    "props": {
-                        "address": 8,
-                        "ledMode": "GlobalManual",
-                        "globalLed": {
-                            "red": 50,
-                            "green": 0,
-                            "blue": 0
+                    "Props": [
+                        {
+                            "address": 8,
+                            "ledMode": "GlobalManual",
+                            "globalLed": {
+                                "red": 50,
+                                "green": 0,
+                                "blue": 0
+                            }
                         }
-                    }
+                    ]
                 }
             }
         },
@@ -68,15 +76,17 @@
             "Text": "The End!",
             "HapticTriggers": {
                 "end": {
-                    "props": {
-                        "address": 15,
-                        "ledMode": "GlobalManual",
-                        "globalLed": {
-                            "red": 50,
-                            "green": 0,
-                            "blue": 0
+                    "Props": [
+                        {
+                            "address": 15,
+                            "ledMode": "GlobalManual",
+                            "globalLed": {
+                                "red": 50,
+                                "green": 0,
+                                "blue": 0
+                            }
                         }
-                    }
+                    ]
                 }
             }
         }
