@@ -30,4 +30,10 @@
       <DependentUpon>ATHStoreWindow.axaml</DependentUpon>
     </Compile>
   </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Assets\HapticReadingBookExample.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>

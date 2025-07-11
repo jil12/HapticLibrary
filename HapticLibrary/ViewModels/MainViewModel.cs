@@ -31,5 +31,6 @@ public partial class MainViewModel : ViewModelBase
     /// </summary>
     public void ShowLibraryPage() => CurrentPage = new LibraryPageViewModel();
     public void ShowReadingPage() => CurrentPage = new ReadingPageViewModel();
+
     public void ShowSettingsPage() => CurrentPage = new SettingsPageViewModel();
 }

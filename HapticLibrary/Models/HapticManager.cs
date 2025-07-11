@@ -13,7 +13,7 @@ namespace HapticLibrary.Models
      */
     public sealed class HapticManager
     {
-        private static HapticManager _instance;
+        private static HapticManager? _instance;
         private DotManager _dotManager;
         private DatafeelModbusClient _datafeelModbusClient;
         public DotManager DotManager { get { return _dotManager; } }
