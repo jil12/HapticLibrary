@@ -23,6 +23,7 @@
     <PackageReference Include="Datafeel" />
     <PackageReference Include="Datafeel.NET.BLE" />
     <PackageReference Include="Datafeel.NET.Serial" />
+    <PackageReference Include="NAudio" />
   </ItemGroup>
 
   <ItemGroup>

@@ -30,6 +30,7 @@ public partial class MainViewModel : ViewModelBase
     /// to display different pages
     /// </summary>
     public void ShowLibraryPage() => CurrentPage = new LibraryPageViewModel();
-    public void ShowReadingPage() => CurrentPage = new ReadingPageViewModel();
+    //public void ShowReadingPage() => CurrentPage = new ReadingPageViewModel();
+    public void ShowReadingPage() => CurrentPage = new AudioStreamViewModel();
     public void ShowSettingsPage() => CurrentPage = new SettingsPageViewModel();
 }
