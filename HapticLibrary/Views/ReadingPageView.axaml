@@ -31,10 +31,10 @@
 
                 <!-- Reading Mode Toggle -->
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="0,0,20,0" VerticalAlignment="Center">
-                    <ToggleButton IsChecked="True" Classes="mode-btn" Margin="0,0,12,0">
+                    <ToggleButton IsChecked="{Binding IsReadAloudMode, Converter={x:Static BoolConverters.Not}}" Command="{Binding SetAudioModeCommand}" Classes="mode-btn" Margin="0,0,12,0">
                         <TextBlock Text="Audio Only" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </ToggleButton>
-                    <ToggleButton Classes="mode-btn">
+                    <ToggleButton IsChecked="{Binding IsReadAloudMode}" Command="{Binding SetReadAloudModeCommand}" Classes="mode-btn">
                         <TextBlock Text="Read Aloud" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </ToggleButton>
                 </StackPanel>
@@ -82,9 +82,26 @@
                     <Border Background="White" Opacity="0.9" CornerRadius="24" Padding="40" Width="750" Height="500" HorizontalAlignment="Center" VerticalAlignment="Center">
                         <ScrollViewer MaxHeight="400">
                             <StackPanel>
-                                <TextBlock Text="{Binding BookLine}" FontSize="24" Foreground="#333333" TextWrapping="Wrap" LineHeight="36"/>
-                                <TextBlock Text="{Binding BookLine2}" FontSize="24" Foreground="#333333" TextWrapping="Wrap" LineHeight="36" Margin="0,20,0,0"/>
-                                <TextBlock Text="{Binding BookLine3}" FontSize="24" Foreground="#333333" TextWrapping="Wrap" LineHeight="36" Margin="0,20,0,0"/>
+                                <SelectableTextBlock Name="ReadingSelectableText"
+                                                     Text="{Binding BookText}"
+                                                     FontSize="24"
+                                                     Foreground="#333333"
+                                                     TextWrapping="Wrap"
+                                                     LineHeight="36"
+                                                     SelectionBrush="#FFEB3B"
+                                                     SelectionForegroundBrush="#333"
+                                                     Margin="0"
+                                                     />
+                                
+                                <!-- Debug: Show selected text -->
+                                <Border Background="#E3F2FD" CornerRadius="8" Padding="12" Margin="0,16,0,0" IsVisible="{Binding HasTextSelected}">
+                                    <StackPanel>
+                                        <TextBlock Text="Selected Text:" FontSize="14" FontWeight="Medium" Foreground="#1976D2" Margin="0,0,0,8"/>
+                                        <TextBlock Text="{Binding SelectedText}" FontSize="16" Foreground="#333333" TextWrapping="Wrap"/>
+                                        <TextBlock Text="{Binding SelectionStart, StringFormat='Start: {0}'}" FontSize="12" Foreground="#666666" Margin="0,4,0,0"/>
+                                        <TextBlock Text="{Binding SelectionEnd, StringFormat='End: {0}'}" FontSize="12" Foreground="#666666"/>
+                                    </StackPanel>
+                                </Border>
                             </StackPanel>
                         </ScrollViewer>
                     </Border>
@@ -160,7 +177,7 @@
         </Grid>
 
         <!-- Audio Player (compact, no speed controls) -->
-        <Border Grid.Row="2" Background="White" BorderBrush="#E9ECEF" BorderThickness="0,1,0,0" Padding="0,4">
+        <Border Grid.Row="2" Background="White" BorderBrush="#E9ECEF" BorderThickness="0,1,0,0" Padding="0,4" IsVisible="{Binding IsReadAloudMode, Converter={x:Static BoolConverters.Not}}">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -196,6 +213,27 @@
                     </Button>
                     <Button Classes="control-btn" HorizontalAlignment="Center" VerticalAlignment="Center">
                         <TextBlock Text="⏭" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Read Aloud Controls -->
+        <Border Grid.Row="2" Background="White" BorderBrush="#E9ECEF" BorderThickness="0,1,0,0" Padding="0,4" IsVisible="{Binding IsReadAloudMode}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <!-- Recording Status -->
+                <TextBlock Grid.Row="0" Text="{Binding RecordingStatus}" FontSize="16" Foreground="#666666" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,8"/>
+                <!-- Recording Controls -->
+                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Spacing="30" Margin="0,4,0,0">
+                    <Button Classes="mic-btn" Command="{Binding ToggleRecordingCommand}" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock Text="🎤" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Button>
+                    <Button Classes="stop-btn" Command="{Binding StopRecordingCommand}" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock Text="⏹" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Button>
                 </StackPanel>
             </Grid>

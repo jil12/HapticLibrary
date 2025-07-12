@@ -2,6 +2,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using HapticLibrary.Models;
 using System;
+using System.Collections.ObjectModel;
 
 namespace HapticLibrary.ViewModels
 {
@@ -15,6 +16,9 @@ namespace HapticLibrary.ViewModels
         
         [ObservableProperty]
         private string? _bookLine3 = "The brass doorknob felt cold against her palm as she turned it slowly, the mechanism clicking softly in the quiet night.";
+        
+        [ObservableProperty]
+        private string _bookText = "The old library stood silent in the moonlight, its ancient stone walls holding centuries of knowledge within.\n\nSarah approached the heavy oak doors with a mixture of excitement and trepidation. She had waited years for this moment.\n\nThe brass doorknob felt cold against her palm as she turned it slowly, the mechanism clicking softly in the quiet night.";
         
         [ObservableProperty]
         private int _currentPage = 1;
@@ -52,6 +56,29 @@ namespace HapticLibrary.ViewModels
         [ObservableProperty]
         private double _vibrationIntensity = 70;
 
+        // Read-aloud properties
+        [ObservableProperty]
+        private bool _isReadAloudMode = false;
+
+        [ObservableProperty]
+        private bool _isRecording = false;
+
+        [ObservableProperty]
+        private string _recordingStatus = "Ready to record";
+
+        // Text selection properties
+        [ObservableProperty]
+        private string _selectedText = "";
+
+        [ObservableProperty]
+        private bool _hasTextSelected = false;
+
+        [ObservableProperty]
+        private int _selectionStart = 0;
+
+        [ObservableProperty]
+        private int _selectionEnd = 0;
+
         private ReadingBook _readingBook = new ReadingBook();
 
         public ReadingPageViewModel()
@@ -79,14 +106,7 @@ namespace HapticLibrary.ViewModels
         private void UpdatePageContent()
         {
             string fullText = _readingBook.GetText();
-            
-            // Split the text into lines for display
-            string[] lines = fullText.Split('\n', StringSplitOptions.RemoveEmptyEntries);
-            
-            BookLine = lines.Length > 0 ? lines[0] : "";
-            BookLine2 = lines.Length > 1 ? lines[1] : "";
-            BookLine3 = lines.Length > 2 ? lines[2] : "";
-            
+            BookText = fullText;
             CurrentPage = _readingBook.PageIndex + 1;
         }
 
@@ -108,6 +128,76 @@ namespace HapticLibrary.ViewModels
         public void ToggleSidebar()
         {
             SidebarOpen = !SidebarOpen;
+        }
+
+        // Text selection commands
+        [RelayCommand]
+        public void OnTextSelectionChanged(string selectedText)
+        {
+            SelectedText = selectedText ?? "";
+            HasTextSelected = !string.IsNullOrWhiteSpace(SelectedText);
+            
+            // For debugging - you can see the selected text in the console
+            if (HasTextSelected)
+            {
+                Console.WriteLine($"Selected text: '{SelectedText}'");
+            }
+        }
+
+        public void OnSelectionChanged(int start, int end)
+        {
+            SelectionStart = start;
+            SelectionEnd = end;
+            Console.WriteLine($"Selection changed: {start} to {end}");
+        }
+
+        // Read-aloud commands
+        [RelayCommand]
+        public void SetAudioMode()
+        {
+            IsReadAloudMode = false;
+            ReadingMode = "audio";
+            // Stop recording if active
+            if (IsRecording)
+            {
+                StopRecording();
+            }
+        }
+
+        [RelayCommand]
+        public void SetReadAloudMode()
+        {
+            IsReadAloudMode = true;
+            ReadingMode = "read-aloud";
+            // Stop audio if playing
+            if (IsPlaying)
+            {
+                IsPlaying = false;
+            }
+        }
+
+        [RelayCommand]
+        public void ToggleRecording()
+        {
+            IsRecording = !IsRecording;
+            if (IsRecording)
+            {
+                RecordingStatus = "Recording...";
+                // TODO: Start recording backend call
+            }
+            else
+            {
+                RecordingStatus = "Paused";
+                // TODO: Pause recording backend call
+            }
+        }
+
+        [RelayCommand]
+        public void StopRecording()
+        {
+            IsRecording = false;
+            RecordingStatus = "Ready to record";
+            // TODO: Stop recording backend call
         }
     }
 } 

@@ -222,6 +222,25 @@
             <Setter Property="Foreground" Value="White"/>
         </Style>
         
+        <Style Selector="Button.haptic-preset-btn">
+            <Setter Property="Background" Value="#F8F9FA"/>
+            <Setter Property="BorderBrush" Value="#E9ECEF"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Width" Value="40"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+        
+        <Style Selector="Button.haptic-preset-btn:pointerover">
+            <Setter Property="Background" Value="#E9ECEF"/>
+        </Style>
+        
+        <Style Selector="Button.haptic-preset-btn:pressed">
+            <Setter Property="Background" Value="#667EEA"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        
         <!-- Custom Progress Bar Styles -->
         <Style Selector="ProgressBar#AudioProgressBar">
             <Setter Property="Background" Value="#E9ECEF"/>
