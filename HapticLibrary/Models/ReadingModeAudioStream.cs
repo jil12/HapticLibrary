@@ -1,29 +1,35 @@
-﻿using Avalonia.Threading;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using Microsoft.VisualBasic;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using NAudio.Wave;
-using HapticLibrary.Models;
 
-namespace HapticLibrary.ViewModels
+namespace HapticLibrary.Models
 {
-    public partial class AudioStreamViewModel : ViewModelBase, IPageViewModel
+    public class ReadingModeAudioStream
     {
+        private static readonly Lazy<ReadingModeAudioStream> _instance = new(() => new ReadingModeAudioStream());
+        public static ReadingModeAudioStream Instance => _instance.Value;
+
         private ClientWebSocket _webSocket;
         private CancellationTokenSource _cancellationTokenSource;
         private WaveInEvent _waveIn;
 
-        [ObservableProperty]
-        private string _status = "Disconnected";
+        private ReadingModeAudioStream() { }
 
-        [RelayCommand]
+        public string Status { get; private set; } = "Disconnected";
+
+        public event Action<string> StatusChanged;
+
+        private void SetStatus(string status)
+        {
+            Status = status;
+            StatusChanged?.Invoke(status);
+        }
+
         public async Task Connect()
         {
             _webSocket = new ClientWebSocket();
@@ -31,15 +37,15 @@ namespace HapticLibrary.ViewModels
 
             try
             {
-                Status = "Connecting...";
+                SetStatus("Connecting...");
                 await _webSocket.ConnectAsync(new Uri("ws://localhost:8001"), _cancellationTokenSource.Token);
-                Status = "Connected";
+                SetStatus("Connected");
 
-                StartStreaming(); // ⏺ Start streaming immediately
+                StartStreaming();
             }
             catch (Exception ex)
             {
-                Status = $"Error: {ex.Message}";
+                SetStatus($"Error: {ex.Message}");
             }
         }
 
@@ -47,7 +53,7 @@ namespace HapticLibrary.ViewModels
         {
             _waveIn = new WaveInEvent
             {
-                WaveFormat = new WaveFormat(16000, 16, 1), // 16kHz, 16-bit mono PCM
+                WaveFormat = new WaveFormat(16000, 16, 1),
                 BufferMilliseconds = 100
             };
 
@@ -61,7 +67,7 @@ namespace HapticLibrary.ViewModels
             };
 
             _waveIn.StartRecording();
-            Status = "Streaming audio...";
+            SetStatus("Streaming audio...");
         }
 
         private void StopStreaming()
@@ -93,11 +99,11 @@ namespace HapticLibrary.ViewModels
             }
             catch (Exception ex)
             {
-                Status = $"Send error: {ex.Message}";
+                SetStatus($"Send error: {ex.Message}");
             }
         }
 
-        public async Task SendHapticInteractions(string data, CancellationToken cancellationToken = default)
+        public async Task SendHapticInteractions(Dictionary<string, HapticEffect> data, CancellationToken cancellationToken = default)
         {
             if (_webSocket == null)
                 throw new ArgumentNullException(nameof(_webSocket));
@@ -108,16 +114,13 @@ namespace HapticLibrary.ViewModels
             string json = JsonSerializer.Serialize(data);
             byte[] buffer = Encoding.UTF8.GetBytes(json);
 
-            var segment = new ArraySegment<byte>(buffer);
-
             await _webSocket.SendAsync(
-                segment,
+                new ArraySegment<byte>(buffer),
                 WebSocketMessageType.Text,
-                endOfMessage: true,
+                true,
                 cancellationToken);
         }
 
-        [RelayCommand]
         public async Task Disconnect()
         {
             StopStreaming();
@@ -130,7 +133,7 @@ namespace HapticLibrary.ViewModels
             _webSocket?.Dispose();
             _webSocket = null;
 
-            Status = "Disconnected";
+            SetStatus("Disconnected");
         }
     }
 }
