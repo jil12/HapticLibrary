@@ -1,4 +1,5 @@
 ﻿{
+    "Name": "Austin",
     "Pages": [
         {
             "Text": "This is the first page.",
@@ -7,7 +8,7 @@
                     "Props": [
                         {
                             "address": 1,
-                            "ledMode": "GlobalManual",
+                            "ledMode": 1,
                             "globalLed": {
                                 "red": 50,
                                 "green": 0,
@@ -25,7 +26,7 @@
                     "Props": [
                         {
                             "address": 2,
-                            "ledMode": "GlobalManual",
+                            "ledMode": 1,
                             "globalLed": {
                                 "red": 50,
                                 "green": 0,
@@ -43,7 +44,7 @@
                     "Props": [
                         {
                             "address": 4,
-                            "ledMode": "GlobalManual",
+                            "ledMode": 1,
                             "globalLed": {
                                 "red": 50,
                                 "green": 0,
@@ -61,7 +62,7 @@
                     "Props": [
                         {
                             "address": 8,
-                            "ledMode": "GlobalManual",
+                            "ledMode": 1,
                             "globalLed": {
                                 "red": 50,
                                 "green": 0,
@@ -79,7 +80,7 @@
                     "Props": [
                         {
                             "address": 15,
-                            "ledMode": "GlobalManual",
+                            "ledMode": 1,
                             "globalLed": {
                                 "red": 50,
                                 "green": 0,

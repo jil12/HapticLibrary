@@ -23,22 +23,20 @@ namespace HapticLibrary.ViewModels
 
         private ReadingBook _readingBook = new ReadingBook();
 
-        public ReadingPageViewModel()
-        {
-            _readingBook.LoadBook("test");
-        }
-
         public async Task LoadAsync()
         {
-            _bookLine = _readingBook.GetText();
+            _readingBook.LoadBook("");
+            BookLine = _readingBook.GetText();
+            PageNumber = _readingBook.PageIndex + 1;
             await _audioStream.Connect();
-            _audioStream.SendHapticInteractions();
+            _audioStream.SendHapticInteractions(_readingBook.GetHaptics());
         }
 
         [RelayCommand]
         public void NextPage()
         {
             _readingBook.NextPage();
+            _audioStream.SendHapticInteractions(_readingBook.GetHaptics());
             BookLine = _readingBook.GetText();
             PageNumber = _readingBook.PageIndex + 1;
         }
@@ -47,6 +45,7 @@ namespace HapticLibrary.ViewModels
         public void PreviousPage()
         {
             _readingBook.PreviousPage();
+            _audioStream.SendHapticInteractions(_readingBook.GetHaptics());
             BookLine = _readingBook.GetText();
             PageNumber = _readingBook.PageIndex + 1;
         }

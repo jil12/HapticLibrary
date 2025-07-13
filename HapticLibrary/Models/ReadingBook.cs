@@ -6,32 +6,38 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using static HapticLibrary.Models.ReadingBook;
 
 namespace HapticLibrary.Models
 {
+    public class ReadingBookJson
+    {
+        public string Name { get; set; }
+        public ReadingPage[] Pages { get; set; }
+    }
+
+    public class ReadingPage
+    {
+        public string Text { get; set; }
+        public Dictionary<string, HapticEffect> HapticTriggers { get; set; }       //Should this store dotProps or dotPropsJson? Shouldn't matter, Props is probably more correct, json is probably easier maybe??
+        public ReadingPage(string Text, Dictionary<string, HapticEffect> HapticTriggers)
+        {
+            this.Text = Text;
+            this.HapticTriggers = HapticTriggers;
+        }
+    }
+
     /**
      * Stores pages in a haptic reading book.
      */
     public class ReadingBook
     {
-        private class ReadingBookJson
-        {
-            public ReadingPage[] Pages { get; set; }
-        }
+        
 
         /**
          * Represents a page contents in a haptic reading book.
          */
-        private class ReadingPage
-        {
-            public string Text { get; set; }
-            public Dictionary<string, HapticEffect> HapticTriggers { get; set; }       //Should this store dotProps or dotPropsJson? Shouldn't matter, Props is probably more correct, json is probably easier maybe??
-            public ReadingPage(string text, Dictionary<string, HapticEffect> hapticTriggers)
-            {
-                this.Text = text;
-                this.HapticTriggers = hapticTriggers;
-            }
-        }
+        
 
         private ReadingPage[]? pages;
         private int _pageIndex = 0;
@@ -46,7 +52,7 @@ namespace HapticLibrary.Models
         {
             //TODO: Get book contents from server
             //string fullPath = Path.Combine("Assets", "HapticReadingBookExample.json");
-            string fullPath = "C:/Users/Austin/Projects/Datafeel-Storytelling/HapticLibrary/HapticLibrary/Assets/HapticReadingBookExample.json";
+            string fullPath = "C:/Users/Austin/Projects/Datafeel-Storytelling/HapticLibrary/HapticLibrary/Assets/PropSampleBook.json";
             string jsonString = File.ReadAllText(fullPath);
             // Parse the JSON into a JsonDocument
             using JsonDocument doc = JsonDocument.Parse(jsonString);
