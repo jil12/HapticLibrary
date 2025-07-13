@@ -38,10 +38,11 @@ namespace HapticLibrary.Models
             try
             {
                 SetStatus("Connecting...");
-                await _webSocket.ConnectAsync(new Uri("ws://localhost:8001"), _cancellationTokenSource.Token);
+                await _webSocket.ConnectAsync(new Uri("ws://localhost:8080"), _cancellationTokenSource.Token);
                 SetStatus("Connected");
 
                 StartStreaming();
+                _ = ReceiveLoop(); // Fire-and-forget (or await if you prefer blocking)
             }
             catch (Exception ex)
             {
@@ -135,5 +136,45 @@ namespace HapticLibrary.Models
 
             SetStatus("Disconnected");
         }
+
+        private async Task ReceiveLoop()
+        {
+            var buffer = new byte[4096];
+
+            try
+            {
+                while (_webSocket?.State == WebSocketState.Open)
+                {
+                    var result = await _webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), _cancellationTokenSource.Token);
+
+                    if (result.MessageType == WebSocketMessageType.Text)
+                    {
+                        string json = Encoding.UTF8.GetString(buffer, 0, result.Count);
+
+                        try
+                        {
+                            HapticEffect command = JsonSerializer.Deserialize<HapticEffect>(json);
+                            Console.WriteLine($"Received command: {command.Props[0].Address}");
+
+                            // Optionally: raise an event or trigger haptic behavior
+                        }
+                        catch (JsonException ex)
+                        {
+                            SetStatus($"Invalid JSON: {ex.Message}");
+                        }
+                    }
+                    else if (result.MessageType == WebSocketMessageType.Close)
+                    {
+                        SetStatus("Server closed connection.");
+                        await _webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Server closed", CancellationToken.None);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                SetStatus($"Receive error: {ex.Message}");
+            }
+        }
+
     }
 }
