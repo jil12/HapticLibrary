@@ -5,12 +5,32 @@ using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using Datafeel;
 using NAudio.Wave;
 
 namespace HapticLibrary.Models
 {
     public class ReadingModeAudioStream
     {
+        private static List<int> ConvertFlagsToAddresses(int flags)
+        {
+            var addresses = new List<int>();
+            int position = 1;
+
+            while (flags > 0)
+            {
+                if ((flags & 1) == 1)
+                {
+                    addresses.Add(position);
+                }
+
+                flags >>= 1;
+                position++;
+            }
+
+            return addresses;
+        }
+
         private static readonly Lazy<ReadingModeAudioStream> _instance = new(() => new ReadingModeAudioStream());
         public static ReadingModeAudioStream Instance => _instance.Value;
 
@@ -155,7 +175,16 @@ namespace HapticLibrary.Models
                         {
                             HapticEffect command = JsonSerializer.Deserialize<HapticEffect>(json);
                             Console.WriteLine($"Received command: {command.Props[0].Address}");
+                            HapticManager hapticManager = HapticManager.GetInstance();
 
+                            List<int> addresses = ConvertFlagsToAddresses(command.Props[0].Address);
+                            foreach (int address in addresses)
+                            {
+                                DotPropsWritable dotProps = new DotPropsWritable();
+                                dotProps.CopyFrom(command.Props[0]);
+                                dotProps.Address = (byte) address;
+                                await hapticManager.DotManager.Write(dotProps);
+                            }
                             // Optionally: raise an event or trigger haptic behavior
                         }
                         catch (JsonException ex)

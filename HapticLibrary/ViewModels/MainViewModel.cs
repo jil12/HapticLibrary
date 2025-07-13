@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using HapticLibrary.Models;
 
 namespace HapticLibrary.ViewModels;
 
@@ -10,6 +11,8 @@ public partial class MainViewModel : ViewModelBase
     /// </summary>
     [ObservableProperty]
     private IPageViewModel? _currentPage;
+
+
 
     /// <summary>
     /// Navigation bar that's displayed at the bottom of the screen
@@ -23,6 +26,8 @@ public partial class MainViewModel : ViewModelBase
     {
         NavigationBar = new NavigationBarViewModel(this);
         ShowLibraryPage();
+        HapticManager hapticManager = HapticManager.GetInstance();
+        hapticManager.StartManager();   //Make sure manager is running
     }
 
     /// <summary>

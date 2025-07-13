@@ -13,7 +13,7 @@ namespace HapticLibrary.Models
      */
     public sealed class HapticManager
     {
-        private static HapticManager _instance;
+        private static HapticManager _instance = new HapticManager();
         private DotManager _dotManager;
         private DatafeelModbusClient _datafeelModbusClient;
         public DotManager DotManager { get { return _dotManager; } }
@@ -45,7 +45,9 @@ namespace HapticLibrary.Models
 
         public async Task StartManager()
         {
+            Console.WriteLine("starting manager");
             await DotManager.Start(_datafeelModbusClient);
+            Console.WriteLine("started manager");
         }
     }
 }
