@@ -41,6 +41,14 @@ namespace HapticLibrary.Models
         private ReadingModeAudioStream() { }
 
         public string Status { get; private set; } = "Disconnected";
+        private bool _recording = false;
+        public bool Recording 
+        {
+            get
+            {
+                return _recording;
+            }
+        }
 
         public event Action<string> StatusChanged;
 
@@ -87,8 +95,7 @@ namespace HapticLibrary.Models
                 }
             };
 
-            _waveIn.StartRecording();
-            SetStatus("Streaming audio...");
+            SetStatus("Recording");
         }
 
         private void StopStreaming()
@@ -96,6 +103,7 @@ namespace HapticLibrary.Models
             _waveIn?.StopRecording();
             _waveIn?.Dispose();
             _waveIn = null;
+            SetStatus("Recording Stopped");
         }
 
         private async Task SendAudioChunk(byte[] audioData, int sampleRate)
@@ -205,5 +213,17 @@ namespace HapticLibrary.Models
             }
         }
 
+        public void ToggleRecording()
+        {
+            if (_recording)
+            {
+                StopStreaming();
+            }
+            else
+            {
+                StartStreaming();
+            }
+            _recording = !_recording;
+        }
     }
 }

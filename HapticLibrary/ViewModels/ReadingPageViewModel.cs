@@ -21,6 +21,10 @@ namespace HapticLibrary.ViewModels
         [ObservableProperty]
         private int? _pageNumber = 0;
 
+        [ObservableProperty]
+        private bool _isRecording = false;
+        public string RecordingToggleText => IsRecording ? "🎤 On" : "🎤 Off";
+
         private ReadingBook _readingBook = new ReadingBook();
 
         public async Task LoadAsync()
@@ -48,6 +52,14 @@ namespace HapticLibrary.ViewModels
             _audioStream.SendHapticInteractions(_readingBook.GetHaptics());
             BookLine = _readingBook.GetText();
             PageNumber = _readingBook.PageIndex + 1;
+        }
+
+        [RelayCommand]
+        public void ToggleMicrophone()
+        {
+            _audioStream.ToggleRecording();
+            _isRecording = _audioStream.Recording;
+            OnPropertyChanged(nameof(RecordingToggleText));
         }
     }
 }
