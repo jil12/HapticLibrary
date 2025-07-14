@@ -4,9 +4,9 @@ using Avalonia.Markup.Xaml;
 
 namespace HapticLibrary.Views;
 
-public partial class ATHStoreWindow : Window
+public partial class HapticEditorView : UserControl
 {
-    public ATHStoreWindow()
+    public HapticEditorView()
     {
         InitializeComponent();
     }

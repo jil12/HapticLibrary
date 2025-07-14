@@ -1,0 +1,58 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="https://github.com/avaloniaui/designer"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="HapticLibrary.Views.HapticEditorView">
+
+	<Grid RowDefinitions="Auto,*" ColumnDefinitions="*,*" Padding="10" Spacing="10">
+		<GroupBox Header="Metadata" Grid.Row="0" Grid.ColumnSpan="2">
+			<StackPanel Spacing="5">
+				<TextBox Text="{Binding Title}" Watermark="Title"/>
+				<TextBox Text="{Binding Author}" Watermark="Author"/>
+				<TextBox Text="{Binding AudioFile}" Watermark="Audio File Path"/>
+			</StackPanel>
+		</GroupBox>
+
+		<TabControl Grid.Row="1" Grid.Column="0">
+			<TabItem Header="Text Pages">
+				<StackPanel Spacing="5">
+					<TextBox Text="{Binding PageDraft.Text}" AcceptsReturn="True" Watermark="Page text" Height="100"/>
+					<StackPanel Orientation="Horizontal" Spacing="5">
+						<TextBox Text="{Binding PageDraft.StartTime}" Watermark="Start Time (s)" Width="100"/>
+						<TextBox Text="{Binding PageDraft.EndTime}" Watermark="End Time (s)" Width="100"/>
+					</StackPanel>
+					<Button Content="Add Page" Command="{Binding AddPageCommand}"/>
+
+					<DataGrid Items="{Binding Pages}" AutoGenerateColumns="False" Height="200">
+						<DataGrid.Columns>
+							<DataGridTextColumn Header="Index" Binding="{Binding PageIndex}" Width="*"/>
+							<DataGridTextColumn Header="Text" Binding="{Binding Text}" Width="2*"/>
+							<DataGridTextColumn Header="Start" Binding="{Binding StartTime}" Width="*"/>
+							<DataGridTextColumn Header="End" Binding="{Binding EndTime}" Width="*"/>
+						</DataGrid.Columns>
+					</DataGrid>
+				</StackPanel>
+			</TabItem>
+
+			<TabItem Header="Haptic Cues">
+				<StackPanel Spacing="5">
+					<TextBox Text="{Binding HapticDraft.Type}" Watermark="Type (e.g. vibration)"/>
+					<StackPanel Orientation="Horizontal" Spacing="5">
+						<TextBox Text="{Binding HapticDraft.Time}" Watermark="Time (s)" Width="100"/>
+						<TextBox Text="{Binding HapticDraft.Intensity}" Watermark="Intensity" Width="100"/>
+					</StackPanel>
+					<Button Content="Add Haptic" Command="{Binding AddHapticCommand}"/>
+
+					<DataGrid Items="{Binding Haptics}" AutoGenerateColumns="False" Height="200">
+						<DataGrid.Columns>
+							<DataGridTextColumn Header="Time" Binding="{Binding Time}" Width="*"/>
+							<DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="*"/>
+							<DataGridTextColumn Header="Intensity" Binding="{Binding Intensity}" Width="*"/>
+						</DataGrid.Columns>
+					</DataGrid>
+				</StackPanel>
+			</TabItem>
+		</TabControl>
+	</Grid>
+</UserControl>
