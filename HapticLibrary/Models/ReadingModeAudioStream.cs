@@ -69,7 +69,7 @@ namespace HapticLibrary.Models
                 await _webSocket.ConnectAsync(new Uri("ws://localhost:8080"), _cancellationTokenSource.Token);
                 SetStatus("Connected");
 
-                StartStreaming();
+                //StartStreaming();
                 _ = ReceiveLoop(); // Fire-and-forget (or await if you prefer blocking)
             }
             catch (Exception ex)
@@ -94,7 +94,8 @@ namespace HapticLibrary.Models
                     await SendAudioChunk(chunk, 16000);
                 }
             };
-
+            
+            _waveIn.StartRecording();
             SetStatus("Recording");
         }
 
