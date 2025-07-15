@@ -23,6 +23,7 @@
     <PackageReference Include="Datafeel" />
     <PackageReference Include="Datafeel.NET.BLE" />
     <PackageReference Include="Datafeel.NET.Serial" />
+    <PackageReference Include="NAudio" />
   </ItemGroup>
 
   <ItemGroup>
@@ -33,6 +34,9 @@
 
   <ItemGroup>
     <None Include="Assets\HapticReadingBookExample.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Assets\PropSampleBook.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

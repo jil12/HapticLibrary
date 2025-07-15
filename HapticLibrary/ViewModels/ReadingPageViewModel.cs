@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using HapticLibrary.Models;
 using System;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 
 namespace HapticLibrary.ViewModels
 {
@@ -80,10 +81,12 @@ namespace HapticLibrary.ViewModels
         private int _selectionEnd = 0;
 
         private ReadingBook _readingBook = new ReadingBook();
+        private ReadingModeAudioStream _audioStream = ReadingModeAudioStream.Instance;
 
         public ReadingPageViewModel()
         {
             LoadBookContent();
+            InitializeAudioStream();
         }
 
         private void LoadBookContent()
@@ -94,31 +97,67 @@ namespace HapticLibrary.ViewModels
                 UpdatePageContent();
                 TotalPages = _readingBook.GetLength();
                 CurrentPage = 1;
+                CurrentBookTitle = _readingBook.BookName;
             }
             catch
             {
                 // Use default content if loading fails
                 TotalPages = 5;
                 CurrentPage = 1;
+                CurrentBookTitle = "Error Loading Book";
             }
         }
 
-        private void UpdatePageContent()
+        private async void InitializeAudioStream()
+        {
+            try
+            {
+                await _audioStream.Connect();
+                await _audioStream.SendHapticInteractions(_readingBook.GetHaptics());
+                
+                // Subscribe to status changes
+                _audioStream.StatusChanged += OnAudioStreamStatusChanged;
+            }
+            catch (Exception ex)
+            {
+                RecordingStatus = $"Connection error: {ex.Message}";
+            }
+        }
+
+        private void OnAudioStreamStatusChanged(string status)
+        {
+            RecordingStatus = status;
+        }
+
+        private async void UpdatePageContent()
         {
             string fullText = _readingBook.GetText();
             BookText = fullText;
             CurrentPage = _readingBook.PageIndex + 1;
+            
+            // Update book title with page info
+            CurrentBookTitle = $"{_readingBook.BookName} - Page {CurrentPage}";
+            
+            // Send haptic interactions for current page
+            try
+            {
+                await _audioStream.SendHapticInteractions(_readingBook.GetHaptics());
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error sending haptic interactions: {ex.Message}");
+            }
         }
 
         [RelayCommand]
-        public void PreviousPage()
+        public async void PreviousPage()
         {
             _readingBook.PreviousPage();
             UpdatePageContent();
         }
 
         [RelayCommand]
-        public void NextPage()
+        public async void NextPage()
         {
             _readingBook.NextPage();
             UpdatePageContent();
@@ -198,6 +237,34 @@ namespace HapticLibrary.ViewModels
             IsRecording = false;
             RecordingStatus = "Ready to record";
             // TODO: Stop recording backend call
+        }
+
+        // Enhanced microphone toggle with backend integration
+        [RelayCommand]
+        public void ToggleMicrophone()
+        {
+            _audioStream.ToggleRecording();
+            IsRecording = _audioStream.Recording;
+            RecordingStatus = IsRecording ? "🎤 Recording..." : "Ready to record";
+            
+            // Update read-aloud mode based on recording state
+            IsReadAloudMode = IsRecording;
+            
+            // Notify UI of changes
+            OnPropertyChanged(nameof(IsRecording));
+            OnPropertyChanged(nameof(RecordingStatus));
+        }
+
+        // Async initialization method for external use
+        public async Task LoadAsync()
+        {
+            _readingBook.LoadBook("");
+            BookText = _readingBook.GetText();
+            CurrentPage = _readingBook.PageIndex + 1;
+            CurrentBookTitle = _readingBook.BookName;
+            
+            await _audioStream.Connect();
+            await _audioStream.SendHapticInteractions(_readingBook.GetHaptics());
         }
     }
 } 

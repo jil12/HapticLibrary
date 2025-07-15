@@ -18,6 +18,7 @@
     <PackageVersion Include="Datafeel" Version="2.1.0-alpha" />
     <PackageVersion Include="Datafeel.NET.BLE" Version="2.1.0-alpha" />
     <PackageVersion Include="Datafeel.NET.Serial" Version="2.1.0-alpha" />
+    <PackageVersion Include="NAudio" Version="2.2.1" />
     <PackageVersion Include="Xamarin.AndroidX.Core.SplashScreen" Version="1.0.1.15" />
   </ItemGroup>
 </Project>
