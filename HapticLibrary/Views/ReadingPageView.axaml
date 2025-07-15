@@ -18,16 +18,27 @@
 		<TextBlock Text="{Binding BookLine}"
 				   HorizontalAlignment="Center"
 				   Height="200"/>
-		<StackPanel
-			Orientation="Horizontal">
-			<Button Command="{Binding PreviousPage}">
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*"/>
+				<ColumnDefinition Width="*"/>
+				<ColumnDefinition Width="*"/>
+			</Grid.ColumnDefinitions>
+			<Button Grid.Column="0"
+				Command="{Binding PreviousPage}">
 				Previous Page
 			</Button>
-			<Panel
-				Width="300"/>
-			<Button Command="{Binding NextPage}">
+			<Panel Grid.Column="1"
+				Width="300">
+				<Button 
+				HorizontalAlignment="Center"
+				Command="{Binding ToggleMicrophone}"
+				Content="{Binding RecordingToggleText}"/>
+				</Panel>
+			<Button Grid.Column="2"
+				Command="{Binding NextPage}">
 				Next Page
 			</Button>
-		</StackPanel>
+		</Grid>
 	</StackPanel>
 </UserControl>
