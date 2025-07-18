@@ -12,7 +12,5 @@
     <vm:MainViewModel />
   </Design.DataContext>
 
-	<StackPanel>
-		<ContentControl Content="{Binding CurrentPage}" />
-	</StackPanel>
+	<ContentControl Content="{Binding CurrentPage}" />
 </UserControl>

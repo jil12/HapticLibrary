@@ -1,36 +1,34 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using HapticLibrary.Models;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace HapticLibrary.ViewModels
 {
-    public partial class HapticEditorViewModel : ViewModelBase
+    public partial class HapticEditorViewModel : ViewModelBase, IPageViewModel
     {
         [ObservableProperty]
-        private string _title;
-        [ObservableProperty]
-        private string _author;
-        [ObservableProperty]
-        private string _audioFile;
+        private ObservableCollection<WordModel> words;
 
-        [ObservableProperty]
-        private PageDraft _pageDraft;
-    }
+        public HapticEditorViewModel()
+        {
+            // Split and initialize words
+            var inputText = "This is a sample sentence with clickable words.\nC A M P F I R E Song.\n";
+            Words = new ObservableCollection<WordModel>(
+                inputText.Split((char[])null, StringSplitOptions.RemoveEmptyEntries)
+                         .Select(w => new WordModel(w))
+            );
+        }
 
-    public partial class PageDraft : ObservableObject
-    {
-        public string Text = "";
-        public string StartTime = "";
-        public string EndTime = "";
-    }
+        [RelayCommand]
+        public void ShowDropdown(WordModel word)
+        {
 
-    public partial class HapticDraft : ObservableObject
-    {
-        public string Type = "";
-        public string Time = "";
-        public string Intensity = "";
+        }
     }
 }

@@ -37,4 +37,5 @@ public partial class MainViewModel : ViewModelBase
     public void ShowLibraryPage() => CurrentPage = new LibraryPageViewModel();
     public void ShowReadingPage() => CurrentPage = new ReadingPageViewModel();
     public void ShowSettingsPage() => CurrentPage = new SettingsPageViewModel();
+    public void ShowEditorPage() => CurrentPage = new HapticEditorViewModel();
 }

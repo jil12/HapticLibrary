@@ -1,58 +1,48 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="https://github.com/avaloniaui/designer"
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d"
-             x:Class="HapticLibrary.Views.HapticEditorView">
+			 xmlns:vm="using:HapticLibrary.ViewModels"
+			 xmlns:m="using:HapticLibrary.Models"
+			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+			 x:DataType="vm:HapticEditorViewModel"
+             x:Class="HapticLibrary.Views.HapticEditorView"
+			 x:Name="HapticEditor">
+	<Grid ColumnDefinitions="5*, 1*">
+			<Grid Grid.Column="0"
+				  RowDefinitions="3*, 1*">
+				<Panel Grid.Row="0"
+					   Background="Gray">
+					<Panel Margin="100,60,100,60" Background="White"
+						   Width="500"
+						   Height="300">
+						<ItemsControl ItemsSource="{Binding Words}">
+							<ItemsControl.ItemsPanel>
+								<ItemsPanelTemplate>
+									<WrapPanel HorizontalAlignment="Center"/>
+								</ItemsPanelTemplate>
+							</ItemsControl.ItemsPanel>
 
-	<Grid RowDefinitions="Auto,*" ColumnDefinitions="*,*" Padding="10" Spacing="10">
-		<GroupBox Header="Metadata" Grid.Row="0" Grid.ColumnSpan="2">
-			<StackPanel Spacing="5">
-				<TextBox Text="{Binding Title}" Watermark="Title"/>
-				<TextBox Text="{Binding Author}" Watermark="Author"/>
-				<TextBox Text="{Binding AudioFile}" Watermark="Audio File Path"/>
-			</StackPanel>
-		</GroupBox>
+							<ItemsControl.ItemTemplate>
+								<DataTemplate x:DataType="m:WordModel">
+									<Button Content="{Binding Word}" Margin="2"
+											Command="{Binding DataContext.ShowDropdownCommand, ElementName=HapticEditor}"
+											CommandParameter="{Binding}"
+											Background="Blue">
+										<Button.ContextMenu>
 
-		<TabControl Grid.Row="1" Grid.Column="0">
-			<TabItem Header="Text Pages">
-				<StackPanel Spacing="5">
-					<TextBox Text="{Binding PageDraft.Text}" AcceptsReturn="True" Watermark="Page text" Height="100"/>
-					<StackPanel Orientation="Horizontal" Spacing="5">
-						<TextBox Text="{Binding PageDraft.StartTime}" Watermark="Start Time (s)" Width="100"/>
-						<TextBox Text="{Binding PageDraft.EndTime}" Watermark="End Time (s)" Width="100"/>
-					</StackPanel>
-					<Button Content="Add Page" Command="{Binding AddPageCommand}"/>
-
-					<DataGrid Items="{Binding Pages}" AutoGenerateColumns="False" Height="200">
-						<DataGrid.Columns>
-							<DataGridTextColumn Header="Index" Binding="{Binding PageIndex}" Width="*"/>
-							<DataGridTextColumn Header="Text" Binding="{Binding Text}" Width="2*"/>
-							<DataGridTextColumn Header="Start" Binding="{Binding StartTime}" Width="*"/>
-							<DataGridTextColumn Header="End" Binding="{Binding EndTime}" Width="*"/>
-						</DataGrid.Columns>
-					</DataGrid>
-				</StackPanel>
-			</TabItem>
-
-			<TabItem Header="Haptic Cues">
-				<StackPanel Spacing="5">
-					<TextBox Text="{Binding HapticDraft.Type}" Watermark="Type (e.g. vibration)"/>
-					<StackPanel Orientation="Horizontal" Spacing="5">
-						<TextBox Text="{Binding HapticDraft.Time}" Watermark="Time (s)" Width="100"/>
-						<TextBox Text="{Binding HapticDraft.Intensity}" Watermark="Intensity" Width="100"/>
-					</StackPanel>
-					<Button Content="Add Haptic" Command="{Binding AddHapticCommand}"/>
-
-					<DataGrid Items="{Binding Haptics}" AutoGenerateColumns="False" Height="200">
-						<DataGrid.Columns>
-							<DataGridTextColumn Header="Time" Binding="{Binding Time}" Width="*"/>
-							<DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="*"/>
-							<DataGridTextColumn Header="Intensity" Binding="{Binding Intensity}" Width="*"/>
-						</DataGrid.Columns>
-					</DataGrid>
-				</StackPanel>
-			</TabItem>
-		</TabControl>
+										</Button.ContextMenu>
+									</Button>
+								</DataTemplate>
+							</ItemsControl.ItemTemplate>
+						</ItemsControl>
+					</Panel>
+				</Panel>
+				<Panel Grid.Row="1" Background="BlueViolet">
+				</Panel>
+			</Grid>
+		<Panel Grid.Column="1" Background="White">
+			<TextBlock> Create Haptic Pattern </TextBlock>
+		</Panel>
 	</Grid>
 </UserControl>

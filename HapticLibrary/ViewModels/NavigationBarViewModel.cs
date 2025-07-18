@@ -55,5 +55,11 @@ namespace HapticLibrary.ViewModels
         {
             _main.ShowSettingsPage();
         }
+
+        [RelayCommand]
+        private void NavigateToEditorPage()
+        {
+            _main.ShowEditorPage();
+        }
     }
 }
