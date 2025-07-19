@@ -31,11 +31,14 @@
 
                 <!-- Reading Mode Toggle -->
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="0,0,20,0" VerticalAlignment="Center">
-                    <ToggleButton IsChecked="{Binding IsReadAloudMode, Converter={x:Static BoolConverters.Not}}" Command="{Binding SetAudioModeCommand}" Classes="mode-btn" Margin="0,0,12,0">
-                        <TextBlock Text="Audio Only" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <ToggleButton IsChecked="{Binding IsReadAloudMode, Converter={x:Static BoolConverters.Not}}" Command="{Binding SetAudioModeCommand}" Classes="mode-btn" Margin="0,0,8,0">
+                        <TextBlock Text="Audio Only" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </ToggleButton>
-                    <ToggleButton IsChecked="{Binding IsReadAloudMode}" Command="{Binding SetReadAloudModeCommand}" Classes="mode-btn">
-                        <TextBlock Text="Read Aloud" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <ToggleButton IsChecked="{Binding IsReadAloudMode}" Command="{Binding SetReadAloudModeCommand}" Classes="mode-btn" Margin="0,0,8,0">
+                        <TextBlock Text="Read Aloud" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </ToggleButton>
+                    <ToggleButton IsChecked="{Binding AutoPageFlipEnabled}" Command="{Binding ToggleAutoPageFlipCommand}" Classes="mode-btn" Margin="0,0,8,0">
+                        <TextBlock Text="Auto Pages" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </ToggleButton>
                 </StackPanel>
 
@@ -79,8 +82,8 @@
                         <TextBlock Text="{Binding TotalPages}" FontSize="16" FontWeight="SemiBold" Foreground="#333333" VerticalAlignment="Center"/>
                     </StackPanel>
                     <!-- Text Content -->
-                    <Border Background="White" Opacity="0.9" CornerRadius="24" Padding="40" Width="750" Height="500" HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <ScrollViewer MaxHeight="400">
+                    <Border Background="White" Opacity="0.9" CornerRadius="24" Padding="30" Width="800" Height="650" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <ScrollViewer MaxHeight="650">
                             <StackPanel>
                                 <SelectableTextBlock Name="ReadingSelectableText"
                                                      Text="{Binding BookText}"
@@ -119,6 +122,49 @@
                     <TabItem Header="Haptic">
                         <StackPanel Orientation="Vertical" Spacing="16" Margin="16">
                             <TextBlock Text="Haptic Feedback" FontSize="18" FontWeight="SemiBold" Foreground="#333333"/>
+                            
+                            <!-- Haptic Hardware Status -->
+                            <StackPanel Spacing="8">
+                                <TextBlock Text="Hardware Status" FontSize="14" FontWeight="Medium" Foreground="#333333"/>
+                                
+                                <!-- Connected Status -->
+                                <Border Background="#E8F5E8" CornerRadius="4" Padding="6" IsVisible="{Binding HapticHardwareConnected}">
+                                    <TextBlock Text="✓ Connected" FontSize="12" Foreground="#388E3C" HorizontalAlignment="Center"/>
+                                </Border>
+                                
+                                <!-- Disconnected Status -->
+                                <Border Background="#FFEBEE" CornerRadius="4" Padding="6" IsVisible="{Binding HapticHardwareConnected, Converter={x:Static BoolConverters.Not}}">
+                                    <TextBlock Text="✗ Disconnected" FontSize="12" Foreground="#D32F2F" HorizontalAlignment="Center"/>
+                                </Border>
+                                
+                                <!-- Test Button -->
+                                <Button Command="{Binding TestHapticDotsCommand}" 
+                                        IsEnabled="{Binding HapticHardwareConnected}"
+                                        Classes="test-btn" 
+                                        HorizontalAlignment="Stretch">
+                                    <TextBlock Text="🧪 Test Dots" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Button>
+                            </StackPanel>
+                            
+                            <!-- Haptic Sequence Status -->
+                            <StackPanel Spacing="4" IsVisible="{Binding HapticSequenceLoaded}">
+                                <TextBlock Text="F451 Sequence" FontSize="14" FontWeight="Medium" Foreground="#333333"/>
+                                <Border Background="#E8F5E8" CornerRadius="4" Padding="6">
+                                    <TextBlock Text="✓ Loaded" FontSize="12" Foreground="#388E3C" HorizontalAlignment="Center"/>
+                                </Border>
+                                <TextBlock Text="{Binding CurrentHapticEvent}" FontSize="12" Foreground="#666666" TextWrapping="Wrap"/>
+                            </StackPanel>
+                            
+                            <!-- Debug Output -->
+                            <StackPanel Spacing="4">
+                                <TextBlock Text="Debug Output" FontSize="14" FontWeight="Medium" Foreground="#333333"/>
+                                <Border Background="#F5F5F5" CornerRadius="4" Padding="8" MaxHeight="100">
+                                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                        <TextBlock Text="{Binding DebugOutput}" FontSize="10" Foreground="#444444" TextWrapping="Wrap" FontFamily="Consolas"/>
+                                    </ScrollViewer>
+                                </Border>
+                            </StackPanel>
+                            
                             <StackPanel Spacing="8">
                                 <TextBlock Text="Intensity" FontSize="14" FontWeight="Medium" Foreground="#333333"/>
                                 <Slider Minimum="0" Maximum="100" Value="{Binding VibrationIntensity}" />
@@ -204,15 +250,18 @@
                     <TextBlock Text="{Binding TotalTime, StringFormat='{}{0:mm\\:ss}'}" FontSize="12" Foreground="#666666"/>
                 </StackPanel>
                 <!-- Audio Controls -->
-                <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center" Spacing="30" Margin="0,4,0,0">
-                    <Button Classes="control-btn" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center" Spacing="20" Margin="0,4,0,0">
+                    <Button Classes="control-btn" Command="{Binding SeekBackwardCommand}" HorizontalAlignment="Center" VerticalAlignment="Center">
                         <TextBlock Text="⏮" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Button>
-                    <Button Classes="play-btn" HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <TextBlock Text="▶" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <Button Classes="play-btn" Command="{Binding TogglePlaybackCommand}" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding PlayButtonText}" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Button>
-                    <Button Classes="control-btn" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Button Classes="control-btn" Command="{Binding SeekForwardCommand}" HorizontalAlignment="Center" VerticalAlignment="Center">
                         <TextBlock Text="⏭" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Button>
+                    <Button Classes="control-btn" Command="{Binding ResetAudioCommand}" HorizontalAlignment="Center" VerticalAlignment="Center" ToolTip.Tip="Reset to beginning">
+                        <TextBlock Text="⏹" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Button>
                 </StackPanel>
             </Grid>

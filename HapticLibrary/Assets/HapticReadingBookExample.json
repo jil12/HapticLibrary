@@ -1,13 +1,14 @@
 ﻿{
+    "Name": "Austin",
     "Pages": [
         {
-            "Text": "The old library stood silent in the moonlight, its ancient stone walls holding centuries of knowledge within.\n\nSarah approached the heavy oak doors with a mixture of excitement and trepidation. She had waited years for this moment.\n\nThe brass doorknob felt cold against her palm as she turned it slowly, the mechanism clicking softly in the quiet night.",
+            "Text": "This is the first page.",
             "HapticTriggers": {
                 "first": {
                     "Props": [
                         {
                             "address": 1,
-                            "ledMode": "GlobalManual",
+                            "ledMode": 1,
                             "globalLed": {
                                 "red": 50,
                                 "green": 0,
@@ -19,13 +20,13 @@
             }
         },
         {
-            "Text": "Inside, the air was thick with the scent of old books and leather bindings. Dust motes danced in the pale light filtering through stained glass windows.\n\nHer footsteps echoed on the marble floor as she made her way toward the back of the library, where the oldest and most mysterious tomes were kept.\n\nA soft humming sound seemed to emanate from the walls themselves, as if the building was alive and aware of her presence.",
+            "Text": "This is the second page.",
             "HapticTriggers": {
                 "second": {
                     "Props": [
                         {
                             "address": 2,
-                            "ledMode": "GlobalManual",
+                            "ledMode": 1,
                             "globalLed": {
                                 "red": 50,
                                 "green": 0,
@@ -37,13 +38,13 @@
             }
         },
         {
-            "Text": "At the far end of the library, she found what she had been searching for: a massive book bound in what appeared to be dragon hide.\n\nThe cover was embossed with strange symbols that seemed to shift and move when she wasn't looking directly at them.\n\nAs she reached out to touch the book, a warm tingling sensation spread through her fingertips, and she knew her life would never be the same.",
+            "Text": "This is the third page.",
             "HapticTriggers": {
                 "third": {
                     "Props": [
                         {
                             "address": 4,
-                            "ledMode": "GlobalManual",
+                            "ledMode": 1,
                             "globalLed": {
                                 "red": 50,
                                 "green": 0,
@@ -55,13 +56,13 @@
             }
         },
         {
-            "Text": "The moment her hand closed around the book, the entire library seemed to hold its breath. The humming grew louder, more urgent.\n\nPages began to turn on their own, revealing ancient spells and forgotten knowledge that had been hidden for generations.\n\nSarah felt a connection forming between herself and the book, as if it had been waiting for her all along.",
+            "Text": "This is the almost the last page.",
             "HapticTriggers": {
                 "last": {
                     "Props": [
                         {
                             "address": 8,
-                            "ledMode": "GlobalManual",
+                            "ledMode": 1,
                             "globalLed": {
                                 "red": 50,
                                 "green": 0,
@@ -73,13 +74,13 @@
             }
         },
         {
-            "Text": "With each word she read, Sarah felt her understanding of the world expanding beyond what she had ever imagined possible.\n\nThe book was not just a collection of knowledge—it was a living entity that had chosen her as its new guardian.\n\nAs dawn broke through the library windows, Sarah knew her adventure was just beginning.",
+            "Text": "The End!",
             "HapticTriggers": {
                 "end": {
                     "Props": [
                         {
                             "address": 15,
-                            "ledMode": "GlobalManual",
+                            "ledMode": 1,
                             "globalLed": {
                                 "red": 50,
                                 "green": 0,

@@ -1,0 +1,77 @@
+{
+    "Name": "Fahrenheit 451 - The Chase",
+    "Pages": [
+        {
+            "Text": "\"Police suggest entire population in the Elm Terrace area do as follows: Everyone in every house in every street open a front or rear door or look from the windows. The fugitive cannot escape if everyone in the next minute looks from his house. Ready!\"\n\nOf course! Why hadn't they done it before! Why, in all the years, hadn't this game been tried!\n\nEveryone up, everyone out! He couldn't be missed! The only man running alone in the night city, the only man proving his legs!",
+            "HapticTriggers": {
+                "announcement": {
+                    "Props": [
+                        {
+                            "address": 1,
+                            "ledMode": "GlobalManual",
+                            "globalLed": {
+                                "red": 100,
+                                "green": 0,
+                                "blue": 0
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "Text": "\"At the count of ten now! One! Two!\"\n\nHe felt the city rise. Three.\n\nHe felt the city turn to its thousands of doors.\n\nFaster! Leg up, leg down!\n\n\"Four!\"\n\nThe people sleepwalking in their hallways.\n\n\"Five!\"\n\nHe felt their hands on the doorknobs!",
+            "HapticTriggers": {
+                "countdown": {
+                    "Props": [
+                        {
+                            "address": 2,
+                            "ledMode": "GlobalManual",
+                            "globalLed": {
+                                "red": 80,
+                                "green": 20,
+                                "blue": 0
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "Text": "The smell of the river was cool and like a solid rain. His throat was burnt rust and his eyes were wept dry with running. He yelled as if this yell would jet him on, fling him the last hundred yards.\n\n\"Six, seven, eight!\"\n\nThe doorknobs turned on five thousand doors. \"Nine!\"\n\nHe ran out away from the last row of houses, on a slope leading down to a solid moving blackness. \"Ten!\"\n\nThe doors opened.",
+            "HapticTriggers": {
+                "escape": {
+                    "Props": [
+                        {
+                            "address": 4,
+                            "ledMode": "GlobalManual",
+                            "globalLed": {
+                                "red": 60,
+                                "green": 40,
+                                "blue": 20
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "Text": "He imagined thousands on thousands of faces peering into yards, into alleys, and into the sky, faces hid by curtains, pale, night-frightened faces, like grey animals peering from electric caves, faces with grey colourless eyes, grey tongues and grey thoughts looking out through the numb flesh of the face.\n\nBut he was at the river.\n\nHe touched it, just to be sure it was real. He waded in and stripped in darkness to the skin, splashed his body, arms, legs, and head with raw liquor; drank it and snuffed some up his nose. Then he dressed in Faber's old clothes and shoes. He tossed his own clothing into the river and watched it swept away. Then, holding the suitcase, he walked out in the river until there was no bottom and he was swept away in the dark.",
+            "HapticTriggers": {
+                "river_escape": {
+                    "Props": [
+                        {
+                            "address": 8,
+                            "ledMode": "GlobalManual",
+                            "globalLed": {
+                                "red": 0,
+                                "green": 50,
+                                "blue": 100
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}

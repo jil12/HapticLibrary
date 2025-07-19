@@ -51,7 +51,7 @@ namespace HapticLibrary.Models
             try
             {
                 //TODO: Get book contents from server
-                string fileName = string.IsNullOrEmpty(bookID) ? "HapticReadingBookExample.json" : $"{bookID}.json";
+                string fileName = string.IsNullOrEmpty(bookID) ? "F451_BookPages.json" : $"{bookID}.json";
                 string fullPath = Path.Combine("Assets", fileName);
                 
                 // Check if file exists
@@ -66,7 +66,7 @@ namespace HapticLibrary.Models
                     else
                     {
                         // Try alternative files if main file not found
-                        string[] alternativeFiles = { "HapticReadingBookExample.json", "PropSampleBook.json" };
+                        string[] alternativeFiles = { "F451_BookPages.json" };
                         foreach (string altFile in alternativeFiles)
                         {
                             foundPath = FindFileInDirectory(altFile, Directory.GetCurrentDirectory());

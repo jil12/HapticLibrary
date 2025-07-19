@@ -1,0 +1,426 @@
+{
+  "Name": "Fahrenheit 451 - The Chase - Full Haptic Sequence",
+  "Description": "Complete haptic sequence for F451 audiobook with precise timing",
+  "DeviceMapping": {
+    "1": "Wrists (Combined)",
+    "2": "Chest (Combined)"
+  },
+  "AudioFile": "F451 Script Pt 2.wav",
+  "TotalDuration": "2:00",
+  "HapticSequence": [
+    {
+      "EventName": "Event1_PoliceAnnouncement",
+      "StartTime": "0:00",
+      "EndTime": "0:16",
+      "Duration": 16000,
+      "TextSection": "Police suggest entire population in the Elm Terrace area do as follows: Everyone in every house in every street open a front or rear door or look from the windows. The fugitive cannot escape if everyone in the next minute looks from his house. Ready!",
+      "HapticEffects": {
+        "description": "UNEASE (binaural), red and white, flashing like sirens - combining original dots 1+2 (wrists) and 3+4 (chest)",
+        "originalMapping": {
+          "dot1_rightWrist": "now_dot1_wrists",  
+          "dot2_leftWrist": "now_dot1_wrists",
+          "dot3_chest": "now_dot2_chest",
+          "dot4_back": "now_dot2_chest"
+        },
+        "patterns": {
+          "AmbulanceSiren_Wrists": {
+            "device": 1,
+            "type": "continuous",
+            "duration": 16000,
+            "pattern": "alternating_red_white_250ms",
+            "repeatCount": 30
+          },
+          "BinauralUnease_Chest": {
+            "device": 2,
+            "type": "continuous", 
+            "duration": 16000,
+            "vibrationFrequency_chest": 41.2,
+            "vibrationIntensity_chest": 1.0,
+            "vibrationFrequency_back": 28.76,
+            "vibrationIntensity_back": 0.5,
+            "combined_frequency": 41.2,
+            "combined_intensity": 1.0
+          }
+        }
+      }
+    },
+    {
+      "EventName": "Event2_Realization", 
+      "StartTime": "0:17",
+      "EndTime": "0:32", 
+      "Duration": 15000,
+      "TextSection": "Of course! Why hadn't they done it before! Why, in all the years, hadn't this game been tried! Everyone up, everyone out! He couldn't be missed! The only man running alone in the night city, the only man proving his legs!",
+      "HapticEffects": {
+        "description": "Speed everything up, chest dot goes like heartbeat, wrist dots vibrate at highest speed to simulate shaking hands - combining original effects",
+        "originalMapping": {
+          "dot1_rightWrist_thermal": "now_dot1_wrists_thermal",
+          "dot2_leftWrist_thermal": "now_dot1_wrists_thermal", 
+          "dot3_chest_heartbeat": "now_dot2_chest_heartbeat",
+          "dot4_back": "now_dot2_chest"
+        },
+        "patterns": {
+          "HeartBeat_Chest": {
+            "device": 2,
+            "type": "continuous",
+            "duration": 15000,
+            "bpm": 150,
+            "beatCount": 78,
+            "vibrationMode": "Library",
+            "ledPattern": "HeartbeatPulse"
+          },
+          "ThermalHeating_Wrists": {
+            "device": 1,
+            "type": "continuous",
+            "duration": 15000, 
+            "thermalIntensity": 0.5,
+            "description": "Combined left+right wrist heating"
+          }
+        }
+      }
+    },
+    {
+      "EventName": "EventCounting_One",
+      "StartTime": "0:30.8",
+      "EndTime": "0:31.8",
+      "Duration": 1000,
+      "TextSection": "One!",
+      "HapticEffects": {
+        "description": "Random red flash on wrists only - like original Number() function",
+        "patterns": {
+          "RandomFlash_Wrists": {
+            "device": 1,
+            "type": "instant",
+            "ledMode": "GlobalManual",
+            "globalLed": { "red": 255, "green": 0, "blue": 0 },
+            "vibrationMode": "Library",
+            "vibrationIntensity": 1.0,
+            "vibrationWaveform": "StrongClick1P100",
+            "duration": 1000
+          }
+        }
+      }
+    },
+    {
+      "EventName": "EventCounting_Two",
+      "StartTime": "0:32",
+      "EndTime": "0:33",
+      "Duration": 1000,
+      "TextSection": "Two!",
+      "HapticEffects": {
+        "patterns": {
+          "RandomFlash_Wrists": {
+            "device": 1,
+            "type": "instant",
+            "ledMode": "GlobalManual",
+            "globalLed": { "red": 255, "green": 0, "blue": 0 },
+            "vibrationMode": "Library",
+            "vibrationIntensity": 1.0,
+            "vibrationWaveform": "StrongClick1P100",
+            "duration": 1000
+          }
+        }
+      }
+    },
+    {
+      "EventName": "EventCounting_Three",
+      "StartTime": "0:35",
+      "EndTime": "0:36",
+      "Duration": 1000,
+      "TextSection": "Three!",
+      "HapticEffects": {
+        "patterns": {
+          "RandomFlash_Wrists": {
+            "device": 1,
+            "type": "instant",
+            "ledMode": "GlobalManual",
+            "globalLed": { "red": 255, "green": 0, "blue": 0 },
+            "vibrationMode": "Library", 
+            "vibrationIntensity": 1.0,
+            "vibrationWaveform": "StrongClick1P100",
+            "duration": 1000
+          }
+        }
+      }
+    },
+    {
+      "EventName": "EventCounting_Four",
+      "StartTime": "0:40",
+      "EndTime": "0:41",
+      "Duration": 1000,
+      "TextSection": "Four!",
+      "HapticEffects": {
+        "patterns": {
+          "RandomFlash_Wrists": {
+            "device": 1,
+            "type": "instant",
+            "ledMode": "GlobalManual",
+            "globalLed": { "red": 255, "green": 0, "blue": 0 },
+            "vibrationMode": "Library",
+            "vibrationIntensity": 1.0,
+            "vibrationWaveform": "StrongClick1P100",
+            "duration": 1000
+          }
+        }
+      }
+    },
+    {
+      "EventName": "EventCounting_Five",
+      "StartTime": "0:44.0",
+      "EndTime": "0:45.0",
+      "Duration": 1000,
+      "TextSection": "Five!",
+      "HapticEffects": {
+        "patterns": {
+          "RandomFlash_Wrists": {
+            "device": 1,
+            "type": "instant",
+            "ledMode": "GlobalManual",
+            "globalLed": { "red": 255, "green": 0, "blue": 0 },
+            "vibrationMode": "Library",
+            "vibrationIntensity": 1.0,
+            "vibrationWaveform": "StrongClick1P100",
+            "duration": 1000
+          }
+        }
+      }
+    },
+    {
+      "EventName": "EventCounting_Six",
+      "StartTime": "0:55.0",
+      "EndTime": "0:56.0",
+      "Duration": 1000,
+      "TextSection": "Six!",
+      "HapticEffects": {
+        "patterns": {
+          "RandomFlash_Wrists": {
+            "device": 1,
+            "type": "instant",
+            "ledMode": "GlobalManual",
+            "globalLed": { "red": 255, "green": 0, "blue": 0 },
+            "vibrationMode": "Library",
+            "vibrationIntensity": 1.0,
+            "vibrationWaveform": "StrongClick1P100",
+            "duration": 1000
+          }
+        }
+      }
+    },
+    {
+      "EventName": "EventCounting_Seven",
+      "StartTime": "0:57.0",
+      "EndTime": "0:58.0",
+      "Duration": 1000,
+      "TextSection": "Seven!",
+      "HapticEffects": {
+        "patterns": {
+          "RandomFlash_Wrists": {
+            "device": 1,
+            "type": "instant",
+            "ledMode": "GlobalManual",
+            "globalLed": { "red": 255, "green": 0, "blue": 0 },
+            "vibrationMode": "Library",
+            "vibrationIntensity": 1.0,
+            "vibrationWaveform": "StrongClick1P100",
+            "duration": 1000
+          }
+        }
+      }
+    },
+    {
+      "EventName": "EventCounting_Eight",
+      "StartTime": "0:59.0",
+      "EndTime": "1:00.0",
+      "Duration": 1000,
+      "TextSection": "Eight!",
+      "HapticEffects": {
+        "patterns": {
+          "RandomFlash_Wrists": {
+            "device": 1,
+            "type": "instant",
+            "ledMode": "GlobalManual",
+            "globalLed": { "red": 255, "green": 0, "blue": 0 },
+            "vibrationMode": "Library",
+            "vibrationIntensity": 1.0,
+            "vibrationWaveform": "StrongClick1P100",
+            "duration": 1000
+          }
+        }
+      }
+    },
+    {
+      "EventName": "EventCounting_Nine",
+      "StartTime": "1:03.0",
+      "EndTime": "1:04.0",
+      "Duration": 1000,
+      "TextSection": "Nine!",
+      "HapticEffects": {
+        "patterns": {
+          "RandomFlash_Wrists": {
+            "device": 1,
+            "type": "instant",
+            "ledMode": "GlobalManual",
+            "globalLed": { "red": 255, "green": 0, "blue": 0 },
+            "vibrationMode": "Library",
+            "vibrationIntensity": 1.0,
+            "vibrationWaveform": "StrongClick1P100",
+            "duration": 1000
+          }
+        }
+      }
+    },
+    {
+      "EventName": "EventCounting_Ten",
+      "StartTime": "1:08.0",
+      "EndTime": "1:09.0",
+      "Duration": 1000,
+      "TextSection": "Ten!",
+      "HapticEffects": {
+        "description": "Final countdown - flash wrists only (since we only have 2 dots now, not 4)",
+        "patterns": {
+          "FinalFlash_Wrists": {
+            "device": 1,
+            "type": "instant",
+            "ledMode": "GlobalManual",
+            "globalLed": { "red": 255, "green": 0, "blue": 0 },
+            "vibrationMode": "Library",
+            "vibrationIntensity": 1.0,
+            "vibrationWaveform": "StrongClick1P100",
+            "duration": 1000
+          }
+        }
+      }
+    },
+    {
+      "EventName": "Event5_GreyFaces",
+      "StartTime": "1:13.0",
+      "EndTime": "1:32.0",
+      "Duration": 19000,
+      "TextSection": "He imagined thousands on thousands of faces peering into yards, into alleys, and into the sky, faces hid by curtains, pale, night-frightened faces, like grey animals peering from electric caves, faces with grey colourless eyes, grey tongues and grey thoughts looking out through the numb flesh of the face.",
+      "HapticEffects": {
+        "BinauralUnease": {
+          "Device2_Chest": {
+            "vibrationMode": "Manual",
+            "vibrationFrequency": 41.2,
+            "vibrationIntensity": 1.0,
+            "vibrationGo": true,
+            "duration": 19000,
+            "description": "Combined chest and back unease vibration"
+          }
+        },
+        "ShakingHands": {
+          "Device1_Wrists": {
+            "vibrationMode": "Manual",
+            "vibrationFrequency": 30,
+            "vibrationIntensity": 0.3,
+            "vibrationGo": true,
+            "duration": 16000,
+            "description": "Combined wrist shaking effect"
+          }
+        },
+        "HarshGrayPulse": {
+          "AllDevices": {
+            "devices": "1,2",
+            "ledMode": "GlobalManual",
+            "pattern": "GradualPulse",
+            "cycles": 2,
+            "pulseSequence": [
+              {
+                "brightnessRange": { "min": 20, "max": 100 },
+                "globalLed": { "red": "brightness", "green": "brightness", "blue": "brightness" },
+                "transitionSpeed": 50,
+                "direction": "up"
+              },
+              {
+                "brightnessRange": { "min": 100, "max": 20 },
+                "globalLed": { "red": "brightness", "green": "brightness", "blue": "brightness" },
+                "transitionSpeed": 50,
+                "direction": "down"
+              }
+            ],
+            "description": "Gray pulsing on both wrists and chest"
+          }
+        }
+      }
+    },
+    {
+      "EventName": "Event6_River",
+      "StartTime": "1:32.4",
+      "EndTime": "1:54.6", 
+      "Duration": 22200,
+      "TextSection": "But he was at the river. He touched it, just to be sure it was real. He waded in and stripped in darkness to the skin, splashed his body, arms, legs, and head with raw liquor; drank it and snuffed some up his nose.",
+      "HapticEffects": {
+        "BinauralRelief": {
+          "Device2_Chest": {
+            "vibrationMode": "Manual",
+            "vibrationFrequency": 52.13,
+            "vibrationIntensity": 0.3,
+            "vibrationGo": true,
+            "duration": 16000,
+            "description": "Combined chest relief vibration"
+          }
+        },
+        "ColdThermal": {
+          "Device1_Wrists": {
+            "thermalMode": "Manual",
+            "thermalIntensity": -1.0,
+            "duration": 20000,
+            "description": "Combined wrist cooling effect"
+          }
+        },
+        "SoftBluePulse": {
+          "AllDevices": {
+            "devices": "1,2",
+            "ledMode": "GlobalManual", 
+            "pattern": "GradualPulse",
+            "cycles": 2,
+            "pulseSequence": [
+              {
+                "brightnessRange": { "min": 20, "max": 100 },
+                "globalLed": { "red": 0, "green": 0, "blue": "brightness" },
+                "transitionSpeed": 50,
+                "direction": "up"
+              },
+              {
+                "brightnessRange": { "min": 100, "max": 20 },
+                "globalLed": { "red": 0, "green": 0, "blue": "brightness" },
+                "transitionSpeed": 50,
+                "direction": "down"
+              }
+            ],
+            "description": "Blue pulsing on both wrists and chest"
+          }
+        }
+      }
+    },
+    {
+      "EventName": "Event7_FinalEscape",
+      "StartTime": "1:54.6",
+      "EndTime": "2:00.0",
+      "Duration": 5400,
+      "TextSection": "Then he dressed in Faber's old clothes and shoes. He tossed his own clothing into the river and watched it swept away. Then, holding the suitcase, he walked out in the river until there was no bottom and he was swept away in the dark.",
+      "HapticEffects": {
+        "SilenceWithCold": {
+          "Device1_Wrists": {
+            "thermalMode": "Manual",
+            "thermalIntensity": -1.0,
+            "duration": "indefinite",
+            "description": "Continued wrist cooling after escape"
+          },
+          "AllOtherEffects": "stop"
+        }
+      }
+    }
+  ],
+  "ResetSequence": {
+    "AllDevices": {
+      "devices": "1,2",
+      "thermalIntensity": 0,
+      "ledMode": "GlobalManual",
+      "globalLed": { "red": 0, "green": 0, "blue": 0 },
+      "vibrationFrequency": 0,
+      "vibrationIntensity": 0,
+      "vibrationGo": false,
+      "description": "Reset both wrists and chest to default state"
+    }
+  }
+} 

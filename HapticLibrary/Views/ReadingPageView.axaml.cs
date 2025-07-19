@@ -16,7 +16,7 @@ namespace HapticLibrary.Views
         public ReadingPageView()
         {
             InitializeComponent();
-            DataContext = new HapticLibrary.ViewModels.ReadingPageViewModel(); // Explicitly set DataContext for debugging
+            DataContext = new HapticLibrary.ViewModels.ReadingPageViewModel();
             SetupProgressBarDrag();
             SetupTextSelection();
         }
@@ -79,9 +79,10 @@ namespace HapticLibrary.Views
             // Clamp progress between 0 and 1
             progress = Math.Max(0, Math.Min(1, progress));
             
-            // Calculate new time based on progress
+            // Calculate new time based on progress and seek to it
             var newTimeSeconds = progress * viewModel.TotalTime.TotalSeconds;
-            viewModel.CurrentTime = TimeSpan.FromSeconds(newTimeSeconds);
+            var newTime = TimeSpan.FromSeconds(newTimeSeconds);
+            viewModel.SeekToPosition(newTime);
         }
 
         private void OnTextBlockPointerReleased(object? sender, PointerReleasedEventArgs e)
