@@ -4,10 +4,15 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:vm="using:HapticLibrary.ViewModels"
 			 xmlns:m="using:HapticLibrary.Models"
+			 xmlns:converters="using:HapticLibrary.Converters"
 			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 			 x:DataType="vm:HapticEditorViewModel"
              x:Class="HapticLibrary.Views.HapticEditorView"
 			 x:Name="HapticEditor">
+	<UserControl.Resources>
+		<converters:DrawingColorToBrushConverter x:Key="ColorBrushConverter"/>
+	</UserControl.Resources>
+	
 	<Grid ColumnDefinitions="5*, 1*">
 			<Grid Grid.Column="0"
 				  RowDefinitions="3*, 1*">
@@ -38,11 +43,70 @@
 						</ItemsControl>
 					</Panel>
 				</Panel>
+				<!-- Haptic Pattern Storage Panel -->
 				<Panel Grid.Row="1" Background="BlueViolet">
+					<StackPanel Margin="20, 10">
+						<TextBlock Text="Haptic Patterns:" FontSize="16">
+							
+						</TextBlock>
+						<ItemsControl ItemsSource="{Binding Patterns}"
+									  Margin="0, 20">
+							<ItemsControl.ItemsPanel>
+								<ItemsPanelTemplate>
+									<WrapPanel HorizontalAlignment="Left"/>
+								</ItemsPanelTemplate>
+							</ItemsControl.ItemsPanel>
+
+							<ItemsControl.ItemTemplate>
+								<DataTemplate x:DataType="m:HapticPattern">
+									<Button Content="{Binding Name}" Margin="2"
+											Width="60" Height="60"
+											HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+											Background="{Binding Color, Converter={StaticResource ColorBrushConverter}}">
+										<Button.ContextMenu>
+
+										</Button.ContextMenu>
+									</Button>
+								</DataTemplate>
+							</ItemsControl.ItemTemplate>
+						</ItemsControl>
+					</StackPanel>
 				</Panel>
 			</Grid>
-		<Panel Grid.Column="1" Background="White">
-			<TextBlock> Create Haptic Pattern </TextBlock>
+		<!-- Haptic Properties Panel -->
+		<Panel Grid.Column="1" Margin="10">	<!-- Haptic Properties Panel -->
+			<StackPanel   HorizontalAlignment="Left">
+				<TextBlock HorizontalAlignment="Center"
+						   FontSize="20"
+						   TextWrapping="Wrap">Haptic Pattern Properties</TextBlock>
+				<!-- Name Input -->
+				<TextBlock Text="Name:"/>
+				<TextBox Name="NameTextBox" Width="200" Text="{Binding HapticName}"/>
+
+				<!-- Color Input -->
+				<TextBlock Text="Color (R, G, B):"/>
+				<StackPanel Orientation="Horizontal" Spacing="10">
+					<TextBox Name="RedTextBox" Width="50"
+							 Tag="0,255,HapticRed" TextInput="IntBox_TextInput" LostFocus="IntBox_OnLostFocus"/>
+					<TextBox Name="GreenTextBox" Width="50"
+							 Tag="0,255,HapticGreen" TextInput="IntBox_TextInput" LostFocus="IntBox_OnLostFocus"/>
+					<TextBox Name="BlueTextBox" Width="50"
+							 Tag="0,255,HapticBlue" TextInput="IntBox_TextInput" LostFocus="IntBox_OnLostFocus"/>
+				</StackPanel>
+
+				<!-- Temperature Input -->
+				<TextBlock Text="Temperature (-1 to 1):"/>
+				<TextBox Name="TemperatureTextBox" Width="200"
+						 Tag="-1,1,HapticTemperature" TextInput="FloatBox_TextInput" LostFocus="FloatBox_OnLostFocus"/>
+
+				<!-- Vibration Input -->
+				<TextBlock Text="Vibration (0 to 1):"/>
+				<TextBox Name="VibrationTextBox" Width="200"
+						 Tag="0,1,HapticVibration" TextInput="FloatBox_TextInput" LostFocus="FloatBox_OnLostFocus"/>
+			</StackPanel>
+			<Button VerticalAlignment="Bottom" Command="{Binding CreateHapticPatternCommand}">
+				Create Pattern
+			</Button>
 		</Panel>
 	</Grid>
 </UserControl>
