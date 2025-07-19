@@ -11,6 +11,7 @@
 			 x:Name="HapticEditor">
 	<UserControl.Resources>
 		<converters:DrawingColorToBrushConverter x:Key="ColorBrushConverter"/>
+		<converters:EditorWordToBrushConverter x:Key="EditorWordToBrushConverter"/>
 	</UserControl.Resources>
 	
 	<Grid ColumnDefinitions="5*, 1*">
@@ -29,11 +30,13 @@
 							</ItemsControl.ItemsPanel>
 
 							<ItemsControl.ItemTemplate>
-								<DataTemplate x:DataType="m:WordModel">
+								<DataTemplate x:DataType="vm:EditorWordViewModel">
 									<Button Content="{Binding Word}" Margin="2"
-											Command="{Binding DataContext.ShowDropdownCommand, ElementName=HapticEditor}"
+											Command="{Binding DataContext.SelectWordCommand, ElementName=HapticEditor}"
 											CommandParameter="{Binding}"
-											Background="Blue">
+											HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+											Foreground="Black"
+											Background="{Binding, Converter={StaticResource EditorWordToBrushConverter}}">
 										<Button.ContextMenu>
 
 										</Button.ContextMenu>
@@ -60,6 +63,8 @@
 							<ItemsControl.ItemTemplate>
 								<DataTemplate x:DataType="m:HapticPattern">
 									<Button Content="{Binding Name}" Margin="2"
+											Command="{Binding DataContext.SelectPatternCommand, ElementName=HapticEditor}"
+											CommandParameter="{Binding}"
 											Width="60" Height="60"
 											HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
 											Background="{Binding Color, Converter={StaticResource ColorBrushConverter}}">

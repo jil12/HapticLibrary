@@ -2,12 +2,9 @@
 using CommunityToolkit.Mvvm.Input;
 using HapticLibrary.Models;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Drawing;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HapticLibrary.ViewModels
 {
@@ -26,34 +23,30 @@ namespace HapticLibrary.ViewModels
         [ObservableProperty]
         private float _hapticVibration = 0f;
 
-
         [ObservableProperty]
-        private ObservableCollection<WordModel> words = new();
-
+        private ObservableCollection<EditorWordViewModel> words = new();
         [ObservableProperty]
         private ObservableCollection<HapticPattern> patterns = new();
+        
+        private int _selectedPatternIndex = -1;
+        private bool _selectedPattern = false;
+
 
         public HapticEditorViewModel()
         {
             // Split and initialize words
             var inputText = "This is a sample sentence with clickable words.\nC A M P F I R E Song.\n";
-            Words = new ObservableCollection<WordModel>(
+            Words = new ObservableCollection<EditorWordViewModel>(
                 inputText.Split((char[])null, StringSplitOptions.RemoveEmptyEntries)
-                         .Select(w => new WordModel(w))
+                         .Select(w => new EditorWordViewModel(w))
             );
-        }
-
-        [RelayCommand]
-        public void ShowDropdown(WordModel word)
-        {
-
         }
 
         [RelayCommand]
         public void CreateHapticPattern()
         {
             if (VerifyValidInputs()) {
-                HapticPattern pattern = new HapticPattern(HapticName, Color.FromArgb(HapticRed, HapticBlue, HapticGreen), HapticTemperature, HapticVibration);
+                HapticPattern pattern = new HapticPattern(HapticName, Color.FromArgb(HapticRed, HapticGreen, HapticBlue), HapticTemperature, HapticVibration);
                 Patterns.Add(pattern);
             }
         }
@@ -68,6 +61,24 @@ namespace HapticLibrary.ViewModels
             bool hasTemp = HapticTemperature != 0.0f;
             bool hasVibration = HapticVibration != 0.0f;
             return hasColor || hasTemp || hasVibration;
+        }
+
+        [RelayCommand]
+        public void SelectPattern(HapticPattern pattern)
+        {
+            _selectedPatternIndex = Patterns.IndexOf(pattern);
+            _selectedPattern = _selectedPatternIndex != -1;
+        }
+
+        [RelayCommand]
+        public void SelectWord(EditorWordViewModel word)
+        {
+            int index = words.IndexOf(word);
+            if (_selectedPattern)
+            {
+                word.HapticPattern = Patterns[_selectedPatternIndex];
+                Words[index] = word;
+            }
         }
     }
 }
