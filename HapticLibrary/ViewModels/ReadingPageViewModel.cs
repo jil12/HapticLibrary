@@ -10,16 +10,16 @@ namespace HapticLibrary.ViewModels
     public partial class ReadingPageViewModel : ViewModelBase, IPageViewModel
     {
         [ObservableProperty]
-        private string? _bookLine = "The old library stood silent in the moonlight, its ancient stone walls holding centuries of knowledge within.";
+        private string? _bookLine;
         
         [ObservableProperty]
-        private string? _bookLine2 = "Sarah approached the heavy oak doors with a mixture of excitement and trepidation. She had waited years for this moment.";
+        private string? _bookLine2;
         
         [ObservableProperty]
-        private string? _bookLine3 = "The brass doorknob felt cold against her palm as she turned it slowly, the mechanism clicking softly in the quiet night.";
+        private string? _bookLine3;
         
         [ObservableProperty]
-        private string _bookText = "The old library stood silent in the moonlight, its ancient stone walls holding centuries of knowledge within.\n\nSarah approached the heavy oak doors with a mixture of excitement and trepidation. She had waited years for this moment.\n\nThe brass doorknob felt cold against her palm as she turned it slowly, the mechanism clicking softly in the quiet night.";
+        private string _bookText;
         
         [ObservableProperty]
         private int _currentPage = 1;
