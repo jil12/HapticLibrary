@@ -29,8 +29,23 @@ public partial class MainViewModel : ViewModelBase
     /// Methods called by <see cref="ViewModels.NavigationBarViewModel"/> commands
     /// to display different pages
     /// </summary>
-    public void ShowLibraryPage() => CurrentPage = new LibraryPageViewModel();
+    public void ShowLibraryPage() => CurrentPage = new LibraryPageViewModel(NavigateToReadingWithBook);
     public void ShowReadingPage() => CurrentPage = new ReadingPageViewModel();
 
     public void ShowSettingsPage() => CurrentPage = new SettingsPageViewModel();
+
+    /// <summary>
+    /// Navigate to reading page with a specific book
+    /// </summary>
+    /// <param name="bookId">The ID of the book to open</param>
+    private void NavigateToReadingWithBook(string bookId)
+    {
+        // Load the specific book and navigate to reading page
+        ShowReadingPage();
+        // Update navigation state
+        NavigationBar.IsLibrarySelected = false;
+        NavigationBar.IsReadingSelected = true;
+        NavigationBar.IsSettingsSelected = false;
+        // You can pass the bookId to ReadingPageViewModel if needed
+    }
 }

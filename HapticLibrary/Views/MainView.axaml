@@ -12,7 +12,9 @@
     <vm:MainViewModel />
   </Design.DataContext>
 
-	<StackPanel>
-		<ContentControl Content="{Binding CurrentPage}" />
-	</StackPanel>
+	<Grid>
+		<ContentControl Content="{Binding CurrentPage}" 
+		                HorizontalAlignment="Stretch"
+		                VerticalAlignment="Stretch"/>
+	</Grid>
 </UserControl>
