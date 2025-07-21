@@ -414,9 +414,23 @@ namespace HapticLibrary.ViewModels
                             break;
                             
                         case "HeartBeat":
-                            // Chest heartbeat with red pulse like original
-                            await _hapticManager.SetDotLED(2, 255, 100, 100);
-                            await _hapticManager.SetDotVibration(2, 2.5f, 0.8f, true);
+                            // Chest heartbeat with proper Library mode sequence like original
+                            if (pattern == "Pulse")
+                            {
+                                var dot = _hapticManager.DotManager.Dots.FirstOrDefault(d => d.Address == 2);
+                                if (dot != null)
+                                {
+                                    dot.VibrationGo = false;
+                                    // Fade LED brightness like original
+                                    for (byte brightness = 241; brightness > 20; brightness -= 20)
+                                    {
+                                        dot.GlobalLed.Red = brightness;
+                                        await dot.Write();
+                                    }
+                                    dot.VibrationGo = true;
+                                    await dot.Write();
+                                }
+                            }
                             break;
                             
                         case "HarshGray":
@@ -472,9 +486,8 @@ namespace HapticLibrary.ViewModels
                         break;
                         
                     case "Event2_Realization":
-                        // Heartbeat effect on chest + thermal heating on wrists
-                        await _hapticManager.SetDotLED(2, 255, 100, 100); // Chest red pulse
-                        await _hapticManager.SetDotVibration(2, 2.5f, 0.8f, true); // Heartbeat frequency
+                        // Heartbeat effect on chest + thermal heating on wrists (using proper Library mode like original)
+                        await _hapticManager.StartHeartBeat(2); // Setup proper heartbeat sequence on chest (dot2)
                         await _hapticManager.SetDotThermal(1, 0.5f); // Wrists heating
                         break;
                         

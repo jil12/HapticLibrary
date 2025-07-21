@@ -213,5 +213,75 @@ namespace HapticLibrary.Models
                 // Silent error handling
             }
         }
+
+        public async Task StartHeartBeat(int address)
+        {
+            if (!_isStarted)
+            {
+                return;
+            }
+
+            try
+            {
+                var dot = _dotManager.Dots.FirstOrDefault(d => d.Address == address);
+                if (dot != null)
+                {
+                    int bpm = 150;
+                    double beatRate = 60.0 / bpm;
+                    int singleBeatDelay = 100;
+                    double betweenBeatOffset = beatRate - .1;
+
+                    dot.VibrationMode = VibrationModes.Library;
+                    dot.VibrationSequence[0].Waveforms = VibrationWaveforms.SoftBumpP100;
+                    dot.VibrationSequence[1].RestDuration = singleBeatDelay; // Milliseconds
+                    dot.VibrationSequence[2].Waveforms = VibrationWaveforms.SoftBumpP30;
+                    dot.VibrationSequence[3].RestDuration = (int)(betweenBeatOffset * 1000); // Milliseconds
+                    dot.VibrationSequence[4].Waveforms = VibrationWaveforms.EndSequence;
+
+                    dot.LedMode = LedModes.GlobalManual;
+
+                    await dot.Write();
+                }
+            }
+            catch
+            {
+                // Silent error handling
+            }
+        }
+
+        public async Task RunHeartBeatLoop(int address, int beatCount = 78)
+        {
+            if (!_isStarted)
+            {
+                return;
+            }
+
+            try
+            {
+                var dot = _dotManager.Dots.FirstOrDefault(d => d.Address == address);
+                if (dot != null)
+                {
+                    // Setup heartbeat sequence first
+                    await StartHeartBeat(address);
+
+                    for (int i = 0; i < beatCount; i++)
+                    {
+                        dot.VibrationGo = false;
+                        for (byte brightness = 241; brightness > 20; brightness -= 20)
+                        {
+                            dot.GlobalLed.Red = brightness;
+                            await dot.Write();
+                        }
+                        dot.VibrationGo = true;
+                        await dot.Write();
+                        await Task.Delay(500);
+                    }
+                }
+            }
+            catch
+            {
+                // Silent error handling
+            }
+        }
     }
 }
