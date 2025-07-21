@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:vm="using:HapticLibrary.ViewModels"
+			 xmlns:conv="using:HapticLibrary.Converters"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 			 x:DataType="vm:ReadingPageViewModel"
              x:Class="HapticLibrary.Views.ReadingPageView">
@@ -44,7 +45,7 @@
 
                 <!-- Sidebar Toggle Button -->
                 <Button Grid.Column="2" Command="{Binding ToggleSidebarCommand}" Classes="sidebar-toggle" HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <TextBlock Text="☰" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <PathIcon Data="{StaticResource icon_menu}" Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 </Button>
             </Grid>
         </Border>
@@ -69,7 +70,7 @@
 
                 <!-- Previous Page Button -->
                 <Button Grid.Row="0" Grid.Column="0" Classes="page-flip-btn" Command="{Binding PreviousPageCommand}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20,0,0,0">
-                    <TextBlock Text="&#x2039;" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <PathIcon Data="{StaticResource icon_chevron_left}" Width="24" Height="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 </Button>
 
                 <!-- Centered Content -->
@@ -112,7 +113,7 @@
 
                 <!-- Next Page Button -->
                 <Button Grid.Row="0" Grid.Column="2" Classes="page-flip-btn" Command="{Binding NextPageCommand}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,20,0">
-                    <TextBlock Text="&#x203A;" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <PathIcon Data="{StaticResource icon_chevron_right}" Width="24" Height="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 </Button>
             </Grid>
 
@@ -252,16 +253,16 @@
                 <!-- Audio Controls -->
                 <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center" Spacing="20" Margin="0,4,0,0">
                     <Button Classes="control-btn" Command="{Binding SeekBackwardCommand}" HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <TextBlock Text="⏮" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <PathIcon Data="{StaticResource icon_back}" Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Button>
                     <Button Classes="play-btn" Command="{Binding TogglePlaybackCommand}" HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <TextBlock Text="{Binding PlayButtonText}" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <PathIcon Data="{Binding IsPlaying, Converter={x:Static conv:PlayPauseIconConverter.Instance}}" Width="24" Height="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Button>
                     <Button Classes="control-btn" Command="{Binding SeekForwardCommand}" HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <TextBlock Text="⏭" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <PathIcon Data="{StaticResource icon_forward}" Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Button>
                     <Button Classes="control-btn" Command="{Binding ResetAudioCommand}" HorizontalAlignment="Center" VerticalAlignment="Center" ToolTip.Tip="Reset to beginning">
-                        <TextBlock Text="⏹" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <PathIcon Data="{StaticResource icon_stop}" Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Button>
                 </StackPanel>
             </Grid>
@@ -279,10 +280,10 @@
                 <!-- Recording Controls -->
                 <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Spacing="30" Margin="0,4,0,0">
                     <Button Classes="mic-btn" Command="{Binding ToggleMicrophoneCommand}" HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <TextBlock Text="🎤" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <PathIcon Data="{StaticResource icon_mic}" Width="24" Height="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Button>
                     <Button Classes="stop-btn" Command="{Binding StopRecordingCommand}" HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <TextBlock Text="⏹" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <PathIcon Data="{StaticResource icon_stop}" Width="24" Height="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Button>
                 </StackPanel>
             </Grid>

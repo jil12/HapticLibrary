@@ -22,7 +22,7 @@
 			<!-- Centered Navigation Buttons Container -->
 			<StackPanel Grid.Column="1" 
 			           Orientation="Horizontal" 
-			           Spacing="40"
+			           Spacing="80"
 			           HorizontalAlignment="Center">
 				
 				<!-- Library Button -->
@@ -30,20 +30,15 @@
 				        Classes="nav-button">
 					<StackPanel Orientation="Vertical" Spacing="6">
 						<Border CornerRadius="12" 
-						        Width="24" 
-						        Height="24"
+						        Width="32" 
+						        Height="32"
 						        HorizontalAlignment="Center"
 						        Background="{Binding IsLibrarySelected, Converter={x:Static vm:NavigationIconConverter.Instance}}">
-							<TextBlock FontFamily="Segoe MDL2 Assets" 
-							          Text="&#xE8F1;" 
-							          FontSize="12"
-							          Foreground="White"
-							          HorizontalAlignment="Center"
-							          VerticalAlignment="Center"/>
+							<PathIcon Data="{StaticResource icon_library}" Width="18" Height="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 						</Border>
 						<TextBlock Text="Library" 
-						          FontSize="11"
-						          FontWeight="Medium"
+						          FontSize="18"
+						          FontWeight="Regular"
 						          HorizontalAlignment="Center"
 						          Foreground="{Binding IsLibrarySelected, Converter={x:Static vm:NavigationTextConverter.Instance}}"/>
 					</StackPanel>
@@ -54,20 +49,15 @@
 				        Classes="nav-button">
 					<StackPanel Orientation="Vertical" Spacing="6">
 						<Border CornerRadius="12" 
-						        Width="24" 
-						        Height="24"
+						        Width="32" 
+						        Height="32"
 						        HorizontalAlignment="Center"
 						        Background="{Binding IsReadingSelected, Converter={x:Static vm:NavigationIconConverter.Instance}}">
-							<TextBlock FontFamily="Segoe MDL2 Assets" 
-							          Text="&#xE8A5;" 
-							          FontSize="12"
-							          Foreground="White"
-							          HorizontalAlignment="Center"
-							          VerticalAlignment="Center"/>
+							<PathIcon Data="{StaticResource icon_reading}" Width="18" Height="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 						</Border>
 						<TextBlock Text="Reading" 
-						          FontSize="11"
-						          FontWeight="Medium"
+						          FontSize="18"
+						          FontWeight="Regular"
 						          HorizontalAlignment="Center"
 						          Foreground="{Binding IsReadingSelected, Converter={x:Static vm:NavigationTextConverter.Instance}}"/>
 					</StackPanel>
@@ -78,20 +68,15 @@
 				        Classes="nav-button">
 					<StackPanel Orientation="Vertical" Spacing="6">
 						<Border CornerRadius="12" 
-						        Width="24" 
-						        Height="24"
+						        Width="32" 
+						        Height="32"
 						        HorizontalAlignment="Center"
 						        Background="{Binding IsSettingsSelected, Converter={x:Static vm:NavigationIconConverter.Instance}}">
-							<TextBlock FontFamily="Segoe MDL2 Assets" 
-							          Text="&#xE70F;" 
-							          FontSize="12"
-							          Foreground="White"
-							          HorizontalAlignment="Center"
-							          VerticalAlignment="Center"/>
+							<PathIcon Data="{StaticResource icon_editor}" Width="18" Height="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 						</Border>
 						<TextBlock Text="Editor" 
-						          FontSize="11"
-						          FontWeight="Medium"
+						          FontSize="18"
+						          FontWeight="Regular"
 						          HorizontalAlignment="Center"
 						          Foreground="{Binding IsSettingsSelected, Converter={x:Static vm:NavigationTextConverter.Instance}}"/>
 					</StackPanel>

@@ -84,17 +84,10 @@
 												       IsVisible="{Binding BookId, Converter={x:Static vm:F451VisibilityConverter.Instance}}"/>
 												
 												<!-- Placeholder for other books -->
-												<Border Background="#E5E5EA" 
-												        CornerRadius="8"
-												        Width="168"
-												        Height="240"
-												        IsVisible="{Binding BookId, Converter={x:Static vm:PlaceholderVisibilityConverter.Instance}}">
+												<Border Background="#E5E5EA" CornerRadius="8" Width="140" Height="200" IsVisible="{Binding BookId, Converter={x:Static vm:PlaceholderVisibilityConverter.Instance}}">
 													<StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-														<TextBlock Text="📚" FontSize="48" HorizontalAlignment="Center" Margin="0,0,0,8"/>
-														<TextBlock Text="Cover" 
-														          FontSize="12" 
-														          Foreground="#8E8E93"
-														          HorizontalAlignment="Center"/>
+														<PathIcon Data="{StaticResource icon_book_placeholder}" Width="48" Height="48" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+														<TextBlock Text="Cover" FontSize="12" Foreground="#8E8E93" HorizontalAlignment="Center"/>
 													</StackPanel>
 												</Border>
 											</Grid>

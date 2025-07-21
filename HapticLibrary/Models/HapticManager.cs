@@ -56,32 +56,14 @@ namespace HapticLibrary.Models
         {
             try
             {
-                System.Diagnostics.Debug.WriteLine("Starting Datafeel DotManager...");
                 using var cts = new CancellationTokenSource(10000); // 10 second timeout like original
                 var result = await _dotManager.Start(_datafeelModbusClient, cts.Token);
                 _isStarted = result;
                 
-                if (result)
-                {
-                    System.Diagnostics.Debug.WriteLine("✅ Datafeel DotManager started successfully");
-                    System.Diagnostics.Debug.WriteLine($"Connected to {_dotManager.Dots.Count()} dots");
-                    
-                    // Verify dots are responsive like in original
-                    foreach (var dot in _dotManager.Dots)
-                    {
-                        System.Diagnostics.Debug.WriteLine($"Dot {dot.Address} connected");
-                    }
-                }
-                else
-                {
-                    System.Diagnostics.Debug.WriteLine("❌ Failed to start Datafeel DotManager - no hardware connection");
-                }
-                
                 return result;
             }
-            catch (Exception ex)
+            catch
             {
-                System.Diagnostics.Debug.WriteLine($"ERROR starting Datafeel DotManager: {ex.Message}");
                 _isStarted = false;
                 return false;
             }
@@ -91,7 +73,6 @@ namespace HapticLibrary.Models
         {
             if (!_isStarted)
             {
-                Console.WriteLine("DotManager not started - cannot set LED");
                 return;
             }
 
@@ -106,16 +87,11 @@ namespace HapticLibrary.Models
                     dot.GlobalLed.Blue = blue;
                     
                     await dot.Write();
-                    Console.WriteLine($"Set Dot {address} LED to RGB({red}, {green}, {blue})");
-                }
-                else
-                {
-                    Console.WriteLine($"Dot with address {address} not found");
                 }
             }
-            catch (Exception ex)
+            catch
             {
-                Console.WriteLine($"Error setting LED for dot {address}: {ex.Message}");
+                // Silent error handling
             }
         }
 
@@ -123,7 +99,6 @@ namespace HapticLibrary.Models
         {
             if (!_isStarted)
             {
-                Console.WriteLine("DotManager not started - cannot set vibration");
                 return;
             }
 
@@ -138,16 +113,11 @@ namespace HapticLibrary.Models
                     dot.VibrationGo = enable;
                     
                     await dot.Write();
-                    Console.WriteLine($"Set Dot {address} vibration: {frequency}Hz, intensity {intensity}, {(enable ? "ON" : "OFF")}");
-                }
-                else
-                {
-                    Console.WriteLine($"Dot with address {address} not found");
                 }
             }
-            catch (Exception ex)
+            catch
             {
-                Console.WriteLine($"Error setting vibration for dot {address}: {ex.Message}");
+                // Silent error handling
             }
         }
 
@@ -155,7 +125,6 @@ namespace HapticLibrary.Models
         {
             if (!_isStarted)
             {
-                Console.WriteLine("DotManager not started - cannot set thermal");
                 return;
             }
 
@@ -168,16 +137,11 @@ namespace HapticLibrary.Models
                     dot.ThermalIntensity = intensity;
                     
                     await dot.Write();
-                    Console.WriteLine($"Set Dot {address} thermal intensity: {intensity}");
-                }
-                else
-                {
-                    Console.WriteLine($"Dot with address {address} not found");
                 }
             }
-            catch (Exception ex)
+            catch
             {
-                Console.WriteLine($"Error setting thermal for dot {address}: {ex.Message}");
+                // Silent error handling
             }
         }
         
@@ -185,7 +149,6 @@ namespace HapticLibrary.Models
         {
             if (!_isStarted)
             {
-                System.Diagnostics.Debug.WriteLine("DotManager not started - cannot stop vibration");
                 return;
             }
 
@@ -200,16 +163,11 @@ namespace HapticLibrary.Models
                     dot.VibrationGo = false;
                     
                     await dot.Write();
-                    System.Diagnostics.Debug.WriteLine($"Stopped vibration for Dot {address}");
-                }
-                else
-                {
-                    System.Diagnostics.Debug.WriteLine($"Dot with address {address} not found");
                 }
             }
-            catch (Exception ex)
+            catch
             {
-                System.Diagnostics.Debug.WriteLine($"Error stopping vibration for dot {address}: {ex.Message}");
+                // Silent error handling
             }
         }
 
@@ -217,13 +175,11 @@ namespace HapticLibrary.Models
         {
             if (!_isStarted)
             {
-                System.Diagnostics.Debug.WriteLine("DotManager not started - cannot stop effects");
                 return;
             }
 
             try
             {
-                System.Diagnostics.Debug.WriteLine("Resetting all dots...");
                 foreach (var dot in _dotManager.Dots)
                 {
                     // Reset thermal (must be first)
@@ -245,18 +201,16 @@ namespace HapticLibrary.Models
                     try
                     {
                         await dot.Write();
-                        System.Diagnostics.Debug.WriteLine($"Reset Dot {dot.Address}");
                     }
-                    catch (Exception writeEx)
+                    catch
                     {
-                        System.Diagnostics.Debug.WriteLine($"Error writing to dot {dot.Address}: {writeEx.Message}");
+                        // Silent error handling
                     }
                 }
-                System.Diagnostics.Debug.WriteLine("All haptic effects stopped and reset");
             }
-            catch (Exception ex)
+            catch
             {
-                System.Diagnostics.Debug.WriteLine($"Error stopping haptic effects: {ex.Message}");
+                // Silent error handling
             }
         }
     }

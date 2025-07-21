@@ -8,8 +8,18 @@
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
     <Application.Resources>
-        <!-- Resources removed - no longer needed for simplified ReadingPageView -->
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceInclude Source="avares://HapticLibrary/Views/Icons.axaml" />
+            </ResourceDictionary.MergedDictionaries>
+            
+            <!-- Resources removed - no longer needed for simplified ReadingPageView -->
+        </ResourceDictionary>
     </Application.Resources>
+
+    <Application.Styles>
+        <!-- Styles removed - will handle PathIcon colors individually -->
+    </Application.Styles>
 
     <Application.DataTemplates>
         <local:ViewLocator/>
@@ -108,6 +118,11 @@
             <Setter Property="Background" Value="#4C51BF"/>
         </Style>
         
+        <!-- PathIcon inside play button inherits white color -->
+        <Style Selector="Button.play-btn PathIcon">
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        
         <Style Selector="Button.control-btn">
             <Setter Property="Background" Value="#F8F9FA"/>
             <Setter Property="BorderBrush" Value="Transparent"/>
@@ -125,6 +140,42 @@
         
         <Style Selector="Button.control-btn:pressed">
             <Setter Property="Background" Value="#DEE2E6"/>
+        </Style>
+        
+        <!-- PathIcon inside control button inherits gray color -->
+        <Style Selector="Button.control-btn PathIcon">
+            <Setter Property="Foreground" Value="#666666"/>
+        </Style>
+        
+        <!-- Additional styles for other button types -->
+        <Style Selector="Button.sidebar-toggle PathIcon">
+            <Setter Property="Foreground" Value="#666666"/>
+        </Style>
+        
+        <Style Selector="Button.mic-btn PathIcon">
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        
+        <Style Selector="Button.stop-btn PathIcon">
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        
+        <Style Selector="Button.page-flip-btn PathIcon">
+            <Setter Property="Foreground" Value="#666666"/>
+        </Style>
+        
+        <Style Selector="Button.page-flip-btn:pointerover PathIcon">
+            <Setter Property="Foreground" Value="rgba(102, 126, 234, 0.8)"/>
+        </Style>
+        
+        <!-- Navigation button PathIcon styles -->
+        <Style Selector="Button.nav-button PathIcon">
+            <Setter Property="Foreground" Value="#666"/>
+        </Style>
+        
+        <!-- General fallback for PathIcon not inside specific button classes -->
+        <Style Selector="PathIcon">
+            <Setter Property="Foreground" Value="#8E8E93"/>
         </Style>
         
         <Style Selector="ToggleButton.speed-btn">

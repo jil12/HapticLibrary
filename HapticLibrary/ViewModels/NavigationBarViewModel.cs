@@ -21,9 +21,9 @@ namespace HapticLibrary.ViewModels
             {
                 return isSelected
                     ? new SolidColorBrush(Color.Parse("#007AFF")) // Blue for selected
-                    : new SolidColorBrush(Color.Parse("#9B9B9B")); // Gray for unselected
+                    : new SolidColorBrush(Color.Parse("#f8f9fa")); // Gray for unselected
             }
-            return new SolidColorBrush(Color.Parse("#9B9B9B"));
+            return new SolidColorBrush(Color.Parse("#f8f9fa"));
         }
 
         public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)

@@ -1,6 +1,5 @@
 {
   "Name": "Fahrenheit 451 - The Chase - Full Haptic Sequence",
-  "Description": "Complete haptic sequence for F451 audiobook with precise timing",
   "DeviceMapping": {
     "1": "Wrists (Combined)",
     "2": "Chest (Combined)"
@@ -15,13 +14,6 @@
       "Duration": 16000,
       "TextSection": "Police suggest entire population in the Elm Terrace area do as follows: Everyone in every house in every street open a front or rear door or look from the windows. The fugitive cannot escape if everyone in the next minute looks from his house. Ready!",
       "HapticEffects": {
-        "description": "UNEASE (binaural), red and white, flashing like sirens - combining original dots 1+2 (wrists) and 3+4 (chest)",
-        "originalMapping": {
-          "dot1_rightWrist": "now_dot1_wrists",  
-          "dot2_leftWrist": "now_dot1_wrists",
-          "dot3_chest": "now_dot2_chest",
-          "dot4_back": "now_dot2_chest"
-        },
         "patterns": {
           "AmbulanceSiren_Wrists": {
             "device": 1,
@@ -51,13 +43,6 @@
       "Duration": 15000,
       "TextSection": "Of course! Why hadn't they done it before! Why, in all the years, hadn't this game been tried! Everyone up, everyone out! He couldn't be missed! The only man running alone in the night city, the only man proving his legs!",
       "HapticEffects": {
-        "description": "Speed everything up, chest dot goes like heartbeat, wrist dots vibrate at highest speed to simulate shaking hands - combining original effects",
-        "originalMapping": {
-          "dot1_rightWrist_thermal": "now_dot1_wrists_thermal",
-          "dot2_leftWrist_thermal": "now_dot1_wrists_thermal", 
-          "dot3_chest_heartbeat": "now_dot2_chest_heartbeat",
-          "dot4_back": "now_dot2_chest"
-        },
         "patterns": {
           "HeartBeat_Chest": {
             "device": 2,
@@ -65,15 +50,13 @@
             "duration": 15000,
             "bpm": 150,
             "beatCount": 78,
-            "vibrationMode": "Library",
-            "ledPattern": "HeartbeatPulse"
+            "vibrationMode": "Library"
           },
           "ThermalHeating_Wrists": {
             "device": 1,
             "type": "continuous",
             "duration": 15000, 
-            "thermalIntensity": 0.5,
-            "description": "Combined left+right wrist heating"
+            "thermalIntensity": 0.5
           }
         }
       }
@@ -85,7 +68,6 @@
       "Duration": 1000,
       "TextSection": "One!",
       "HapticEffects": {
-        "description": "Random red flash on wrists only - like original Number() function",
         "patterns": {
           "RandomFlash_Wrists": {
             "device": 1,
@@ -134,7 +116,7 @@
             "type": "instant",
             "ledMode": "GlobalManual",
             "globalLed": { "red": 255, "green": 0, "blue": 0 },
-            "vibrationMode": "Library", 
+            "vibrationMode": "Library",
             "vibrationIntensity": 1.0,
             "vibrationWaveform": "StrongClick1P100",
             "duration": 1000
@@ -275,7 +257,6 @@
       "Duration": 1000,
       "TextSection": "Ten!",
       "HapticEffects": {
-        "description": "Final countdown - flash wrists only (since we only have 2 dots now, not 4)",
         "patterns": {
           "FinalFlash_Wrists": {
             "device": 1,
@@ -303,8 +284,7 @@
             "vibrationFrequency": 41.2,
             "vibrationIntensity": 1.0,
             "vibrationGo": true,
-            "duration": 19000,
-            "description": "Combined chest and back unease vibration"
+            "duration": 19000
           }
         },
         "ShakingHands": {
@@ -313,8 +293,7 @@
             "vibrationFrequency": 30,
             "vibrationIntensity": 0.3,
             "vibrationGo": true,
-            "duration": 16000,
-            "description": "Combined wrist shaking effect"
+            "duration": 16000
           }
         },
         "HarshGrayPulse": {
@@ -336,8 +315,7 @@
                 "transitionSpeed": 50,
                 "direction": "down"
               }
-            ],
-            "description": "Gray pulsing on both wrists and chest"
+            ]
           }
         }
       }
@@ -355,16 +333,14 @@
             "vibrationFrequency": 52.13,
             "vibrationIntensity": 0.3,
             "vibrationGo": true,
-            "duration": 16000,
-            "description": "Combined chest relief vibration"
+            "duration": 16000
           }
         },
         "ColdThermal": {
           "Device1_Wrists": {
             "thermalMode": "Manual",
             "thermalIntensity": -1.0,
-            "duration": 20000,
-            "description": "Combined wrist cooling effect"
+            "duration": 20000
           }
         },
         "SoftBluePulse": {
@@ -386,8 +362,7 @@
                 "transitionSpeed": 50,
                 "direction": "down"
               }
-            ],
-            "description": "Blue pulsing on both wrists and chest"
+            ]
           }
         }
       }
@@ -403,8 +378,7 @@
           "Device1_Wrists": {
             "thermalMode": "Manual",
             "thermalIntensity": -1.0,
-            "duration": "indefinite",
-            "description": "Continued wrist cooling after escape"
+            "duration": "indefinite"
           },
           "AllOtherEffects": "stop"
         }
@@ -419,8 +393,7 @@
       "globalLed": { "red": 0, "green": 0, "blue": 0 },
       "vibrationFrequency": 0,
       "vibrationIntensity": 0,
-      "vibrationGo": false,
-      "description": "Reset both wrists and chest to default state"
+      "vibrationGo": false
     }
   }
 } 

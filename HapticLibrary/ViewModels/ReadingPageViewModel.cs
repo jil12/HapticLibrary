@@ -42,6 +42,9 @@ namespace HapticLibrary.ViewModels
         private string _playButtonText = "▶";
 
         [ObservableProperty]
+        private string _playButtonIcon = "\uE768"; // Play icon (Segoe MDL2 Assets)
+
+        [ObservableProperty]
         private TimeSpan _currentTime = TimeSpan.Zero;
 
         [ObservableProperty]
@@ -614,6 +617,7 @@ namespace HapticLibrary.ViewModels
                 _waveOut.Pause();
                 IsPlaying = false;
                 PlayButtonText = "▶";
+                PlayButtonIcon = "\uE768"; // Play icon
             }
             else
             {
@@ -622,6 +626,7 @@ namespace HapticLibrary.ViewModels
                 _waveOut.Play();
                 IsPlaying = true;
                 PlayButtonText = "⏸";
+                PlayButtonIcon = "\uE769"; // Pause icon
                 
                 // Reset triggered events when starting playback to allow re-triggering
                 if (_audioFileReader.Position == 0)
@@ -706,6 +711,7 @@ namespace HapticLibrary.ViewModels
                 CurrentTime = TimeSpan.Zero;
                 IsPlaying = false;
                 PlayButtonText = "▶";
+                PlayButtonIcon = "\uE768"; // Play icon
                 
                 // Stop haptic sequence and reset
                 StopHapticSequence();
@@ -787,6 +793,7 @@ namespace HapticLibrary.ViewModels
                     _waveOut?.Stop();
                     IsPlaying = false;
                     PlayButtonText = "▶";
+                    PlayButtonIcon = "\uE768"; // Play icon
                 }
                 
                 // Reset audio position to beginning
