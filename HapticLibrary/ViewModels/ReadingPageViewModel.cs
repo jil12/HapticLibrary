@@ -29,7 +29,7 @@ namespace HapticLibrary.ViewModels
 
         public async Task LoadAsync()
         {
-            _readingBook.LoadBook("");
+            _readingBook.LoadBook("Assets/PropSampleBook.json");
             BookLine = _readingBook.GetText();
             PageNumber = _readingBook.PageIndex + 1;
             await _audioStream.Connect();

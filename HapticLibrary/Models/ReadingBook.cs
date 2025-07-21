@@ -48,11 +48,11 @@ namespace HapticLibrary.Models
             pages = null;
         }
 
-        public void LoadBook(string bookID) //TODO: ID or name?
+        public void LoadBook(string bookName) //TODO: ID or name?
         {
             //TODO: Get book contents from server
             //string fullPath = Path.Combine("Assets", "HapticReadingBookExample.json");
-            string fullPath = "C:/Users/Austin/Projects/Datafeel-Storytelling/HapticLibrary/HapticLibrary/Assets/PropSampleBook.json";
+            string fullPath = Path.Combine(Environment.CurrentDirectory, bookName);
             string jsonString = File.ReadAllText(fullPath);
             // Parse the JSON into a JsonDocument
             using JsonDocument doc = JsonDocument.Parse(jsonString);

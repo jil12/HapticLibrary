@@ -11,6 +11,16 @@
   </ItemGroup>
   
   <ItemGroup>
+    <AvaloniaResource Remove="Assets\PropSampleBook.json" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Content Include="Assets\PropSampleBook.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  
+  <ItemGroup>
     <None Include="ViewModels\EditorWordViewModel.cs" />
   </ItemGroup>
 
