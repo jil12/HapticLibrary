@@ -101,6 +101,8 @@ namespace HapticLibrary.ViewModels
         private bool _isGraySwellingInProgress = false;
         private bool _isBlueSwellingInProgress = false;
         
+        private TaskCompletionSource<bool>? _graySwellCompletionSource;
+        
         [ObservableProperty]
         private bool _autoPageFlipEnabled = true;
         
@@ -115,6 +117,8 @@ namespace HapticLibrary.ViewModels
         
         [ObservableProperty]
         private string _debugOutput = "Debug: Ready...";
+        
+        private bool _ledsShouldBeOff = false;
         
         private void UpdateDebugOutput(string message)
         {
@@ -454,14 +458,7 @@ namespace HapticLibrary.ViewModels
                         await RunHarshGraySwellCycle();
                         break;
                     case "BlueShades":
-                        if (pattern == "PulseUp")
-                        {
-                            await RunBlueShadesSwellUp();
-                        }
-                        else if (pattern == "PulseDown")
-                        {
-                            await RunBlueShadesSwellDown();
-                        }
+                        await RunBlueShadesSwellCycle();
                         break;
                 }
                 
@@ -557,6 +554,7 @@ namespace HapticLibrary.ViewModels
             }
 
             _isGraySwellingInProgress = true;
+            _graySwellCompletionSource = new TaskCompletionSource<bool>();
             try
             {
                 if (!_hapticManager.IsStarted) return;
@@ -575,9 +573,10 @@ namespace HapticLibrary.ViewModels
                 System.Diagnostics.Debug.WriteLine("🌫️ Starting Gray Swell UP (20→100)");
                 for (byte brightness = 20; brightness <= 100; brightness += 2)
                 {
-                    if (!_isGraySwellingInProgress) break;
+                    if (!_isGraySwellingInProgress || _ledsShouldBeOff) break;
                     foreach (var dot in _hapticManager.DotManager.Dots)
                     {
+                        if (_ledsShouldBeOff) break;
                         dot.LedMode = LedModes.GlobalManual;
                         dot.GlobalLed.Red = brightness;
                         dot.GlobalLed.Green = brightness;
@@ -591,9 +590,10 @@ namespace HapticLibrary.ViewModels
                 System.Diagnostics.Debug.WriteLine("🌫️ Starting Gray Swell DOWN (100→20)");
                 for (byte brightness = 100; brightness > 20; brightness -= 2)
                 {
-                    if (!_isGraySwellingInProgress) break;
+                    if (!_isGraySwellingInProgress || _ledsShouldBeOff) break;
                     foreach (var dot in _hapticManager.DotManager.Dots)
                     {
+                        if (_ledsShouldBeOff) break;
                         dot.LedMode = LedModes.GlobalManual;
                         dot.GlobalLed.Red = brightness;
                         dot.GlobalLed.Green = brightness;
@@ -629,91 +629,65 @@ namespace HapticLibrary.ViewModels
             finally
             {
                 _isGraySwellingInProgress = false;
+                _graySwellCompletionSource?.TrySetResult(true);
             }
         }
 
-        private async Task RunBlueShadesSwellUp()
+        private async Task RunBlueShadesSwellCycle()
         {
-            // Prevent overlapping blue swelling operations
+            // Wait for gray swell to finish if in progress
+            if (_isGraySwellingInProgress && _graySwellCompletionSource != null)
+            {
+                System.Diagnostics.Debug.WriteLine("🔵 Waiting for gray swell to finish before starting blue swell");
+                // Signal gray swell to end early
+                _isGraySwellingInProgress = false;
+                await _graySwellCompletionSource.Task;
+            }
             if (_isBlueSwellingInProgress)
             {
                 System.Diagnostics.Debug.WriteLine("⚠️ Blue swelling already in progress - skipping");
                 return;
             }
-            
             _isBlueSwellingInProgress = true;
             try
             {
                 if (!_hapticManager.IsStarted) return;
 
+                // Swell Up
                 System.Diagnostics.Debug.WriteLine("🌊 Starting Blue Swell UP (20→100)");
-                
-                // Gradually increase blue brightness from 20 to 100 like original BlueHelper
                 for (byte brightness = 20; brightness <= 100; brightness += 2)
                 {
-                    if (!_isBlueSwellingInProgress) break; // Allow early termination
-                    
-                    // Apply to all dots (both wrists and chest) like original
+                    if (!_isBlueSwellingInProgress || _ledsShouldBeOff) break;
                     foreach (var dot in _hapticManager.DotManager.Dots)
                     {
+                        if (_ledsShouldBeOff) break;
                         dot.LedMode = LedModes.GlobalManual;
                         dot.GlobalLed.Red = 0; // Pure blue, no red
                         dot.GlobalLed.Green = 0; // Pure blue, no green
                         dot.GlobalLed.Blue = brightness;
-
-                        await dot.Write(); // Send updated values
-                    }
-                    await Task.Delay(50); // Smooth transition like original
-                }
-                System.Diagnostics.Debug.WriteLine("✅ Blue Swell UP completed");
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"ERROR in RunBlueShadesSwellUp: {ex.Message}");
-            }
-            finally
-            {
-                _isBlueSwellingInProgress = false;
-            }
-        }
-
-        private async Task RunBlueShadesSwellDown()
-        {
-            // Prevent overlapping blue swelling operations
-            if (_isBlueSwellingInProgress)
-            {
-                System.Diagnostics.Debug.WriteLine("⚠️ Blue swelling already in progress - skipping");
-                return;
-            }
-            
-            _isBlueSwellingInProgress = true;
-            try
-            {
-                if (!_hapticManager.IsStarted) return;
-
-                System.Diagnostics.Debug.WriteLine("🌊 Starting Blue Swell DOWN (100→20)");
-                
-                // Gradually decrease blue brightness from 100 to 20 like original BlueHelper
-                for (byte brightness = 100; brightness > 20; brightness -= 1) // Note: -= 1 like original BlueHelper
-                {
-                    if (!_isBlueSwellingInProgress) break; // Allow early termination
-                    
-                    // Apply to all dots (both wrists and chest) like original
-                    foreach (var dot in _hapticManager.DotManager.Dots)
-                    {
-                        // Ensure LED mode is properly set each time
-                        dot.LedMode = LedModes.GlobalManual;
-                        dot.GlobalLed.Red = 0; // Pure blue, no red
-                        dot.GlobalLed.Green = 0; // Pure blue, no green
-                        dot.GlobalLed.Blue = brightness;
-
                         await dot.Write();
-                        System.Diagnostics.Debug.WriteLine($"🌊 Blue DOWN: Dot {dot.Address} brightness={brightness}");
                     }
-                    await Task.Delay(50); // Smooth transition like original
+                    await Task.Delay(50);
                 }
-                
-                // Ensure minimum brightness is maintained (never go completely dark)
+
+                // Swell Down
+                System.Diagnostics.Debug.WriteLine("🌊 Starting Blue Swell DOWN (100→20)");
+                for (byte brightness = 100; brightness > 20; brightness -= 1)
+                {
+                    if (!_isBlueSwellingInProgress || _ledsShouldBeOff) break;
+                    foreach (var dot in _hapticManager.DotManager.Dots)
+                    {
+                        if (_ledsShouldBeOff) break;
+                        dot.LedMode = LedModes.GlobalManual;
+                        dot.GlobalLed.Red = 0; // Pure blue, no red
+                        dot.GlobalLed.Green = 0; // Pure blue, no green
+                        dot.GlobalLed.Blue = brightness;
+                        await dot.Write();
+                    }
+                    await Task.Delay(50);
+                }
+
+                // Only set minimum blue at the very end of the last cycle
                 foreach (var dot in _hapticManager.DotManager.Dots)
                 {
                     dot.LedMode = LedModes.GlobalManual;
@@ -722,12 +696,14 @@ namespace HapticLibrary.ViewModels
                     dot.GlobalLed.Blue = 21; // Keep minimum visible blue
                     await dot.Write();
                 }
-                System.Diagnostics.Debug.WriteLine("🌊 Blue swell down completed - minimum brightness maintained");
-                System.Diagnostics.Debug.WriteLine("✅ Blue Swell DOWN completed");
+                // Add a short delay to smooth the transition
+                await Task.Delay(80);
+                System.Diagnostics.Debug.WriteLine("🌊 Blue swell cycle completed");
+                System.Diagnostics.Debug.WriteLine("✅ Blue Swell Cycle completed");
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"ERROR in RunBlueShadesSwellDown: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"ERROR in RunBlueShadesSwellCycle: {ex.Message}");
             }
             finally
             {
@@ -1037,6 +1013,7 @@ namespace HapticLibrary.ViewModels
                 // Reset swelling operation locks to prevent them getting stuck
                 _isGraySwellingInProgress = false;
                 _isBlueSwellingInProgress = false;
+                _ledsShouldBeOff = false;
                 System.Diagnostics.Debug.WriteLine("🔄 Reset swelling operation locks");
                 
                 System.Diagnostics.Debug.WriteLine("--- Haptic sequence stopped and reset ---");
@@ -1097,6 +1074,7 @@ namespace HapticLibrary.ViewModels
                 // Reset haptic sequencer and stop all effects
                 _isExplicitlyStopped = true; // Set flag to stop any running effects
                 StopHapticSequence();
+                _ledsShouldBeOff = false;
                 
                 // Clear all triggered events so they can be triggered again
                 _triggeredEvents.Clear();
@@ -1142,6 +1120,7 @@ namespace HapticLibrary.ViewModels
                 // Reset swelling operation locks when seeking to prevent stuck locks
                 _isGraySwellingInProgress = false;
                 _isBlueSwellingInProgress = false;
+                _ledsShouldBeOff = false;
                 
                 System.Diagnostics.Debug.WriteLine($"Reset triggered events and swelling locks after seeking to {position}");
             }

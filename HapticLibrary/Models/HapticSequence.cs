@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
+using Datafeel;
 
 namespace HapticLibrary.Models
 {
@@ -85,6 +86,7 @@ namespace HapticLibrary.Models
         private Dictionary<string, CancellationTokenSource> _loopCancellationTokens = new();
         // Track triggered one-time events with timestamps to prevent duplicate triggers
         private Dictionary<string, TimeSpan> _triggeredOneTimeEvents = new();
+        private bool _hasStoppedAt112 = false;
 
         public event Action<HapticEvent>? HapticEventTriggered;
         public event Action<int>? PageShouldChange;
@@ -140,8 +142,40 @@ namespace HapticLibrary.Models
             _pageTransitions[TimeSpan.FromSeconds(72)] = 4;
         }
 
+        private void TurnOffAllLEDs()
+        {
+            try
+            {
+                System.Diagnostics.Debug.WriteLine("Turning off all LEDs");
+                var dotManager = HapticManager.GetInstance().DotManager;
+                foreach (var dot in dotManager.Dots)
+                {
+                    dot.LedMode = LedModes.GlobalManual;
+                    dot.GlobalLed.Red = 0;
+                    dot.GlobalLed.Green = 0;
+                    dot.GlobalLed.Blue = 0;
+                    dot.Write();
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error turning off LEDs: {ex.Message}");
+            }
+        }
+
         public void ProcessAudioPosition(TimeSpan currentTime)
         {
+            // Turn off all LEDs at 112.4 seconds, but keep other effects running
+            if (!_hasStoppedAt112 && currentTime >= TimeSpan.FromSeconds(112.4))
+            {
+                TurnOffAllLEDs();
+                _hasStoppedAt112 = true;
+                System.Diagnostics.Debug.WriteLine("🛑 All LEDs turned off at 112.4s");
+            }
+
+            // After 112.4s, do not trigger any further continuous haptic events (blue/gray swells)
+            bool allowLedEvents = currentTime < TimeSpan.FromSeconds(112.4);
+
             // Check for haptic events to trigger
             foreach (var hapticEvent in _events)
             {
@@ -169,6 +203,9 @@ namespace HapticLibrary.Models
                 // Handle other events as continuous effects
                 else if (currentTime >= startTime && currentTime <= endTime)
                 {
+                    // Only allow LED events before 112.4s
+                    if (!allowLedEvents && (hapticEvent.EventName == "Event5_GreyFaces" || hapticEvent.EventName == "Event6_River"))
+                        continue;
                     // Check if this is a new event that needs to start
                     if (!_activeLoops.ContainsKey(hapticEvent.EventName))
                     {
@@ -346,12 +383,12 @@ namespace HapticLibrary.Models
                 if (cancellationToken.IsCancellationRequested) break;
                 
                 ContinuousHapticTriggered?.Invoke("BlueShades", "PulseDown");  
-                // Wait for swelling down to complete (81 steps * 50ms = ~4050ms, down uses -=1)
-                await Task.Delay(4100, cancellationToken);
+                // Wait for swelling down to complete (41 steps * 50ms = ~2050ms)
+                await Task.Delay(2100, cancellationToken);
                 if (cancellationToken.IsCancellationRequested) break;
                 
                 // Brief pause between cycles like original (for 2 loops)
-                await Task.Delay(500, cancellationToken);
+                await Task.Delay(50, cancellationToken);
             }
         }
 
@@ -360,6 +397,7 @@ namespace HapticLibrary.Models
             try
             {
                 _triggeredOneTimeEvents.Clear();
+                _hasStoppedAt112 = false;
                 System.Diagnostics.Debug.WriteLine("🔄 Reset triggered one-time events for retrigger");
             }
             catch (Exception ex)
