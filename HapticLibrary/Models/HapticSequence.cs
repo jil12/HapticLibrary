@@ -83,6 +83,8 @@ namespace HapticLibrary.Models
         private Dictionary<TimeSpan, int> _pageTransitions = new();
         private Dictionary<string, DateTime> _activeLoops = new(); // Track active looping events
         private Dictionary<string, CancellationTokenSource> _loopCancellationTokens = new();
+        // Track triggered one-time events with timestamps to prevent duplicate triggers
+        private Dictionary<string, TimeSpan> _triggeredOneTimeEvents = new();
 
         public event Action<HapticEvent>? HapticEventTriggered;
         public event Action<int>? PageShouldChange;
@@ -146,7 +148,26 @@ namespace HapticLibrary.Models
                 var startTime = hapticEvent.StartTimeSpan;
                 var endTime = hapticEvent.EndTimeSpan;
                 
-                if (currentTime >= startTime && currentTime <= endTime)
+                // Handle EventCounting events as one-time triggers at start time
+                if (hapticEvent.EventName.StartsWith("EventCounting_"))
+                {
+                    // Check if we're at the start time (within 150ms window to account for timer precision)
+                    if (currentTime >= startTime && currentTime <= startTime.Add(TimeSpan.FromMilliseconds(150)))
+                    {
+                        // Check if we've already triggered this specific event at this time
+                        if (!_triggeredOneTimeEvents.ContainsKey(hapticEvent.EventName) || 
+                            Math.Abs((_triggeredOneTimeEvents[hapticEvent.EventName] - startTime).TotalMilliseconds) > 500)
+                        {
+                            _triggeredOneTimeEvents[hapticEvent.EventName] = startTime;
+                            System.Diagnostics.Debug.WriteLine($"🔢 Triggering one-time event: {hapticEvent.EventName} at {currentTime}");
+                            
+                            // Trigger the event for immediate effect
+                            HapticEventTriggered?.Invoke(hapticEvent);
+                        }
+                    }
+                }
+                // Handle other events as continuous effects
+                else if (currentTime >= startTime && currentTime <= endTime)
                 {
                     // Check if this is a new event that needs to start
                     if (!_activeLoops.ContainsKey(hapticEvent.EventName))
@@ -297,12 +318,19 @@ namespace HapticLibrary.Models
             var endTime = DateTime.Now + duration;
             while (DateTime.Now < endTime && !cancellationToken.IsCancellationRequested)
             {
+                // Complete one full swelling cycle (up + down) like original HarshGray() 
                 ContinuousHapticTriggered?.Invoke("HarshGray", "PulseUp");
-                await Task.Delay(2000, cancellationToken); // Pulsing cycle
+                // Wait for swelling up to complete (41 steps * 50ms = ~2050ms) 
+                await Task.Delay(2100, cancellationToken); 
                 if (cancellationToken.IsCancellationRequested) break;
                 
                 ContinuousHapticTriggered?.Invoke("HarshGray", "PulseDown");
-                await Task.Delay(2000, cancellationToken);
+                // Wait for swelling down to complete (41 steps * 50ms = ~2050ms)
+                await Task.Delay(2100, cancellationToken);
+                if (cancellationToken.IsCancellationRequested) break;
+                
+                // Brief pause between cycles like original (for 2 loops)
+                await Task.Delay(500, cancellationToken);
             }
         }
 
@@ -311,12 +339,32 @@ namespace HapticLibrary.Models
             var endTime = DateTime.Now + duration;
             while (DateTime.Now < endTime && !cancellationToken.IsCancellationRequested)
             {
+                // Complete one full swelling cycle (up + down) like original BlueShades()
                 ContinuousHapticTriggered?.Invoke("BlueShades", "PulseUp");
-                await Task.Delay(2000, cancellationToken);
+                // Wait for swelling up to complete (41 steps * 50ms = ~2050ms)
+                await Task.Delay(2100, cancellationToken);
                 if (cancellationToken.IsCancellationRequested) break;
                 
-                ContinuousHapticTriggered?.Invoke("BlueShades", "PulseDown");
-                await Task.Delay(2000, cancellationToken);
+                ContinuousHapticTriggered?.Invoke("BlueShades", "PulseDown");  
+                // Wait for swelling down to complete (81 steps * 50ms = ~4050ms, down uses -=1)
+                await Task.Delay(4100, cancellationToken);
+                if (cancellationToken.IsCancellationRequested) break;
+                
+                // Brief pause between cycles like original (for 2 loops)
+                await Task.Delay(500, cancellationToken);
+            }
+        }
+
+        public void ResetTriggeredEvents()
+        {
+            try
+            {
+                _triggeredOneTimeEvents.Clear();
+                System.Diagnostics.Debug.WriteLine("🔄 Reset triggered one-time events for retrigger");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error resetting triggered events: {ex.Message}");
             }
         }
 
@@ -334,6 +382,10 @@ namespace HapticLibrary.Models
                 
                 _activeLoops.Clear();
                 _loopCancellationTokens.Clear();
+                
+                // Clear triggered one-time events so they can be retriggered if needed
+                _triggeredOneTimeEvents.Clear();
+                System.Diagnostics.Debug.WriteLine("🔄 Cleared triggered one-time events for potential retrigger");
                 
                 if (_sequenceData?.ResetSequence != null)
                 {

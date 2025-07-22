@@ -97,6 +97,10 @@ namespace HapticLibrary.ViewModels
         private HapticManager _hapticManager = HapticManager.GetInstance();
         private bool _isExplicitlyStopped = false; // Track if user stopped playback
         
+        // Swelling operation locks to prevent overlapping swelling patterns
+        private bool _isGraySwellingInProgress = false;
+        private bool _isBlueSwellingInProgress = false;
+        
         [ObservableProperty]
         private bool _autoPageFlipEnabled = true;
         
@@ -368,13 +372,17 @@ namespace HapticLibrary.ViewModels
         {
             try
             {
-                // Avoid triggering the same event multiple times
-                if (_triggeredEvents.Contains(hapticEvent.EventName))
+                // Don't deduplicate EventCounting events as they should be able to retrigger
+                if (!hapticEvent.EventName.StartsWith("EventCounting_"))
                 {
-                    return;
+                    // Avoid triggering the same event multiple times for non-counting events
+                    if (_triggeredEvents.Contains(hapticEvent.EventName))
+                    {
+                        return;
+                    }
+                    _triggeredEvents.Add(hapticEvent.EventName);
                 }
                 
-                _triggeredEvents.Add(hapticEvent.EventName);
                 CurrentHapticEvent = hapticEvent.EventName;
                 
                 UpdateDebugOutput($"🎯 HAPTIC: {hapticEvent.EventName}");
@@ -420,13 +428,27 @@ namespace HapticLibrary.ViewModels
                                 var dot = _hapticManager.DotManager.Dots.FirstOrDefault(d => d.Address == 2);
                                 if (dot != null)
                                 {
+                                    // Set up heartbeat vibration sequence for each pulse
+                                    dot.VibrationMode = VibrationModes.Library;
+                                    dot.VibrationSequence[0].Waveforms = VibrationWaveforms.SoftBumpP100;
+                                    dot.VibrationSequence[1].RestDuration = 100; // Single beat delay
+                                    dot.VibrationSequence[2].Waveforms = VibrationWaveforms.SoftBumpP30;
+                                    dot.VibrationSequence[3].RestDuration = 300; // Between beat offset
+                                    dot.VibrationSequence[4].Waveforms = VibrationWaveforms.EndSequence;
+                                    
+                                    dot.LedMode = LedModes.GlobalManual;
                                     dot.VibrationGo = false;
-                                    // Fade LED brightness like original
+                                    
+                                    // Fade LED brightness like original (red heartbeat)
                                     for (byte brightness = 241; brightness > 20; brightness -= 20)
                                     {
                                         dot.GlobalLed.Red = brightness;
+                                        dot.GlobalLed.Green = 0;  // Ensure pure red heartbeat
+                                        dot.GlobalLed.Blue = 0;   // Don't interfere with swelling colors
                                         await dot.Write();
                                     }
+                                    
+                                    // Start the vibration pulse
                                     dot.VibrationGo = true;
                                     await dot.Write();
                                 }
@@ -436,17 +458,26 @@ namespace HapticLibrary.ViewModels
                         case "HarshGray":
                             if (pattern == "PulseUp")
                             {
-                                await _hapticManager.SetDotLED(1, 128, 128, 128); // Gray wrists
-                                await _hapticManager.SetDotLED(2, 128, 128, 128); // Gray chest
-                                await _hapticManager.SetDotVibration(1, 30f, 0.3f, true); // Shaking hands
+                                // Swelling gray effect like original - gradually increase brightness
+                                await RunHarshGraySwellUp();
+                            }
+                            else if (pattern == "PulseDown")
+                            {
+                                // Swelling gray effect like original - gradually decrease brightness
+                                await RunHarshGraySwellDown();
                             }
                             break;
                             
                         case "BlueShades":
                             if (pattern == "PulseUp")
                             {
-                                await _hapticManager.SetDotLED(1, 0, 100, 255); // Blue wrists
-                                await _hapticManager.SetDotLED(2, 0, 100, 255); // Blue chest
+                                // Swelling blue effect like original - gradually increase brightness
+                                await RunBlueShadesSwellUp();
+                            }
+                            else if (pattern == "PulseDown")
+                            {
+                                // Swelling blue effect like original - gradually decrease brightness
+                                await RunBlueShadesSwellDown();
                             }
                             break;
                     }
@@ -460,6 +491,290 @@ namespace HapticLibrary.ViewModels
             }
         }
         
+        private async Task ExecuteEventCountingEffect(string eventName)
+        {
+            try
+            {
+                if (!_hapticManager.IsStarted)
+                {
+                    System.Diagnostics.Debug.WriteLine("⚠️ Haptic hardware not started - cannot send effects");
+                    return;
+                }
+
+                string countNumber = eventName.Replace("EventCounting_", "");
+                UpdateDebugOutput($"🔢 {countNumber}!");
+                System.Diagnostics.Debug.WriteLine($"Executing counting effect: {countNumber}");
+
+                // Use the same pattern as HapticManager methods
+                var dot = _hapticManager.DotManager.Dots.FirstOrDefault(d => d.Address == 1);
+                if (dot != null)
+                {
+                    // Set LED Red like original code
+                    dot.LedMode = LedModes.GlobalManual;
+                    dot.GlobalLed.Red = 255;
+                    dot.GlobalLed.Green = 0;
+                    dot.GlobalLed.Blue = 0;
+
+                    // Set vibration like original code
+                    dot.VibrationMode = VibrationModes.Library;
+                    dot.VibrationSequence[0].Waveforms = VibrationWaveforms.StrongClick1P100;
+                    dot.VibrationSequence[1].Waveforms = VibrationWaveforms.EndSequence;
+                    dot.VibrationGo = true;
+
+                    try
+                    {
+                        // Write to hardware
+                        await dot.Write();
+                    }
+                    catch (Exception e)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Error writing to dot: {e.Message}");
+                    }
+
+                    // Wait for the 1000ms duration like original code
+                    await Task.Delay(1000);
+
+                    // Reset the dot after the duration (like resetDots() in original)
+                    try
+                    {
+                        // Reset LED to off
+                        dot.LedMode = LedModes.GlobalManual;
+                        dot.GlobalLed.Red = 0;
+                        dot.GlobalLed.Green = 0;
+                        dot.GlobalLed.Blue = 0;
+
+                        // Stop vibration
+                        dot.VibrationGo = false;
+                        dot.VibrationMode = VibrationModes.Library;
+                        dot.VibrationSequence[0].Waveforms = VibrationWaveforms.EndSequence;
+
+                        await dot.Write();
+                    }
+                    catch (Exception e)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Error resetting dot: {e.Message}");
+                    }
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("⚠️ Dot 1 (wrists) not found");
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"ERROR in ExecuteEventCountingEffect: {ex.Message}");
+            }
+        }
+
+        private async Task RunHarshGraySwellUp()
+        {
+            // Prevent overlapping gray swelling operations
+            if (_isGraySwellingInProgress)
+            {
+                System.Diagnostics.Debug.WriteLine("⚠️ Gray swelling already in progress - skipping");
+                return;
+            }
+            
+            _isGraySwellingInProgress = true;
+            try
+            {
+                if (!_hapticManager.IsStarted) return;
+
+                System.Diagnostics.Debug.WriteLine("🌫️ Starting Gray Swell UP (20→100)");
+                
+                // Gradually increase gray brightness from 20 to 100 like original GrayHelper
+                for (byte brightness = 20; brightness <= 100; brightness += 2)
+                {
+                    if (!_isGraySwellingInProgress) break; // Allow early termination
+                    
+                    // Apply to all dots (both wrists and chest) like original
+                    foreach (var dot in _hapticManager.DotManager.Dots)
+                    {
+                        dot.LedMode = LedModes.GlobalManual;
+                        dot.GlobalLed.Red = brightness;
+                        dot.GlobalLed.Green = brightness;
+                        dot.GlobalLed.Blue = brightness;
+
+                        await dot.Write(); // Send updated values
+                    }
+                    await Task.Delay(50); // Smooth transition like original
+                }
+
+                // Add shaking hands vibration on wrists during harsh gray like original
+                await _hapticManager.SetDotVibration(1, 30f, 0.3f, true);
+                System.Diagnostics.Debug.WriteLine("✅ Gray Swell UP completed");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"ERROR in RunHarshGraySwellUp: {ex.Message}");
+            }
+            finally
+            {
+                _isGraySwellingInProgress = false;
+            }
+        }
+
+        private async Task RunHarshGraySwellDown()
+        {
+            // Prevent overlapping gray swelling operations
+            if (_isGraySwellingInProgress)
+            {
+                System.Diagnostics.Debug.WriteLine("⚠️ Gray swelling already in progress - skipping");
+                return;
+            }
+            
+            _isGraySwellingInProgress = true;
+            try
+            {
+                if (!_hapticManager.IsStarted) return;
+
+                System.Diagnostics.Debug.WriteLine("🌫️ Starting Gray Swell DOWN (100→20)");
+                
+                // Gradually decrease gray brightness from 100 to 20 like original GrayHelper
+                for (byte brightness = 100; brightness > 20; brightness -= 2)
+                {
+                    if (!_isGraySwellingInProgress) break; // Allow early termination
+                    
+                    // Apply to all dots (both wrists and chest) like original
+                    foreach (var dot in _hapticManager.DotManager.Dots)
+                    {
+                        // Ensure LED mode is properly set each time
+                        dot.LedMode = LedModes.GlobalManual;
+                        dot.GlobalLed.Red = brightness;
+                        dot.GlobalLed.Green = brightness;
+                        dot.GlobalLed.Blue = brightness;
+
+                        await dot.Write();
+                        System.Diagnostics.Debug.WriteLine($"🌫️ Gray DOWN: Dot {dot.Address} brightness={brightness}");
+                    }
+                    await Task.Delay(50); // Smooth transition like original
+                }
+                
+                // Ensure minimum brightness is maintained (never go completely dark)
+                foreach (var dot in _hapticManager.DotManager.Dots)
+                {
+                    dot.LedMode = LedModes.GlobalManual;
+                    dot.GlobalLed.Red = 21; // Keep minimum visible gray
+                    dot.GlobalLed.Green = 21;
+                    dot.GlobalLed.Blue = 21;
+                    await dot.Write();
+                }
+                System.Diagnostics.Debug.WriteLine("🌫️ Gray swell down completed - minimum brightness maintained");
+                System.Diagnostics.Debug.WriteLine("✅ Gray Swell DOWN completed");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"ERROR in RunHarshGraySwellDown: {ex.Message}");
+            }
+            finally
+            {
+                _isGraySwellingInProgress = false;
+            }
+        }
+
+        private async Task RunBlueShadesSwellUp()
+        {
+            // Prevent overlapping blue swelling operations
+            if (_isBlueSwellingInProgress)
+            {
+                System.Diagnostics.Debug.WriteLine("⚠️ Blue swelling already in progress - skipping");
+                return;
+            }
+            
+            _isBlueSwellingInProgress = true;
+            try
+            {
+                if (!_hapticManager.IsStarted) return;
+
+                System.Diagnostics.Debug.WriteLine("🌊 Starting Blue Swell UP (20→100)");
+                
+                // Gradually increase blue brightness from 20 to 100 like original BlueHelper
+                for (byte brightness = 20; brightness <= 100; brightness += 2)
+                {
+                    if (!_isBlueSwellingInProgress) break; // Allow early termination
+                    
+                    // Apply to all dots (both wrists and chest) like original
+                    foreach (var dot in _hapticManager.DotManager.Dots)
+                    {
+                        dot.LedMode = LedModes.GlobalManual;
+                        dot.GlobalLed.Red = 0; // Pure blue, no red
+                        dot.GlobalLed.Green = 0; // Pure blue, no green
+                        dot.GlobalLed.Blue = brightness;
+
+                        await dot.Write(); // Send updated values
+                    }
+                    await Task.Delay(50); // Smooth transition like original
+                }
+                System.Diagnostics.Debug.WriteLine("✅ Blue Swell UP completed");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"ERROR in RunBlueShadesSwellUp: {ex.Message}");
+            }
+            finally
+            {
+                _isBlueSwellingInProgress = false;
+            }
+        }
+
+        private async Task RunBlueShadesSwellDown()
+        {
+            // Prevent overlapping blue swelling operations
+            if (_isBlueSwellingInProgress)
+            {
+                System.Diagnostics.Debug.WriteLine("⚠️ Blue swelling already in progress - skipping");
+                return;
+            }
+            
+            _isBlueSwellingInProgress = true;
+            try
+            {
+                if (!_hapticManager.IsStarted) return;
+
+                System.Diagnostics.Debug.WriteLine("🌊 Starting Blue Swell DOWN (100→20)");
+                
+                // Gradually decrease blue brightness from 100 to 20 like original BlueHelper
+                for (byte brightness = 100; brightness > 20; brightness -= 1) // Note: -= 1 like original BlueHelper
+                {
+                    if (!_isBlueSwellingInProgress) break; // Allow early termination
+                    
+                    // Apply to all dots (both wrists and chest) like original
+                    foreach (var dot in _hapticManager.DotManager.Dots)
+                    {
+                        // Ensure LED mode is properly set each time
+                        dot.LedMode = LedModes.GlobalManual;
+                        dot.GlobalLed.Red = 0; // Pure blue, no red
+                        dot.GlobalLed.Green = 0; // Pure blue, no green
+                        dot.GlobalLed.Blue = brightness;
+
+                        await dot.Write();
+                        System.Diagnostics.Debug.WriteLine($"🌊 Blue DOWN: Dot {dot.Address} brightness={brightness}");
+                    }
+                    await Task.Delay(50); // Smooth transition like original
+                }
+                
+                // Ensure minimum brightness is maintained (never go completely dark)
+                foreach (var dot in _hapticManager.DotManager.Dots)
+                {
+                    dot.LedMode = LedModes.GlobalManual;
+                    dot.GlobalLed.Red = 0; // Pure blue
+                    dot.GlobalLed.Green = 0; 
+                    dot.GlobalLed.Blue = 21; // Keep minimum visible blue
+                    await dot.Write();
+                }
+                System.Diagnostics.Debug.WriteLine("🌊 Blue swell down completed - minimum brightness maintained");
+                System.Diagnostics.Debug.WriteLine("✅ Blue Swell DOWN completed");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"ERROR in RunBlueShadesSwellDown: {ex.Message}");
+            }
+            finally
+            {
+                _isBlueSwellingInProgress = false;
+            }
+        }
+
         private async void SendHapticEffects(HapticEvent hapticEvent)
         {
             try
@@ -472,9 +787,12 @@ namespace HapticLibrary.ViewModels
                 
                 System.Diagnostics.Debug.WriteLine($"🔨 Sending haptic effects for: {hapticEvent.EventName}");
 
-                // IMPORTANT: Stop previous effects first (like original sequencer resetDots)
-                await _hapticManager.StopAllEffects();
-                await Task.Delay(50); // Small delay to ensure stop commands are processed
+                // IMPORTANT: Only stop all effects for non-counting events to avoid interfering with continuous heartbeat
+                if (!hapticEvent.EventName.StartsWith("EventCounting_"))
+                {
+                    await _hapticManager.StopAllEffects();
+                    await Task.Delay(50); // Small delay to ensure stop commands are processed
+                }
 
                 // Map F451 haptic events to 2-dot configuration (Dot 1: Wrists, Dot 2: Chest)
                 switch (hapticEvent.EventName)
@@ -502,24 +820,18 @@ namespace HapticLibrary.ViewModels
                     case "EventCounting_Eight":
                     case "EventCounting_Nine":
                     case "EventCounting_Ten":
-                        // Random red flash on wrists only with proper intensity like original: dot1.VibrationIntensity = 1.0f
-                        await _hapticManager.SetDotLED(1, 255, 0, 0); // Wrists red flash
-                        await _hapticManager.SetDotVibration(1, 100f, 1.0f, true); // Strong click with intensity 1.0f
-                        UpdateDebugOutput($"🔢 {hapticEvent.EventName.Replace("EventCounting_", "")}!");
+                        // Execute eventCounting effect with proper duration and reset like original code
+                        await ExecuteEventCountingEffect(hapticEvent.EventName);
                         break;
                         
                     case "Event5_GreyFaces":
-                        // Gray pulsing + hand shaking + unease vibration
-                        await _hapticManager.SetDotLED(1, 128, 128, 128); // Wrists gray
-                        await _hapticManager.SetDotLED(2, 128, 128, 128); // Chest gray
+                        // Gray swelling LEDs are handled by continuous patterns, only set vibrations here
                         await _hapticManager.SetDotVibration(1, 30f, 0.3f, true); // Wrists shaking
                         await _hapticManager.SetDotVibration(2, 41.2f, 1.0f, true); // Chest unease
                         break;
                         
                     case "Event6_River":
-                        // Blue pulsing + cold thermal + relief vibration
-                        await _hapticManager.SetDotLED(1, 0, 100, 255); // Wrists blue
-                        await _hapticManager.SetDotLED(2, 0, 100, 255); // Chest blue
+                        // Blue swelling LEDs are handled by continuous patterns, only set vibrations/thermal here
                         await _hapticManager.SetDotThermal(1, -1.0f); // Cold wrists
                         await _hapticManager.SetDotVibration(2, 52.13f, 0.3f, true); // Chest relief
                         break;
@@ -646,6 +958,7 @@ namespace HapticLibrary.ViewModels
                 {
                     _triggeredEvents.Clear();
                     CurrentHapticEvent = "";
+                    _hapticSequenceManager.ResetTriggeredEvents();
                     System.Diagnostics.Debug.WriteLine("Reset triggered events for fresh playback");
                 }
             }
@@ -761,6 +1074,11 @@ namespace HapticLibrary.ViewModels
                     System.Diagnostics.Debug.WriteLine("Stopped haptic sequence manager");
                 }
                 
+                // Reset swelling operation locks to prevent them getting stuck
+                _isGraySwellingInProgress = false;
+                _isBlueSwellingInProgress = false;
+                System.Diagnostics.Debug.WriteLine("🔄 Reset swelling operation locks");
+                
                 System.Diagnostics.Debug.WriteLine("--- Haptic sequence stopped and reset ---");
             }
             catch (Exception ex)
@@ -855,6 +1173,17 @@ namespace HapticLibrary.ViewModels
                 if (position > _audioFileReader.TotalTime) position = _audioFileReader.TotalTime;
                 _audioFileReader.CurrentTime = position;
                 CurrentTime = position;
+                
+                // Reset triggered events when seeking to allow re-triggering of haptic events
+                _triggeredEvents.Clear();
+                _hapticSequenceManager.ResetTriggeredEvents();
+                CurrentHapticEvent = "";
+                
+                // Reset swelling operation locks when seeking to prevent stuck locks
+                _isGraySwellingInProgress = false;
+                _isBlueSwellingInProgress = false;
+                
+                System.Diagnostics.Debug.WriteLine($"Reset triggered events and swelling locks after seeking to {position}");
             }
         }
 

@@ -39,23 +39,23 @@
     {
       "EventName": "Event2_Realization", 
       "StartTime": "0:17",
-      "EndTime": "0:32", 
-      "Duration": 15000,
+      "EndTime": "1:09", 
+      "Duration": 52000,
       "TextSection": "Of course! Why hadn't they done it before! Why, in all the years, hadn't this game been tried! Everyone up, everyone out! He couldn't be missed! The only man running alone in the night city, the only man proving his legs!",
       "HapticEffects": {
         "patterns": {
           "HeartBeat_Chest": {
             "device": 2,
             "type": "continuous",
-            "duration": 15000,
+            "duration": 52000,
             "bpm": 150,
-            "beatCount": 78,
+            "beatCount": 270,
             "vibrationMode": "Library"
           },
           "ThermalHeating_Wrists": {
             "device": 1,
             "type": "continuous",
-            "duration": 15000, 
+            "duration": 52000, 
             "thermalIntensity": 0.5
           }
         }
@@ -84,8 +84,8 @@
     },
     {
       "EventName": "EventCounting_Two",
-      "StartTime": "0:32",
-      "EndTime": "0:33",
+      "StartTime": "0:32.5",
+      "EndTime": "0:33.5",
       "Duration": 1000,
       "TextSection": "Two!",
       "HapticEffects": {
@@ -105,8 +105,8 @@
     },
     {
       "EventName": "EventCounting_Three",
-      "StartTime": "0:35",
-      "EndTime": "0:36",
+      "StartTime": "0:35.2",
+      "EndTime": "0:36.2",
       "Duration": 1000,
       "TextSection": "Three!",
       "HapticEffects": {
@@ -126,8 +126,8 @@
     },
     {
       "EventName": "EventCounting_Four",
-      "StartTime": "0:40",
-      "EndTime": "0:41",
+      "StartTime": "0:40.9",
+      "EndTime": "0:41.9",
       "Duration": 1000,
       "TextSection": "Four!",
       "HapticEffects": {
@@ -147,8 +147,8 @@
     },
     {
       "EventName": "EventCounting_Five",
-      "StartTime": "0:44.0",
-      "EndTime": "0:45.0",
+      "StartTime": "0:43.9",
+      "EndTime": "0:44.9",
       "Duration": 1000,
       "TextSection": "Five!",
       "HapticEffects": {
@@ -168,8 +168,8 @@
     },
     {
       "EventName": "EventCounting_Six",
-      "StartTime": "0:55.0",
-      "EndTime": "0:56.0",
+      "StartTime": "0:55.7",
+      "EndTime": "0:56.7",
       "Duration": 1000,
       "TextSection": "Six!",
       "HapticEffects": {
@@ -189,8 +189,8 @@
     },
     {
       "EventName": "EventCounting_Seven",
-      "StartTime": "0:57.0",
-      "EndTime": "0:58.0",
+      "StartTime": "0:57.2",
+      "EndTime": "0:58.2",
       "Duration": 1000,
       "TextSection": "Seven!",
       "HapticEffects": {
@@ -210,8 +210,8 @@
     },
     {
       "EventName": "EventCounting_Eight",
-      "StartTime": "0:59.0",
-      "EndTime": "1:00.0",
+      "StartTime": "0:58.6",
+      "EndTime": "0:59.6",
       "Duration": 1000,
       "TextSection": "Eight!",
       "HapticEffects": {
@@ -231,8 +231,8 @@
     },
     {
       "EventName": "EventCounting_Nine",
-      "StartTime": "1:03.0",
-      "EndTime": "1:04.0",
+      "StartTime": "1:02.4",
+      "EndTime": "1:03.4",
       "Duration": 1000,
       "TextSection": "Nine!",
       "HapticEffects": {
@@ -252,8 +252,8 @@
     },
     {
       "EventName": "EventCounting_Ten",
-      "StartTime": "1:08.0",
-      "EndTime": "1:09.0",
+      "StartTime": "1:08.4",
+      "EndTime": "1:09.4",
       "Duration": 1000,
       "TextSection": "Ten!",
       "HapticEffects": {
@@ -274,8 +274,8 @@
     {
       "EventName": "Event5_GreyFaces",
       "StartTime": "1:13.0",
-      "EndTime": "1:32.0",
-      "Duration": 19000,
+      "EndTime": "1:32.4",
+      "Duration": 19400,
       "TextSection": "He imagined thousands on thousands of faces peering into yards, into alleys, and into the sky, faces hid by curtains, pale, night-frightened faces, like grey animals peering from electric caves, faces with grey colourless eyes, grey tongues and grey thoughts looking out through the numb flesh of the face.",
       "HapticEffects": {
         "BinauralUnease": {
@@ -284,7 +284,7 @@
             "vibrationFrequency": 41.2,
             "vibrationIntensity": 1.0,
             "vibrationGo": true,
-            "duration": 19000
+            "duration": 19400
           }
         },
         "ShakingHands": {
@@ -293,7 +293,7 @@
             "vibrationFrequency": 30,
             "vibrationIntensity": 0.3,
             "vibrationGo": true,
-            "duration": 16000
+            "duration": 19400
           }
         },
         "HarshGrayPulse": {

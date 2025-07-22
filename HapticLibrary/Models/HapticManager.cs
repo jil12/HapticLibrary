@@ -39,7 +39,7 @@ namespace HapticLibrary.Models
 
             _datafeelModbusClient = new DatafeelModbusClientConfiguration()
                 .UseWindowsSerialPortTransceiver()
-                //.UseSerialPort("COM6") // Uncomment this line to specify the serial port by name
+                .UseSerialPort("COM6") // Uncomment this line to specify the serial port by name
                 .CreateClient();
         }
 
@@ -239,6 +239,7 @@ namespace HapticLibrary.Models
                     dot.VibrationSequence[4].Waveforms = VibrationWaveforms.EndSequence;
 
                     dot.LedMode = LedModes.GlobalManual;
+                    dot.VibrationGo = true; // Actually start the vibration sequence
 
                     await dot.Write();
                 }
