@@ -396,7 +396,7 @@ namespace HapticLibrary.ViewModels
             }
         }
 
-        private void OnContinuousHapticTriggered(string effectType, string pattern)
+        private async void OnContinuousHapticTriggered(string effectType, string pattern)
         {
             try
             {
@@ -404,84 +404,66 @@ namespace HapticLibrary.ViewModels
                 {
                     return;
                 }
-
-                // Handle continuous patterns like the original code
-                Task.Run(async () =>
+                
+                switch (effectType)
                 {
-                    switch (effectType)
-                    {
-                        case "AmbulanceSiren":
-                            if (pattern == "Red")
+                    case "AmbulanceSiren":
+                        if (pattern == "Red")
+                        {
+                            await _hapticManager.SetDotLED(1, 255, 0, 0); // Wrists red
+                        }
+                        else if (pattern == "White")
+                        {
+                            await _hapticManager.SetDotLED(1, 255, 255, 255); // Wrists white
+                        }
+                        break;
+                    case "HeartBeat":
+                        // Chest heartbeat with proper Library mode sequence like original
+                        if (pattern == "Pulse")
+                        {
+                            var dot = _hapticManager.DotManager.Dots.FirstOrDefault(d => d.Address == 2);
+                            if (dot != null)
                             {
-                                await _hapticManager.SetDotLED(1, 255, 0, 0); // Wrists red
-                            }
-                            else if (pattern == "White")
-                            {
-                                await _hapticManager.SetDotLED(1, 255, 255, 255); // Wrists white
-                            }
-                            break;
-                            
-                        case "HeartBeat":
-                            // Chest heartbeat with proper Library mode sequence like original
-                            if (pattern == "Pulse")
-                            {
-                                var dot = _hapticManager.DotManager.Dots.FirstOrDefault(d => d.Address == 2);
-                                if (dot != null)
+                                // Set up heartbeat vibration sequence for each pulse
+                                dot.VibrationMode = VibrationModes.Library;
+                                dot.VibrationSequence[0].Waveforms = VibrationWaveforms.SoftBumpP100;
+                                dot.VibrationSequence[1].RestDuration = 100; // Single beat delay
+                                dot.VibrationSequence[2].Waveforms = VibrationWaveforms.SoftBumpP30;
+                                dot.VibrationSequence[3].RestDuration = 300; // Between beat offset
+                                dot.VibrationSequence[4].Waveforms = VibrationWaveforms.EndSequence;
+
+                                dot.LedMode = LedModes.GlobalManual;
+                                dot.VibrationGo = false;
+
+                                // Fade LED brightness like original (red heartbeat)
+                                for (byte brightness = 241; brightness > 20; brightness -= 20)
                                 {
-                                    // Set up heartbeat vibration sequence for each pulse
-                                    dot.VibrationMode = VibrationModes.Library;
-                                    dot.VibrationSequence[0].Waveforms = VibrationWaveforms.SoftBumpP100;
-                                    dot.VibrationSequence[1].RestDuration = 100; // Single beat delay
-                                    dot.VibrationSequence[2].Waveforms = VibrationWaveforms.SoftBumpP30;
-                                    dot.VibrationSequence[3].RestDuration = 300; // Between beat offset
-                                    dot.VibrationSequence[4].Waveforms = VibrationWaveforms.EndSequence;
-                                    
-                                    dot.LedMode = LedModes.GlobalManual;
-                                    dot.VibrationGo = false;
-                                    
-                                    // Fade LED brightness like original (red heartbeat)
-                                    for (byte brightness = 241; brightness > 20; brightness -= 20)
-                                    {
-                                        dot.GlobalLed.Red = brightness;
-                                        dot.GlobalLed.Green = 0;  // Ensure pure red heartbeat
-                                        dot.GlobalLed.Blue = 0;   // Don't interfere with swelling colors
-                                        await dot.Write();
-                                    }
-                                    
-                                    // Start the vibration pulse
-                                    dot.VibrationGo = true;
+                                    dot.GlobalLed.Red = brightness;
+                                    dot.GlobalLed.Green = 0;  // Ensure pure red heartbeat
+                                    dot.GlobalLed.Blue = 0;   // Don't interfere with swelling colors
                                     await dot.Write();
                                 }
+
+                                // Start the vibration pulse
+                                dot.VibrationGo = true;
+                                await dot.Write();
                             }
-                            break;
-                            
-                        case "HarshGray":
-                            if (pattern == "PulseUp")
-                            {
-                                // Swelling gray effect like original - gradually increase brightness
-                                await RunHarshGraySwellUp();
-                            }
-                            else if (pattern == "PulseDown")
-                            {
-                                // Swelling gray effect like original - gradually decrease brightness
-                                await RunHarshGraySwellDown();
-                            }
-                            break;
-                            
-                        case "BlueShades":
-                            if (pattern == "PulseUp")
-                            {
-                                // Swelling blue effect like original - gradually increase brightness
-                                await RunBlueShadesSwellUp();
-                            }
-                            else if (pattern == "PulseDown")
-                            {
-                                // Swelling blue effect like original - gradually decrease brightness
-                                await RunBlueShadesSwellDown();
-                            }
-                            break;
-                    }
-                });
+                        }
+                        break;
+                    case "HarshGray":
+                        await RunHarshGraySwellCycle();
+                        break;
+                    case "BlueShades":
+                        if (pattern == "PulseUp")
+                        {
+                            await RunBlueShadesSwellUp();
+                        }
+                        else if (pattern == "PulseDown")
+                        {
+                            await RunBlueShadesSwellDown();
+                        }
+                        break;
+                }
                 
                 UpdateDebugOutput($"🔄 {effectType}: {pattern}");
             }
@@ -566,105 +548,83 @@ namespace HapticLibrary.ViewModels
             }
         }
 
-        private async Task RunHarshGraySwellUp()
+        private async Task RunHarshGraySwellCycle()
         {
-            // Prevent overlapping gray swelling operations
             if (_isGraySwellingInProgress)
             {
                 System.Diagnostics.Debug.WriteLine("⚠️ Gray swelling already in progress - skipping");
                 return;
             }
-            
+
             _isGraySwellingInProgress = true;
             try
             {
                 if (!_hapticManager.IsStarted) return;
 
+                // --- Start vibration on both dots (wrists and chest) ---
+                foreach (var dot in _hapticManager.DotManager.Dots)
+                {
+                    dot.VibrationMode = VibrationModes.Manual;
+                    dot.VibrationIntensity = 0.3f;
+                    dot.VibrationFrequency = 30;
+                    dot.VibrationGo = true;
+                    await dot.Write();
+                }
+
+                // Swell Up
                 System.Diagnostics.Debug.WriteLine("🌫️ Starting Gray Swell UP (20→100)");
-                
-                // Gradually increase gray brightness from 20 to 100 like original GrayHelper
                 for (byte brightness = 20; brightness <= 100; brightness += 2)
                 {
-                    if (!_isGraySwellingInProgress) break; // Allow early termination
-                    
-                    // Apply to all dots (both wrists and chest) like original
+                    if (!_isGraySwellingInProgress) break;
                     foreach (var dot in _hapticManager.DotManager.Dots)
                     {
                         dot.LedMode = LedModes.GlobalManual;
                         dot.GlobalLed.Red = brightness;
                         dot.GlobalLed.Green = brightness;
                         dot.GlobalLed.Blue = brightness;
-
-                        await dot.Write(); // Send updated values
+                        await dot.Write();
                     }
-                    await Task.Delay(50); // Smooth transition like original
+                    await Task.Delay(50);
                 }
 
-                // Add shaking hands vibration on wrists during harsh gray like original
-                await _hapticManager.SetDotVibration(1, 30f, 0.3f, true);
-                System.Diagnostics.Debug.WriteLine("✅ Gray Swell UP completed");
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"ERROR in RunHarshGraySwellUp: {ex.Message}");
-            }
-            finally
-            {
-                _isGraySwellingInProgress = false;
-            }
-        }
-
-        private async Task RunHarshGraySwellDown()
-        {
-            // Prevent overlapping gray swelling operations
-            if (_isGraySwellingInProgress)
-            {
-                System.Diagnostics.Debug.WriteLine("⚠️ Gray swelling already in progress - skipping");
-                return;
-            }
-            
-            _isGraySwellingInProgress = true;
-            try
-            {
-                if (!_hapticManager.IsStarted) return;
-
+                // Swell Down
                 System.Diagnostics.Debug.WriteLine("🌫️ Starting Gray Swell DOWN (100→20)");
-                
-                // Gradually decrease gray brightness from 100 to 20 like original GrayHelper
                 for (byte brightness = 100; brightness > 20; brightness -= 2)
                 {
-                    if (!_isGraySwellingInProgress) break; // Allow early termination
-                    
-                    // Apply to all dots (both wrists and chest) like original
+                    if (!_isGraySwellingInProgress) break;
                     foreach (var dot in _hapticManager.DotManager.Dots)
                     {
-                        // Ensure LED mode is properly set each time
                         dot.LedMode = LedModes.GlobalManual;
                         dot.GlobalLed.Red = brightness;
                         dot.GlobalLed.Green = brightness;
                         dot.GlobalLed.Blue = brightness;
-
                         await dot.Write();
-                        System.Diagnostics.Debug.WriteLine($"🌫️ Gray DOWN: Dot {dot.Address} brightness={brightness}");
                     }
-                    await Task.Delay(50); // Smooth transition like original
+                    await Task.Delay(50);
                 }
-                
-                // Ensure minimum brightness is maintained (never go completely dark)
+
+                // Ensure minimum brightness
                 foreach (var dot in _hapticManager.DotManager.Dots)
                 {
                     dot.LedMode = LedModes.GlobalManual;
-                    dot.GlobalLed.Red = 21; // Keep minimum visible gray
+                    dot.GlobalLed.Red = 21;
                     dot.GlobalLed.Green = 21;
                     dot.GlobalLed.Blue = 21;
                     await dot.Write();
                 }
-                System.Diagnostics.Debug.WriteLine("🌫️ Gray swell down completed - minimum brightness maintained");
-                System.Diagnostics.Debug.WriteLine("✅ Gray Swell DOWN completed");
+
+                // --- Stop vibration on both dots ---
+                foreach (var dot in _hapticManager.DotManager.Dots)
+                {
+                    dot.VibrationGo = false;
+                    await dot.Write();
+                }
+
+                System.Diagnostics.Debug.WriteLine("✅ Gray Swell Cycle completed");
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"ERROR in RunHarshGraySwellDown: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"ERROR in RunHarshGraySwellCycle: {ex.Message}");
             }
             finally
             {
