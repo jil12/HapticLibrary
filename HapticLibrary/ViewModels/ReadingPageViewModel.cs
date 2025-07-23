@@ -118,6 +118,8 @@ namespace HapticLibrary.ViewModels
         [ObservableProperty]
         private string _debugOutput = "Debug: Ready...";
         
+        private bool _lockDot2Red = false;
+        
         private void UpdateDebugOutput(string message)
         {
             var timestamp = DateTime.Now.ToString("HH:mm:ss");
@@ -440,6 +442,7 @@ namespace HapticLibrary.ViewModels
                                 // Fade LED brightness like original (red heartbeat)
                                 for (byte brightness = 241; brightness > 20; brightness -= 20)
                                 {
+                                    if (_lockDot2Red) break;
                                     dot.GlobalLed.Red = brightness;
                                     dot.GlobalLed.Green = 0;  // Ensure pure red heartbeat
                                     dot.GlobalLed.Blue = 0;   // Don't interfere with swelling colors
@@ -448,15 +451,17 @@ namespace HapticLibrary.ViewModels
 
                                 // Start the vibration pulse
                                 dot.VibrationGo = true;
-                                await dot.Write();
+                                if (!_lockDot2Red) await dot.Write();
                             }
                         }
                         break;
                     case "HarshGray":
-                        await RunHarshGraySwellCycle();
+                        if (!_lockDot2Red)
+                            await RunHarshGraySwellCycle();
                         break;
                     case "BlueShades":
-                        await RunBlueShadesSwellCycle();
+                        if (!_lockDot2Red)
+                            await RunBlueShadesSwellCycle();
                         break;
                 }
                 
@@ -507,13 +512,13 @@ namespace HapticLibrary.ViewModels
                 }
                 if (eventName == "EventCounting_Ten" && dotChest != null)
                 {
-                    // Stop heartbeat and set chest LED to red
-                    _hapticManager.CancelHeartBeat(2);
+                    _hapticManager.CancelHeartBeat(2); // Ensure heartbeat is stopped
+                    _lockDot2Red = true;
                     dotChest.LedMode = LedModes.GlobalManual;
                     dotChest.GlobalLed.Red = 255;
                     dotChest.GlobalLed.Green = 0;
                     dotChest.GlobalLed.Blue = 0;
-                    dotChest.VibrationGo = false; // Stop heartbeat
+                    dotChest.VibrationGo = false; // Stop heartbeat vibration
                     await dotChest.Write();
                 }
 
@@ -548,6 +553,7 @@ namespace HapticLibrary.ViewModels
                     dotChest.GlobalLed.Green = 0;
                     dotChest.GlobalLed.Blue = 0;
                     await dotChest.Write();
+                    _lockDot2Red = false;
                 }
                 else if (dotChest != null)
                 {
@@ -857,7 +863,7 @@ namespace HapticLibrary.ViewModels
             CurrentPage = _readingBook.PageIndex + 1;
             
             // Update book title with page info
-            CurrentBookTitle = $"{_readingBook.BookName} - Page {CurrentPage}";
+            CurrentBookTitle = $"{_readingBook.BookName}";
             
             // Send haptic interactions for current page
             try
@@ -1221,12 +1227,9 @@ namespace HapticLibrary.ViewModels
             IsRecording = _audioStream.Recording;
             RecordingStatus = IsRecording ? "🎤 Recording..." : "Ready to record";
             
-            // Update read-aloud mode based on recording state
-            IsReadAloudMode = IsRecording;
-            
-            // Notify UI of changes
-            OnPropertyChanged(nameof(IsRecording));
-            OnPropertyChanged(nameof(RecordingStatus));
+            // Do NOT change IsReadAloudMode here; let the user control the mode explicitly.
+            // OnPropertyChanged(nameof(IsRecording));
+            // OnPropertyChanged(nameof(RecordingStatus));
         }
 
         // Async initialization method for external use

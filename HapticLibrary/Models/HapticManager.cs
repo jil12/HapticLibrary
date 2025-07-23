@@ -40,7 +40,7 @@ namespace HapticLibrary.Models
 
             _datafeelModbusClient = new DatafeelModbusClientConfiguration()
                 .UseWindowsSerialPortTransceiver()
-                .UseSerialPort("COM3") // Uncomment this line to specify the serial port by name
+                //.UseSerialPort("COM3") // Uncomment this line to specify the serial port by name
                 .CreateClient();
         }
 
