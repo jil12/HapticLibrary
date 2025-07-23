@@ -12,9 +12,13 @@
   
   <ItemGroup>
     <AvaloniaResource Remove="Assets\PropSampleBook.json" />
+    <AvaloniaResource Remove="Assets\PropSampleBookTextOnly.json" />
   </ItemGroup>
   
   <ItemGroup>
+    <Content Include="Assets\PropSampleBookTextOnly.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Assets\PropSampleBook.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

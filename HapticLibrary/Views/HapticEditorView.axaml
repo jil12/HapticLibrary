@@ -19,32 +19,46 @@
 				  RowDefinitions="3*, 1*">
 				<Panel Grid.Row="0"
 					   Background="Gray">
-					<Panel Margin="100,60,100,60" Background="White"
-						   Width="500"
-						   Height="300">
-						<ItemsControl ItemsSource="{Binding Words}">
-							<ItemsControl.ItemsPanel>
-								<ItemsPanelTemplate>
-									<WrapPanel HorizontalAlignment="Center"/>
-								</ItemsPanelTemplate>
-							</ItemsControl.ItemsPanel>
+					<Grid ColumnDefinitions="auto, *, auto"
+						HorizontalAlignment="Center" VerticalAlignment="Center">
+						<Button
+							Grid.Column="0"
+							HorizontalAlignment="Right"
+							Content="&lt;"
+							Command="{Binding PrevPageCommand}"/>
+						<Panel Grid.Column="1"
+							Margin="100,60,100,60" Background="White"
+						    Width="500"
+						    Height="300">
+							<ItemsControl ItemsSource="{Binding Words}">
+								<ItemsControl.ItemsPanel>
+									<ItemsPanelTemplate>
+										<WrapPanel HorizontalAlignment="Center"/>
+									</ItemsPanelTemplate>
+								</ItemsControl.ItemsPanel>
 
-							<ItemsControl.ItemTemplate>
-								<DataTemplate x:DataType="vm:EditorWordViewModel">
-									<Button Content="{Binding Word}" Margin="2"
-											Command="{Binding DataContext.SelectWordCommand, ElementName=HapticEditor}"
-											CommandParameter="{Binding}"
-											HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
-											Foreground="Black"
-											Background="{Binding, Converter={StaticResource EditorWordToBrushConverter}}">
-										<Button.ContextMenu>
+								<ItemsControl.ItemTemplate>
+									<DataTemplate x:DataType="vm:EditorWordViewModel">
+										<Button Content="{Binding Word}" Margin="2"
+												Command="{Binding DataContext.SelectWordCommand, ElementName=HapticEditor}"
+												CommandParameter="{Binding}"
+												HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+												Foreground="Black"
+												Background="{Binding, Converter={StaticResource EditorWordToBrushConverter}}">
+											<Button.ContextMenu>
 
-										</Button.ContextMenu>
-									</Button>
-								</DataTemplate>
-							</ItemsControl.ItemTemplate>
-						</ItemsControl>
-					</Panel>
+											</Button.ContextMenu>
+										</Button>
+									</DataTemplate>
+								</ItemsControl.ItemTemplate>
+							</ItemsControl>
+						</Panel>
+						<Button
+							Grid.Column="2"
+							HorizontalAlignment="Left"
+							Content="&gt;"
+							Command="{Binding NextPageCommand}"/>
+					</Grid>
 				</Panel>
 				<!-- Haptic Pattern Storage Panel -->
 				<Panel Grid.Row="1" Background="BlueViolet">
@@ -79,39 +93,66 @@
 				</Panel>
 			</Grid>
 		<!-- Haptic Properties Panel -->
-		<Panel Grid.Column="1" Margin="10">	<!-- Haptic Properties Panel -->
-			<StackPanel   HorizontalAlignment="Left">
-				<TextBlock HorizontalAlignment="Center"
-						   FontSize="20"
-						   TextWrapping="Wrap">Haptic Pattern Properties</TextBlock>
-				<!-- Name Input -->
-				<TextBlock Text="Name:"/>
-				<TextBox Name="NameTextBox" Width="200" Text="{Binding HapticName}"/>
+		<Grid Grid.Column="1" RowDefinitions="auto, *">
+			<Grid Grid.Row="0" ColumnDefinitions="auto, auto">
+				<ToggleButton Grid.Column="0"
+					Content="Pattern"
+					IsChecked="{Binding IsPatternEditing}"
+					Command="{Binding EnablePatternEditingCommand}"/>
+				<ToggleButton Grid.Column="1"
+					Content="Text"
+					IsChecked="{Binding IsTextEditing}"
+					Command="{Binding EnableTextEditingCommand}"/>
+			</Grid>
+			<Panel Grid.Row="1" Margin="10"
+			IsVisible="{Binding IsPatternEditing}">
+				<!-- Haptic Properties Panel -->
+				<StackPanel   HorizontalAlignment="Left">
+					<TextBlock HorizontalAlignment="Center"
+							   FontSize="20"
+							   TextWrapping="Wrap">Haptic Pattern Properties</TextBlock>
+					<!-- Name Input -->
+					<TextBlock Text="Name:"/>
+					<TextBox Name="NameTextBox" Width="200" Text="{Binding HapticName}"/>
 
-				<!-- Color Input -->
-				<TextBlock Text="Color (R, G, B):"/>
-				<StackPanel Orientation="Horizontal" Spacing="10">
-					<TextBox Name="RedTextBox" Width="50"
-							 Tag="0,255,HapticRed" TextInput="IntBox_TextInput" LostFocus="IntBox_OnLostFocus"/>
-					<TextBox Name="GreenTextBox" Width="50"
-							 Tag="0,255,HapticGreen" TextInput="IntBox_TextInput" LostFocus="IntBox_OnLostFocus"/>
-					<TextBox Name="BlueTextBox" Width="50"
-							 Tag="0,255,HapticBlue" TextInput="IntBox_TextInput" LostFocus="IntBox_OnLostFocus"/>
+					<!-- Color Input -->
+					<TextBlock Text="Color (R, G, B):"/>
+					<StackPanel Orientation="Horizontal" Spacing="10">
+						<TextBox Name="RedTextBox" Width="50"
+								 Tag="0,255,HapticRed" TextInput="IntBox_TextInput" LostFocus="IntBox_OnLostFocus"/>
+						<TextBox Name="GreenTextBox" Width="50"
+								 Tag="0,255,HapticGreen" TextInput="IntBox_TextInput" LostFocus="IntBox_OnLostFocus"/>
+						<TextBox Name="BlueTextBox" Width="50"
+								 Tag="0,255,HapticBlue" TextInput="IntBox_TextInput" LostFocus="IntBox_OnLostFocus"/>
+					</StackPanel>
+
+					<!-- Temperature Input -->
+					<TextBlock Text="Temperature (-1 to 1):"/>
+					<TextBox Name="TemperatureTextBox" Width="200"
+							 Tag="-1,1,HapticTemperature" TextInput="FloatBox_TextInput" LostFocus="FloatBox_OnLostFocus"/>
+
+					<!-- Vibration Input -->
+					<TextBlock Text="Vibration (0 to 1):"/>
+					<TextBox Name="VibrationTextBox" Width="200"
+							 Tag="0,1,HapticVibration" TextInput="FloatBox_TextInput" LostFocus="FloatBox_OnLostFocus"/>
 				</StackPanel>
-
-				<!-- Temperature Input -->
-				<TextBlock Text="Temperature (-1 to 1):"/>
-				<TextBox Name="TemperatureTextBox" Width="200"
-						 Tag="-1,1,HapticTemperature" TextInput="FloatBox_TextInput" LostFocus="FloatBox_OnLostFocus"/>
-
-				<!-- Vibration Input -->
-				<TextBlock Text="Vibration (0 to 1):"/>
-				<TextBox Name="VibrationTextBox" Width="200"
-						 Tag="0,1,HapticVibration" TextInput="FloatBox_TextInput" LostFocus="FloatBox_OnLostFocus"/>
-			</StackPanel>
-			<Button VerticalAlignment="Bottom" Command="{Binding CreateHapticPatternCommand}">
-				Create Pattern
-			</Button>
-		</Panel>
+				<Button VerticalAlignment="Bottom" Command="{Binding CreateHapticPatternCommand}">
+					Create Pattern
+				</Button>
+			</Panel>
+			<Panel Grid.Row="1" Margin="10"
+				   IsVisible="{Binding IsTextEditing}">
+				<Grid RowDefinitions="auto, *, auto">
+					<TextBlock Grid.Row="0"
+							   Text="Edit Page"
+							   FontSize="20"/>
+					<TextBox Grid.Row="1"
+							 Margin="0,20"
+							 Text="{Binding EditableText}"/>
+					<Button Grid.Row="2"
+							VerticalAlignment="Bottom" Content="Update Text" Command="{Binding SaveTextCommand}"/>
+				</Grid>
+			</Panel>
+		</Grid>
 	</Grid>
 </UserControl>

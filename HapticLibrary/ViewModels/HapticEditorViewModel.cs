@@ -5,11 +5,20 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Drawing;
+using System.Collections.Generic;
+using Datafeel;
 
 namespace HapticLibrary.ViewModels
 {
     public partial class HapticEditorViewModel : ViewModelBase, IPageViewModel
     {
+        [ObservableProperty]
+        private bool isPatternEditing = true;
+        [ObservableProperty]
+        private bool isTextEditing = false;
+        [ObservableProperty]
+        private string editableText = "";
+
         [ObservableProperty]
         private string _hapticName = "";
         [ObservableProperty]
@@ -30,16 +39,16 @@ namespace HapticLibrary.ViewModels
         
         private int _selectedPatternIndex = -1;
         private bool _selectedPattern = false;
+        private ReadingBook _readingBook = new();
 
 
         public HapticEditorViewModel()
         {
-            // Split and initialize words
-            var inputText = "This is a sample sentence with clickable words.\nC A M P F I R E Song.\n";
-            Words = new ObservableCollection<EditorWordViewModel>(
-                inputText.Split((char[])null, StringSplitOptions.RemoveEmptyEntries)
-                         .Select(w => new EditorWordViewModel(w))
-            );
+            if (_readingBook != null)
+            {
+                _readingBook.LoadBook("Assets/PropSampleBook.json");    //TODO: Create page to select what to load.
+                PopulateWordsPanel();                                     // Split and initialize words
+            }
         }
 
         [RelayCommand]
@@ -71,14 +80,79 @@ namespace HapticLibrary.ViewModels
         }
 
         [RelayCommand]
-        public void SelectWord(EditorWordViewModel word)
+        public void SelectWord(EditorWordViewModel editorWord)
         {
-            int index = words.IndexOf(word);
+            //TODO: add haptic to the word in _readingBook, then populate to view
+            //TODO: Need a way to visually convey multiple effects on a word.
+            int index = words.IndexOf(editorWord);
             if (_selectedPattern)
             {
-                word.HapticPattern = Patterns[_selectedPatternIndex];
-                Words[index] = word;
+                string word = editorWord.Word;
+                Dictionary<string, HapticEffect> effect = _readingBook.GetHaptics();
+                //if (!effect.ContainsKey(word))
+                //{
+                effect[word] = new HapticEffect();  //TODO: Support multiple effect per word. Don't recreate everytime.
+                effect[word].Props = new List<DotPropsJson>();
+                //}
+                DotPropsJson dotJson = Patterns[_selectedPatternIndex].ConvertToJson();
+                effect[word].Props.Add(dotJson);
+
+                PopulateWordsPanel();
             }
+        }
+
+        [RelayCommand]
+        public void NextPage()
+        {
+            _readingBook.NextPage();
+            PopulateWordsPanel();
+        }
+
+        [RelayCommand]
+        public void PrevPage()
+        {
+            _readingBook.PreviousPage();
+            PopulateWordsPanel();
+
+            //TODO: need to process haptics assigned.
+        }
+
+        private void PopulateWordsPanel()
+        {
+            Words = new ObservableCollection<EditorWordViewModel>(
+                    _readingBook.GetText().Split((char[])null, StringSplitOptions.RemoveEmptyEntries)
+                             .Select(w => new EditorWordViewModel(w))
+                );
+            Dictionary<string, HapticEffect> triggerWords = _readingBook.GetHaptics();
+            foreach (var editorWord in Words)
+            {
+                if (triggerWords.ContainsKey(editorWord.Word))
+                {
+                    editorWord.HapticPattern = new HapticPattern(triggerWords[editorWord.Word].Props[0]);
+                }
+            }
+            EditableText = _readingBook.GetText();
+        }
+
+        [RelayCommand]
+        private void SaveText()
+        {
+            _readingBook.SetText(EditableText);
+            _readingBook.SetHaptics(new Dictionary<string, HapticEffect>());
+            PopulateWordsPanel();
+        }
+
+        [RelayCommand]
+        private void EnablePatternEditing()
+        {
+            IsPatternEditing = true;
+            IsTextEditing = false;
+        }
+        [RelayCommand]
+        private void EnableTextEditing()
+        {
+            IsTextEditing = true;
+            IsPatternEditing = false;
         }
     }
 }

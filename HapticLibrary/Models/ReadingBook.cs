@@ -19,7 +19,8 @@ namespace HapticLibrary.Models
     public class ReadingPage
     {
         public string Text { get; set; }
-        public Dictionary<string, HapticEffect> HapticTriggers { get; set; }       //Should this store dotProps or dotPropsJson? Shouldn't matter, Props is probably more correct, json is probably easier maybe??
+        public Dictionary<string, HapticEffect> HapticTriggers { get; set; }       //NOTE: Should this store dotProps or dotPropsJson? Shouldn't matter, Props is probably more correct, json is probably easier maybe??
+                                                                                   //TODO: This should probably be stored alongside the "word" in the text instead of a dictionary.
         public ReadingPage(string Text, Dictionary<string, HapticEffect> HapticTriggers)
         {
             this.Text = Text;
@@ -39,7 +40,7 @@ namespace HapticLibrary.Models
          */
         
 
-        private ReadingPage[]? pages;
+        private List<ReadingPage> pages = new();
         private int _pageIndex = 0;
         public int PageIndex { get { return _pageIndex; } }
 
@@ -57,7 +58,7 @@ namespace HapticLibrary.Models
             // Parse the JSON into a JsonDocument
             using JsonDocument doc = JsonDocument.Parse(jsonString);
             ReadingBookJson readingBookJson = JsonSerializer.Deserialize<ReadingBookJson>(doc);
-            pages = readingBookJson.Pages;
+            pages = new List<ReadingPage>(readingBookJson.Pages);
             _pageIndex = 0;
         }
 
@@ -66,14 +67,24 @@ namespace HapticLibrary.Models
             return pages[_pageIndex].Text;
         }
 
+        public void SetText(string text)
+        {
+            pages[_pageIndex].Text = text;
+        }
+
         public Dictionary<string, HapticEffect> GetHaptics()
         {
             return pages[_pageIndex].HapticTriggers;
         }
 
+        public void SetHaptics(Dictionary<string, HapticEffect> hapticTriggers)
+        {
+            pages[_pageIndex].HapticTriggers = hapticTriggers;
+        }
+
         public int GetLength()
         {
-            return (pages != null) ? pages.Length : 0;
+            return (pages != null) ? pages.Count : 0;
         }
 
         public void NextPage()

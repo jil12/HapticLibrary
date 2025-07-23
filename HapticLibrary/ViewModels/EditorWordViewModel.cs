@@ -16,6 +16,12 @@ namespace HapticLibrary.ViewModels
             Word = word;
             HapticPattern = null;
         }
+
+        public EditorWordViewModel(string word, HapticPattern hapticPattern)
+        {
+            Word = word;
+            HapticPattern = hapticPattern;
+        }
     }
 
 }
