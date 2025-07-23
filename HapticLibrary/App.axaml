@@ -30,8 +30,8 @@
 		<DataTemplate DataType="{x:Type vm:ReadingPageViewModel}">
 			<views:ReadingPageView />
 		</DataTemplate>
-		<DataTemplate DataType="{x:Type vm:SettingsPageViewModel}">
-			<views:SettingsPageView />
+		<DataTemplate DataType="{x:Type vm:HapticEditorViewModel}">
+			<views:HapticEditorView />
 		</DataTemplate>
 		<DataTemplate DataType="{x:Type vm:NavigationBarViewModel}">
 			<views:NavigationBarView />

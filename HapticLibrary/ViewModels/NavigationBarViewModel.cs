@@ -71,7 +71,7 @@ namespace HapticLibrary.ViewModels
         private bool _isReadingSelected = false;
 
         [ObservableProperty]
-        private bool _isSettingsSelected = false;
+        private bool _isEditorSelected = false;
 
         /// <summary>
         /// Creates an instance of a NavigationBar
@@ -91,7 +91,7 @@ namespace HapticLibrary.ViewModels
         {
             IsLibrarySelected = true;
             IsReadingSelected = false;
-            IsSettingsSelected = false;
+            IsEditorSelected = false;
             _main.ShowLibraryPage();
         }
 
@@ -104,20 +104,20 @@ namespace HapticLibrary.ViewModels
         {
             IsLibrarySelected = false;
             IsReadingSelected = true;
-            IsSettingsSelected = false;
+            IsEditorSelected = false;
             _main.ShowReadingPage();
         }
 
         /// <summary>
-        /// Command to change content of page to the settings.
+        /// Command to change content of page to the Editor.
         /// </summary>
         [RelayCommand]
-        private void NavigateToSettingsPage()
+        private void NavigateToEditorPage()
         {
             IsLibrarySelected = false;
             IsReadingSelected = false;
-            IsSettingsSelected = true;
-            _main.ShowSettingsPage();
+            IsEditorSelected = true;
+            _main.ShowEditorPage();
         }
     }
 }

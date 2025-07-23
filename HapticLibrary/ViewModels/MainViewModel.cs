@@ -32,7 +32,7 @@ public partial class MainViewModel : ViewModelBase
     public void ShowLibraryPage() => CurrentPage = new LibraryPageViewModel(NavigateToReadingWithBook);
     public void ShowReadingPage() => CurrentPage = new ReadingPageViewModel();
 
-    public void ShowSettingsPage() => CurrentPage = new SettingsPageViewModel();
+    public void ShowEditorPage() => CurrentPage = new HapticEditorViewModel();
 
     /// <summary>
     /// Navigate to reading page with a specific book
@@ -45,7 +45,7 @@ public partial class MainViewModel : ViewModelBase
         // Update navigation state
         NavigationBar.IsLibrarySelected = false;
         NavigationBar.IsReadingSelected = true;
-        NavigationBar.IsSettingsSelected = false;
+        NavigationBar.IsEditorSelected = false;
         // You can pass the bookId to ReadingPageViewModel if needed
     }
 }

@@ -64,21 +64,21 @@
 				</Button>
 				
 				<!-- Editor Button -->
-				<Button Command="{Binding NavigateToSettingsPageCommand}"
+				<Button Command="{Binding NavigateToEditorPageCommand}"
 				        Classes="nav-button">
 					<StackPanel Orientation="Vertical" Spacing="6">
 						<Border CornerRadius="12" 
 						        Width="32" 
 						        Height="32"
 						        HorizontalAlignment="Center"
-						        Background="{Binding IsSettingsSelected, Converter={x:Static vm:NavigationIconConverter.Instance}}">
+						        Background="{Binding IsEditorSelected, Converter={x:Static vm:NavigationIconConverter.Instance}}">
 							<PathIcon Data="{StaticResource icon_editor}" Width="18" Height="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 						</Border>
 						<TextBlock Text="Editor" 
 						          FontSize="18"
 						          FontWeight="Regular"
 						          HorizontalAlignment="Center"
-						          Foreground="{Binding IsSettingsSelected, Converter={x:Static vm:NavigationTextConverter.Instance}}"/>
+						          Foreground="{Binding IsEditorSelected, Converter={x:Static vm:NavigationTextConverter.Instance}}"/>
 					</StackPanel>
 				</Button>
 			</StackPanel>
