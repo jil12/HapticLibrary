@@ -165,17 +165,7 @@ namespace HapticLibrary.Models
 
         public void ProcessAudioPosition(TimeSpan currentTime)
         {
-            // Turn off all LEDs at 112.4 seconds, but keep other effects running
-            if (!_hasStoppedAt112 && currentTime >= TimeSpan.FromSeconds(112.4))
-            {
-                TurnOffAllLEDs();
-                _hasStoppedAt112 = true;
-                System.Diagnostics.Debug.WriteLine("🛑 All LEDs turned off at 112.4s");
-            }
-
-            // After 112.4s, do not trigger any further continuous haptic events (blue/gray swells)
-            bool allowLedEvents = currentTime < TimeSpan.FromSeconds(112.4);
-
+            // Remove any reference to allowLedEvents, as cutoff logic is gone
             // Check for haptic events to trigger
             foreach (var hapticEvent in _events)
             {
@@ -203,9 +193,6 @@ namespace HapticLibrary.Models
                 // Handle other events as continuous effects
                 else if (currentTime >= startTime && currentTime <= endTime)
                 {
-                    // Only allow LED events before 112.4s
-                    if (!allowLedEvents && (hapticEvent.EventName == "Event5_GreyFaces" || hapticEvent.EventName == "Event6_River"))
-                        continue;
                     // Check if this is a new event that needs to start
                     if (!_activeLoops.ContainsKey(hapticEvent.EventName))
                     {

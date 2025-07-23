@@ -18,6 +18,7 @@ namespace HapticLibrary.Models
         private DotManager _dotManager;
         private DatafeelModbusClient _datafeelModbusClient;
         private bool _isStarted = false;
+        private Dictionary<int, CancellationTokenSource> _heartbeatCancellationTokens = new();
         
         public DotManager DotManager { get { return _dotManager; } }
         public bool IsStarted => _isStarted;
@@ -250,7 +251,7 @@ namespace HapticLibrary.Models
             }
         }
 
-        public async Task RunHeartBeatLoop(int address, int beatCount = 78)
+        public async Task RunHeartBeatLoop(int address, int beatCount = 76)
         {
             if (!_isStarted)
             {
@@ -265,8 +266,19 @@ namespace HapticLibrary.Models
                     // Setup heartbeat sequence first
                     await StartHeartBeat(address);
 
+                    // Setup cancellation
+                    if (_heartbeatCancellationTokens.ContainsKey(address))
+                    {
+                        _heartbeatCancellationTokens[address].Cancel();
+                        _heartbeatCancellationTokens.Remove(address);
+                    }
+                    var cts = new CancellationTokenSource();
+                    _heartbeatCancellationTokens[address] = cts;
+                    var token = cts.Token;
+
                     for (int i = 0; i < beatCount; i++)
                     {
+                        if (token.IsCancellationRequested) break;
                         dot.VibrationGo = false;
                         for (byte brightness = 241; brightness > 20; brightness -= 20)
                         {
@@ -277,11 +289,22 @@ namespace HapticLibrary.Models
                         await dot.Write();
                         await Task.Delay(500);
                     }
+                    // Remove token after loop
+                    _heartbeatCancellationTokens.Remove(address);
                 }
             }
             catch
             {
                 // Silent error handling
+            }
+        }
+
+        public void CancelHeartBeat(int address)
+        {
+            if (_heartbeatCancellationTokens.TryGetValue(address, out var cts))
+            {
+                cts.Cancel();
+                _heartbeatCancellationTokens.Remove(address);
             }
         }
     }

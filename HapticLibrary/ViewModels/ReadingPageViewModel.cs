@@ -118,8 +118,6 @@ namespace HapticLibrary.ViewModels
         [ObservableProperty]
         private string _debugOutput = "Debug: Ready...";
         
-        private bool _ledsShouldBeOff = false;
-        
         private void UpdateDebugOutput(string message)
         {
             var timestamp = DateTime.Now.ToString("HH:mm:ss");
@@ -484,59 +482,76 @@ namespace HapticLibrary.ViewModels
                 UpdateDebugOutput($"🔢 {countNumber}!");
                 System.Diagnostics.Debug.WriteLine($"Executing counting effect: {countNumber}");
 
-                // Use the same pattern as HapticManager methods
-                var dot = _hapticManager.DotManager.Dots.FirstOrDefault(d => d.Address == 1);
-                if (dot != null)
+                var dotWrist = _hapticManager.DotManager.Dots.FirstOrDefault(d => d.Address == 1);
+                var dotChest = _hapticManager.DotManager.Dots.FirstOrDefault(d => d.Address == 2);
+                if (dotWrist != null)
                 {
-                    // Set LED Red like original code
-                    dot.LedMode = LedModes.GlobalManual;
-                    dot.GlobalLed.Red = 255;
-                    dot.GlobalLed.Green = 0;
-                    dot.GlobalLed.Blue = 0;
+                    dotWrist.LedMode = LedModes.GlobalManual;
+                    dotWrist.GlobalLed.Red = 255;
+                    dotWrist.GlobalLed.Green = 0;
+                    dotWrist.GlobalLed.Blue = 0;
 
-                    // Set vibration like original code
-                    dot.VibrationMode = VibrationModes.Library;
-                    dot.VibrationSequence[0].Waveforms = VibrationWaveforms.StrongClick1P100;
-                    dot.VibrationSequence[1].Waveforms = VibrationWaveforms.EndSequence;
-                    dot.VibrationGo = true;
+                    dotWrist.VibrationMode = VibrationModes.Library;
+                    dotWrist.VibrationSequence[0].Waveforms = VibrationWaveforms.StrongClick1P100;
+                    dotWrist.VibrationSequence[1].Waveforms = VibrationWaveforms.EndSequence;
+                    dotWrist.VibrationGo = true;
 
                     try
                     {
-                        // Write to hardware
-                        await dot.Write();
+                        await dotWrist.Write();
                     }
                     catch (Exception e)
                     {
                         System.Diagnostics.Debug.WriteLine($"Error writing to dot: {e.Message}");
                     }
+                }
+                if (eventName == "EventCounting_Ten" && dotChest != null)
+                {
+                    // Stop heartbeat and set chest LED to red
+                    _hapticManager.CancelHeartBeat(2);
+                    dotChest.LedMode = LedModes.GlobalManual;
+                    dotChest.GlobalLed.Red = 255;
+                    dotChest.GlobalLed.Green = 0;
+                    dotChest.GlobalLed.Blue = 0;
+                    dotChest.VibrationGo = false; // Stop heartbeat
+                    await dotChest.Write();
+                }
 
-                    // Wait for the 1000ms duration like original code
-                    await Task.Delay(1000);
-
-                    // Reset the dot after the duration (like resetDots() in original)
-                    try
-                    {
-                        // Reset LED to off
-                        dot.LedMode = LedModes.GlobalManual;
-                        dot.GlobalLed.Red = 0;
-                        dot.GlobalLed.Green = 0;
-                        dot.GlobalLed.Blue = 0;
-
-                        // Stop vibration
-                        dot.VibrationGo = false;
-                        dot.VibrationMode = VibrationModes.Library;
-                        dot.VibrationSequence[0].Waveforms = VibrationWaveforms.EndSequence;
-
-                        await dot.Write();
-                    }
-                    catch (Exception e)
-                    {
-                        System.Diagnostics.Debug.WriteLine($"Error resetting dot: {e.Message}");
-                    }
+                // Wait for a longer duration if this is 'Ten', else normal
+                if (eventName == "EventCounting_Ten")
+                {
+                    await Task.Delay(2000); // 2 seconds for ten
                 }
                 else
                 {
-                    System.Diagnostics.Debug.WriteLine("⚠️ Dot 1 (wrists) not found");
+                    await Task.Delay(1000); // 1 second for others
+                }
+
+                // Reset the dots after the duration
+                if (dotWrist != null)
+                {
+                    dotWrist.LedMode = LedModes.GlobalManual;
+                    dotWrist.GlobalLed.Red = 0;
+                    dotWrist.GlobalLed.Green = 0;
+                    dotWrist.GlobalLed.Blue = 0;
+
+                    dotWrist.VibrationGo = false;
+                    dotWrist.VibrationMode = VibrationModes.Library;
+                    dotWrist.VibrationSequence[0].Waveforms = VibrationWaveforms.EndSequence;
+
+                    await dotWrist.Write();
+                }
+                if (eventName == "EventCounting_Ten" && dotChest != null)
+                {
+                    dotChest.LedMode = LedModes.GlobalManual;
+                    dotChest.GlobalLed.Red = 0;
+                    dotChest.GlobalLed.Green = 0;
+                    dotChest.GlobalLed.Blue = 0;
+                    await dotChest.Write();
+                }
+                else if (dotChest != null)
+                {
+                    // For other numbers, do not affect chest LED
                 }
             }
             catch (Exception ex)
@@ -573,10 +588,8 @@ namespace HapticLibrary.ViewModels
                 System.Diagnostics.Debug.WriteLine("🌫️ Starting Gray Swell UP (20→100)");
                 for (byte brightness = 20; brightness <= 100; brightness += 2)
                 {
-                    if (!_isGraySwellingInProgress || _ledsShouldBeOff) break;
                     foreach (var dot in _hapticManager.DotManager.Dots)
                     {
-                        if (_ledsShouldBeOff) break;
                         dot.LedMode = LedModes.GlobalManual;
                         dot.GlobalLed.Red = brightness;
                         dot.GlobalLed.Green = brightness;
@@ -590,10 +603,8 @@ namespace HapticLibrary.ViewModels
                 System.Diagnostics.Debug.WriteLine("🌫️ Starting Gray Swell DOWN (100→20)");
                 for (byte brightness = 100; brightness > 20; brightness -= 2)
                 {
-                    if (!_isGraySwellingInProgress || _ledsShouldBeOff) break;
                     foreach (var dot in _hapticManager.DotManager.Dots)
                     {
-                        if (_ledsShouldBeOff) break;
                         dot.LedMode = LedModes.GlobalManual;
                         dot.GlobalLed.Red = brightness;
                         dot.GlobalLed.Green = brightness;
@@ -657,10 +668,8 @@ namespace HapticLibrary.ViewModels
                 System.Diagnostics.Debug.WriteLine("🌊 Starting Blue Swell UP (20→100)");
                 for (byte brightness = 20; brightness <= 100; brightness += 2)
                 {
-                    if (!_isBlueSwellingInProgress || _ledsShouldBeOff) break;
                     foreach (var dot in _hapticManager.DotManager.Dots)
                     {
-                        if (_ledsShouldBeOff) break;
                         dot.LedMode = LedModes.GlobalManual;
                         dot.GlobalLed.Red = 0; // Pure blue, no red
                         dot.GlobalLed.Green = 0; // Pure blue, no green
@@ -674,10 +683,8 @@ namespace HapticLibrary.ViewModels
                 System.Diagnostics.Debug.WriteLine("🌊 Starting Blue Swell DOWN (100→20)");
                 for (byte brightness = 100; brightness > 20; brightness -= 1)
                 {
-                    if (!_isBlueSwellingInProgress || _ledsShouldBeOff) break;
                     foreach (var dot in _hapticManager.DotManager.Dots)
                     {
-                        if (_ledsShouldBeOff) break;
                         dot.LedMode = LedModes.GlobalManual;
                         dot.GlobalLed.Red = 0; // Pure blue, no red
                         dot.GlobalLed.Green = 0; // Pure blue, no green
@@ -1013,7 +1020,6 @@ namespace HapticLibrary.ViewModels
                 // Reset swelling operation locks to prevent them getting stuck
                 _isGraySwellingInProgress = false;
                 _isBlueSwellingInProgress = false;
-                _ledsShouldBeOff = false;
                 System.Diagnostics.Debug.WriteLine("🔄 Reset swelling operation locks");
                 
                 System.Diagnostics.Debug.WriteLine("--- Haptic sequence stopped and reset ---");
@@ -1074,7 +1080,6 @@ namespace HapticLibrary.ViewModels
                 // Reset haptic sequencer and stop all effects
                 _isExplicitlyStopped = true; // Set flag to stop any running effects
                 StopHapticSequence();
-                _ledsShouldBeOff = false;
                 
                 // Clear all triggered events so they can be triggered again
                 _triggeredEvents.Clear();
@@ -1120,7 +1125,6 @@ namespace HapticLibrary.ViewModels
                 // Reset swelling operation locks when seeking to prevent stuck locks
                 _isGraySwellingInProgress = false;
                 _isBlueSwellingInProgress = false;
-                _ledsShouldBeOff = false;
                 
                 System.Diagnostics.Debug.WriteLine($"Reset triggered events and swelling locks after seeking to {position}");
             }
