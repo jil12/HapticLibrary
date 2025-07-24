@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:vm="using:HapticLibrary.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+			 x:DataType="vm:SettingsPageViewModel"
              x:Class="HapticLibrary.Views.SettingsPageView">
 	<StackPanel>
 		<TextBlock Text="This is the Settings Page" />
@@ -12,5 +13,8 @@
 			   Height="120"
 			   HorizontalAlignment="Left"
 			   Margin="20, 0, 0, 0"/>
+		<Button Command="{Binding TempButton}">
+			This is a temporary button for testing.
+		</Button>
 	</StackPanel>
 </UserControl>
