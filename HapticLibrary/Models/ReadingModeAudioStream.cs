@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Net.WebSockets;
 using System.Text;
@@ -227,4 +227,4 @@ namespace HapticLibrary.Models
             _recording = !_recording;
         }
     }
-}
+} 

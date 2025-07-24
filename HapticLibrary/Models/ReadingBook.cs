@@ -6,25 +6,26 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using static HapticLibrary.Models.ReadingBook;
 
 namespace HapticLibrary.Models
 {
     public class ReadingBookJson
     {
-        public string Name { get; set; }
-        public ReadingPage[] Pages { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public ReadingPage[] Pages { get; set; } = Array.Empty<ReadingPage>();
     }
 
+    /**
+     * Represents a page contents in a haptic reading book.
+     */
     public class ReadingPage
     {
-        public string Text { get; set; }
-        public Dictionary<string, HapticEffect> HapticTriggers { get; set; }       //NOTE: Should this store dotProps or dotPropsJson? Shouldn't matter, Props is probably more correct, json is probably easier maybe??
-                                                                                   //TODO: This should probably be stored alongside the "word" in the text instead of a dictionary.
-        public ReadingPage(string Text, Dictionary<string, HapticEffect> HapticTriggers)
+        public string Text { get; set; } = string.Empty;
+        public Dictionary<string, HapticEffect> HapticTriggers { get; set; } = new Dictionary<string, HapticEffect>();
+        public ReadingPage(string text, Dictionary<string, HapticEffect> hapticTriggers)
         {
-            this.Text = Text;
-            this.HapticTriggers = HapticTriggers;
+            this.Text = text;
+            this.HapticTriggers = hapticTriggers;
         }
     }
 
@@ -42,11 +43,13 @@ namespace HapticLibrary.Models
 
         private List<ReadingPage> pages = new();
         private int _pageIndex = 0;
+        private string _bookName = string.Empty;
+        
         public int PageIndex { get { return _pageIndex; } }
+        public string BookName { get { return _bookName; } }
 
         public ReadingBook()
         {
-            pages = null;
         }
 
         public void LoadBook(string bookName) //TODO: ID or name?
@@ -64,6 +67,8 @@ namespace HapticLibrary.Models
 
         public string GetText()
         {
+            if (pages.Count == 0 || _pageIndex >= pages.Count)
+                return "No content available";
             return pages[_pageIndex].Text;
         }
 
@@ -74,6 +79,8 @@ namespace HapticLibrary.Models
 
         public Dictionary<string, HapticEffect> GetHaptics()
         {
+            if (pages.Count == 0 || _pageIndex >= pages.Count)
+                return new Dictionary<string, HapticEffect>();
             return pages[_pageIndex].HapticTriggers;
         }
 
@@ -112,7 +119,7 @@ namespace HapticLibrary.Models
 
     public class HapticEffect
     {
-        public List<DotPropsJson> Props { get; set; }
+        public List<DotPropsJson> Props { get; set; } = new List<DotPropsJson>();
         //TODO: Add support for haptic patterns.
     }
 }

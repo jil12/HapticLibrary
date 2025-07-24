@@ -11,11 +11,23 @@
   </ItemGroup>
   
   <ItemGroup>
+    <AvaloniaResource Remove="Assets\F451 Script Pt 2.wav" />
+    <AvaloniaResource Remove="Assets\F451_BookPages.json" />
+    <AvaloniaResource Remove="Assets\F451_HapticSequence.json" />
     <AvaloniaResource Remove="Assets\PropSampleBook.json" />
     <AvaloniaResource Remove="Assets\PropSampleBookTextOnly.json" />
   </ItemGroup>
   
   <ItemGroup>
+    <Content Include="Assets\F451 Script Pt 2.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\F451_BookPages.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\F451_HapticSequence.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Assets\PropSampleBookTextOnly.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -42,5 +54,18 @@
     <PackageReference Include="Datafeel.NET.BLE" />
     <PackageReference Include="Datafeel.NET.Serial" />
     <PackageReference Include="NAudio" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Views\ATHStoreWindow.axaml.cs">
+      <DependentUpon>ATHStoreWindow.axaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Assets\F451_BookPages.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+
   </ItemGroup>
 </Project>

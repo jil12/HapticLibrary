@@ -6,10 +6,98 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="HapticLibrary.Views.NavigationBarView"
 			 x:DataType="vm:NavigationBarViewModel">
-	<StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" VerticalAlignment="Center">
-		<Button Content="Library" Command="{Binding NavigateToLibraryPageCommand}" />
-		<Button Content="Editor" Command="{Binding NavigateToEditorPageCommand}" />
-		<Button Content="Reading" Command="{Binding NavigateToReadingPageCommand}" />
-		<Button Content="Settings" Command="{Binding NavigateToSettingsPageCommand}" />
-	</StackPanel>
+	
+	<Border Background="White" 
+	        BorderBrush="#F0F0F0" 
+	        BorderThickness="0,1,0,0" 
+	        Padding="20,12,20,12">
+		
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*"/>
+				<ColumnDefinition Width="Auto"/>
+				<ColumnDefinition Width="*"/>
+			</Grid.ColumnDefinitions>
+			
+			<!-- Centered Navigation Buttons Container -->
+			<StackPanel Grid.Column="1" 
+			           Orientation="Horizontal" 
+			           Spacing="80"
+			           HorizontalAlignment="Center">
+				
+				<!-- Library Button -->
+				<Button Command="{Binding NavigateToLibraryPageCommand}"
+				        Classes="nav-button">
+					<StackPanel Orientation="Vertical" Spacing="6">
+						<Border CornerRadius="12" 
+						        Width="32" 
+						        Height="32"
+						        HorizontalAlignment="Center"
+						        Background="{Binding IsLibrarySelected, Converter={x:Static vm:NavigationIconConverter.Instance}}">
+							<PathIcon Data="{StaticResource icon_library}" Width="18" Height="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+						</Border>
+						<TextBlock Text="Library" 
+						          FontSize="18"
+						          FontWeight="Regular"
+						          HorizontalAlignment="Center"
+						          Foreground="{Binding IsLibrarySelected, Converter={x:Static vm:NavigationTextConverter.Instance}}"/>
+					</StackPanel>
+				</Button>
+				
+				<!-- Reading Button -->
+				<Button Command="{Binding NavigateToReadingPageCommand}"
+				        Classes="nav-button">
+					<StackPanel Orientation="Vertical" Spacing="6">
+						<Border CornerRadius="12" 
+						        Width="32" 
+						        Height="32"
+						        HorizontalAlignment="Center"
+						        Background="{Binding IsReadingSelected, Converter={x:Static vm:NavigationIconConverter.Instance}}">
+							<PathIcon Data="{StaticResource icon_reading}" Width="18" Height="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+						</Border>
+						<TextBlock Text="Reading" 
+						          FontSize="18"
+						          FontWeight="Regular"
+						          HorizontalAlignment="Center"
+						          Foreground="{Binding IsReadingSelected, Converter={x:Static vm:NavigationTextConverter.Instance}}"/>
+					</StackPanel>
+				</Button>
+				
+				<!-- Editor Button -->
+				<Button Command="{Binding NavigateToEditorPageCommand}"
+				        Classes="nav-button">
+					<StackPanel Orientation="Vertical" Spacing="6">
+						<Border CornerRadius="12" 
+						        Width="32" 
+						        Height="32"
+						        HorizontalAlignment="Center"
+						        Background="{Binding IsEditorSelected, Converter={x:Static vm:NavigationIconConverter.Instance}}">
+							<PathIcon Data="{StaticResource icon_editor}" Width="18" Height="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+						</Border>
+						<TextBlock Text="Editor" 
+						          FontSize="18"
+						          FontWeight="Regular"
+						          HorizontalAlignment="Center"
+						          Foreground="{Binding IsEditorSelected, Converter={x:Static vm:NavigationTextConverter.Instance}}"/>
+					</StackPanel>
+				</Button>
+			</StackPanel>
+		</Grid>
+	</Border>
+	
+	<UserControl.Styles>
+		<Style Selector="Button.nav-button">
+			<Setter Property="Background" Value="Transparent"/>
+			<Setter Property="BorderThickness" Value="0"/>
+			<Setter Property="Padding" Value="12,8"/>
+			<Setter Property="HorizontalContentAlignment" Value="Center"/>
+			<Setter Property="VerticalContentAlignment" Value="Center"/>
+		</Style>
+		<Style Selector="Button.nav-button:pointerover">
+			<Setter Property="Background" Value="Transparent"/>
+		</Style>
+		<Style Selector="Button.nav-button:pressed">
+			<Setter Property="Background" Value="#F8F8F8"/>
+		</Style>
+	</UserControl.Styles>
 </UserControl>

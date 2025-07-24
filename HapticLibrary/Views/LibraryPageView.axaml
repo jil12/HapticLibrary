@@ -4,13 +4,122 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 			 xmlns:vm="using:HapticLibrary.ViewModels"
-             x:Class="HapticLibrary.Views.LibraryPageView">
-	<StackPanel>
-		<TextBlock Text="This is the Library Page" />
-		<Image Source="avares://HapticLibrary/Assets/temp-library-image.jpg" 
-			   Width="120" 
-			   Height="120" 
-			   HorizontalAlignment="Left" 
-			   Margin="20, 0, 0, 0"/>
-	</StackPanel>
+             x:Class="HapticLibrary.Views.LibraryPageView"
+             x:DataType="vm:LibraryPageViewModel">
+
+	<ScrollViewer VerticalScrollBarVisibility="Auto"
+	              HorizontalAlignment="Stretch"
+	              VerticalAlignment="Stretch">
+		<StackPanel Margin="20" Spacing="20">
+			<!-- Header -->
+			<StackPanel Spacing="8">
+				<TextBlock Text="My Library" 
+				          FontSize="32" 
+				          FontWeight="SemiBold" 
+				          Foreground="#1D1D1F"/>
+			</StackPanel>
+
+			<!-- Books Grid -->
+			<ItemsControl ItemsSource="{Binding Books}">
+				<ItemsControl.ItemsPanel>
+					<ItemsPanelTemplate>
+						<UniformGrid Columns="3" />
+					</ItemsPanelTemplate>
+				</ItemsControl.ItemsPanel>
+				
+				<ItemsControl.ItemTemplate>
+					<DataTemplate>
+						<Button Background="Transparent"
+						        BorderThickness="0"
+						        Padding="12"
+						        Command="{Binding ClickCommand}"
+						        HorizontalContentAlignment="Stretch"
+						        VerticalContentAlignment="Stretch"
+						        Cursor="Hand"
+						        x:Name="BookButton">
+							<Button.Styles>
+								<Style Selector="Button:pointerover Border">
+									<Setter Property="RenderTransform" Value="scale(1.02)"/>
+								</Style>
+							</Button.Styles>
+							
+							<Border Background="White" 
+							        CornerRadius="16" 
+							        BoxShadow="0 2 12 0 #08000000"
+							        ClipToBounds="True"
+							        Width="280"
+							        Height="360"
+							        HorizontalAlignment="Center"
+							        VerticalAlignment="Top">
+								
+								<Grid>
+									<!-- Colored Left Border - Now properly contained -->
+									<Border Width="4" 
+									        HorizontalAlignment="Left"
+									        VerticalAlignment="Stretch"
+									        Margin="0,0,0,0"
+									        Background="{Binding IsSelected, Converter={x:Static vm:BookColorConverter.Instance}}"/>
+									
+									<!-- Content -->
+									<StackPanel Margin="20,24,20,24" 
+									           Spacing="16" 
+									           HorizontalAlignment="Center"
+									           VerticalAlignment="Top">
+										<!-- Book Cover -->
+										<Border CornerRadius="8" 
+										        ClipToBounds="True" 
+										        Width="168" 
+										        Height="240"
+										        HorizontalAlignment="Center"
+										        BoxShadow="0 2 8 0 #15000000"
+										        Background="#F5F5F7">
+											<Grid>
+												<!-- F451 Book Cover - Only show for F451 -->
+												<Image Source="avares://HapticLibrary/Assets/Fahrenheit_451_Cover.jpg" 
+												       Stretch="UniformToFill"
+												       HorizontalAlignment="Center"
+												       VerticalAlignment="Center"
+												       Width="168"
+												       Height="240"
+												       IsVisible="{Binding BookId, Converter={x:Static vm:F451VisibilityConverter.Instance}}"/>
+												
+												<!-- Placeholder for other books -->
+												<Border Background="#E5E5EA" CornerRadius="8" Width="140" Height="200" IsVisible="{Binding BookId, Converter={x:Static vm:PlaceholderVisibilityConverter.Instance}}">
+													<StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+														<PathIcon Data="{StaticResource icon_book_placeholder}" Width="48" Height="48" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+														<TextBlock Text="Cover" FontSize="12" Foreground="#8E8E93" HorizontalAlignment="Center"/>
+													</StackPanel>
+												</Border>
+											</Grid>
+										</Border>
+										
+										<!-- Book Info -->
+										<StackPanel Spacing="4" 
+										           HorizontalAlignment="Center"
+										           Height="80"
+										           VerticalAlignment="Top">
+											<TextBlock Text="{Binding Title}" 
+											          FontSize="18" 
+											          FontWeight="Medium" 
+											          Foreground="#1D1D1F" 
+											          TextWrapping="Wrap"
+											          TextAlignment="Center"
+											          MaxLines="2"
+											          Height="44"/>
+											
+											<TextBlock Text="{Binding Author}" 
+											          FontSize="14" 
+											          Foreground="#86868B"
+											          TextAlignment="Center"
+											          Height="20"/>
+										</StackPanel>
+									</StackPanel>
+								</Grid>
+							</Border>
+						</Button>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+		</StackPanel>
+	</ScrollViewer>
 </UserControl>

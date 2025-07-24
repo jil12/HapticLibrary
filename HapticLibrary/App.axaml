@@ -1,11 +1,25 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="using:HapticLibrary"
-			 xmlns:vm="using:HapticLibrary.ViewModels"
-			 xmlns:views="using:HapticLibrary.Views"
+             xmlns:vm="using:HapticLibrary.ViewModels"
+             xmlns:views="using:HapticLibrary.Views"
              x:Class="HapticLibrary.App"
              RequestedThemeVariant="Default">
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
+
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceInclude Source="avares://HapticLibrary/Views/Icons.axaml" />
+            </ResourceDictionary.MergedDictionaries>
+            
+            <!-- Resources removed - no longer needed for simplified ReadingPageView -->
+        </ResourceDictionary>
+    </Application.Resources>
+
+    <Application.Styles>
+        <!-- Styles removed - will handle PathIcon colors individually -->
+    </Application.Styles>
 
     <Application.DataTemplates>
         <local:ViewLocator/>
@@ -16,8 +30,8 @@
 		<DataTemplate DataType="{x:Type vm:ReadingPageViewModel}">
 			<views:ReadingPageView />
 		</DataTemplate>
-		<DataTemplate DataType="{x:Type vm:SettingsPageViewModel}">
-			<views:SettingsPageView />
+		<DataTemplate DataType="{x:Type vm:HapticEditorViewModel}">
+			<views:HapticEditorView />
 		</DataTemplate>
 		<DataTemplate DataType="{x:Type vm:NavigationBarViewModel}">
 			<views:NavigationBarView />
@@ -26,5 +40,277 @@
 
     <Application.Styles>
         <FluentTheme />
+        
+        <!-- Reading Page Styles -->
+        <Style Selector="ToggleButton.mode-btn">
+            <Setter Property="Background" Value="#F8F9FA"/>
+            <Setter Property="BorderBrush" Value="#E9ECEF"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="20"/>
+            <Setter Property="Padding" Value="16,8"/>
+            <Setter Property="Foreground" Value="#666666"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+        
+        <Style Selector="ToggleButton.mode-btn:pointerover">
+            <Setter Property="Background" Value="#E9ECEF"/>
+        </Style>
+        
+        <Style Selector="ToggleButton.mode-btn:checked">
+            <Setter Property="Background" Value="#667EEA"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#667EEA"/>
+        </Style>
+        
+        <Style Selector="Button.sidebar-toggle">
+            <Setter Property="Background" Value="#F8F9FA"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="Width" Value="48"/>
+            <Setter Property="Height" Value="48"/>
+            <Setter Property="Foreground" Value="#666666"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+        
+        <Style Selector="Button.sidebar-toggle:pointerover">
+            <Setter Property="Background" Value="#E9ECEF"/>
+        </Style>
+        
+        <Style Selector="Button.page-flip-btn">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="CornerRadius" Value="50"/>
+            <Setter Property="Width" Value="60"/>
+            <Setter Property="Height" Value="60"/>
+            <Setter Property="Foreground" Value="Transparent"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+        
+        <Style Selector="Button.page-flip-btn:pointerover">
+            <Setter Property="Background" Value="rgba(102, 126, 234, 0.1)"/>
+            <Setter Property="Foreground" Value="rgba(102, 126, 234, 0.5)"/>
+        </Style>
+        
+        <Style Selector="Button.page-flip-btn:pressed">
+            <Setter Property="Background" Value="rgba(102, 126, 234, 0.2)"/>
+            <Setter Property="Foreground" Value="rgba(102, 126, 234, 0.7)"/>
+        </Style>
+        
+        <Style Selector="Button.play-btn">
+            <Setter Property="Background" Value="#667EEA"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="CornerRadius" Value="50"/>
+            <Setter Property="Width" Value="45"/>
+            <Setter Property="Height" Value="45"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+        
+        <Style Selector="Button.play-btn:pointerover">
+            <Setter Property="Background" Value="#5A67D8"/>
+        </Style>
+        
+        <Style Selector="Button.play-btn:pressed">
+            <Setter Property="Background" Value="#4C51BF"/>
+        </Style>
+        
+        <!-- PathIcon inside play button inherits white color -->
+        <Style Selector="Button.play-btn PathIcon">
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        
+        <Style Selector="Button.control-btn">
+            <Setter Property="Background" Value="#F8F9FA"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="CornerRadius" Value="50"/>
+            <Setter Property="Width" Value="30"/>
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="Foreground" Value="#666666"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+        
+        <Style Selector="Button.control-btn:pointerover">
+            <Setter Property="Background" Value="#E9ECEF"/>
+        </Style>
+        
+        <Style Selector="Button.control-btn:pressed">
+            <Setter Property="Background" Value="#DEE2E6"/>
+        </Style>
+        
+        <!-- PathIcon inside control button inherits gray color -->
+        <Style Selector="Button.control-btn PathIcon">
+            <Setter Property="Foreground" Value="#666666"/>
+        </Style>
+        
+        <!-- Additional styles for other button types -->
+        <Style Selector="Button.sidebar-toggle PathIcon">
+            <Setter Property="Foreground" Value="#666666"/>
+        </Style>
+        
+        <Style Selector="Button.mic-btn PathIcon">
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        
+        <Style Selector="Button.stop-btn PathIcon">
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        
+        <Style Selector="Button.page-flip-btn PathIcon">
+            <Setter Property="Foreground" Value="#666666"/>
+        </Style>
+        
+        <Style Selector="Button.page-flip-btn:pointerover PathIcon">
+            <Setter Property="Foreground" Value="rgba(102, 126, 234, 0.8)"/>
+        </Style>
+        
+        <!-- Navigation button PathIcon styles -->
+        <Style Selector="Button.nav-button PathIcon">
+            <Setter Property="Foreground" Value="#666"/>
+        </Style>
+        
+        <!-- General fallback for PathIcon not inside specific button classes -->
+        <Style Selector="PathIcon">
+            <Setter Property="Foreground" Value="#8E8E93"/>
+        </Style>
+        
+        <Style Selector="ToggleButton.speed-btn">
+            <Setter Property="Background" Value="#F8F9FA"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="CornerRadius" Value="20"/>
+            <Setter Property="Padding" Value="16,8"/>
+            <Setter Property="Foreground" Value="#666666"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+        
+        <Style Selector="ToggleButton.speed-btn:pointerover">
+            <Setter Property="Background" Value="#E9ECEF"/>
+        </Style>
+        
+        <Style Selector="ToggleButton.speed-btn:checked">
+            <Setter Property="Background" Value="#667EEA"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        
+        <Style Selector="Button.mic-btn">
+            <Setter Property="Background" Value="#667EEA"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="CornerRadius" Value="50"/>
+            <Setter Property="Width" Value="45"/>
+            <Setter Property="Height" Value="45"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+        
+        <Style Selector="Button.mic-btn:pointerover">
+            <Setter Property="Background" Value="#5A67D8"/>
+        </Style>
+        
+        <Style Selector="Button.mic-btn:pressed">
+            <Setter Property="Background" Value="#FF5722"/>
+        </Style>
+        
+        <Style Selector="Button.stop-btn">
+            <Setter Property="Background" Value="#FF5722"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="CornerRadius" Value="50"/>
+            <Setter Property="Width" Value="45"/>
+            <Setter Property="Height" Value="45"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+        
+        <Style Selector="Button.stop-btn:pointerover">
+            <Setter Property="Background" Value="#E64A19"/>
+        </Style>
+        
+        <Style Selector="Button.stop-btn:pressed">
+            <Setter Property="Background" Value="#D84315"/>
+        </Style>
+        
+        <Style Selector="ToggleButton.pattern-btn">
+            <Setter Property="Background" Value="#F8F9FA"/>
+            <Setter Property="BorderBrush" Value="#E9ECEF"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="16"/>
+            <Setter Property="Padding" Value="8,4"/>
+            <Setter Property="Foreground" Value="#666666"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+        
+        <Style Selector="ToggleButton.pattern-btn:pointerover">
+            <Setter Property="Background" Value="#E9ECEF"/>
+        </Style>
+        
+        <Style Selector="ToggleButton.pattern-btn:checked">
+            <Setter Property="Background" Value="#667EEA"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#667EEA"/>
+        </Style>
+        
+        <Style Selector="ToggleButton.toggle-switch">
+            <Setter Property="Background" Value="#E9ECEF"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="CornerRadius" Value="20"/>
+            <Setter Property="Padding" Value="16,8"/>
+            <Setter Property="Foreground" Value="#666666"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+        
+        <Style Selector="ToggleButton.toggle-switch:checked">
+            <Setter Property="Background" Value="#667EEA"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        
+        <Style Selector="Button.haptic-preset-btn">
+            <Setter Property="Background" Value="#F8F9FA"/>
+            <Setter Property="BorderBrush" Value="#E9ECEF"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Width" Value="40"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+        
+        <Style Selector="Button.haptic-preset-btn:pointerover">
+            <Setter Property="Background" Value="#E9ECEF"/>
+        </Style>
+        
+        <Style Selector="Button.haptic-preset-btn:pressed">
+            <Setter Property="Background" Value="#667EEA"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        
+        <!-- Custom Progress Bar Styles -->
+        <Style Selector="ProgressBar#AudioProgressBar">
+            <Setter Property="Background" Value="#E9ECEF"/>
+            <Setter Property="Foreground" Value="#667EEA"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="CornerRadius" Value="5"/>
+            <Setter Property="Height" Value="10"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+        
+        <Style Selector="ProgressBar#AudioProgressBar:pointerover">
+            <Setter Property="Background" Value="#DEE2E6"/>
+            <Setter Property="Foreground" Value="#5A67D8"/>
+        </Style>
+        
+        <Style Selector="ProgressBar#AudioProgressBar:pressed">
+            <Setter Property="Background" Value="#CED4DA"/>
+            <Setter Property="Foreground" Value="#4C51BF"/>
+        </Style>
     </Application.Styles>
 </Application>

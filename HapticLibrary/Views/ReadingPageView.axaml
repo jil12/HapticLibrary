@@ -3,42 +3,290 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:vm="using:HapticLibrary.ViewModels"
+			 xmlns:conv="using:HapticLibrary.Converters"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 			 x:DataType="vm:ReadingPageViewModel"
              x:Class="HapticLibrary.Views.ReadingPageView">
-	<StackPanel
-		HorizontalAlignment="Center">
-		<TextBlock Text="This is the Reading Page" 
-				   HorizontalAlignment="Center"/>
-		<Image Source="avares://HapticLibrary/Assets/temp-reading-image.jpg"
-			   Width="120"
-			   Height="120"
-			   HorizontalAlignment="Center"
-			   Margin="0, 20, 0, 20"/>
-		<TextBlock Text="{Binding BookLine}"
-				   HorizontalAlignment="Center"
-				   Height="200"/>
-		<Grid>
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="*"/>
-				<ColumnDefinition Width="*"/>
-				<ColumnDefinition Width="*"/>
-			</Grid.ColumnDefinitions>
-			<Button Grid.Column="0"
-				Command="{Binding PreviousPage}">
-				Previous Page
-			</Button>
-			<Panel Grid.Column="1"
-				Width="300">
-				<Button 
-				HorizontalAlignment="Center"
-				Command="{Binding ToggleMicrophone}"
-				Content="{Binding RecordingToggleText}"/>
-				</Panel>
-			<Button Grid.Column="2"
-				Command="{Binding NextPage}">
-				Next Page
-			</Button>
-		</Grid>
-	</StackPanel>
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Reading Header -->
+        <Border Grid.Row="0" Background="White" BorderBrush="#E9ECEF" BorderThickness="0,0,0,1" Padding="30,8">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Book Info -->
+                <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding CurrentBookTitle}" FontSize="28" FontWeight="SemiBold" Foreground="#333333"/>
+                    <TextBlock Text="{Binding CurrentChapter}" FontSize="16" Foreground="#666666"/>
+                </StackPanel>
+
+                <!-- Reading Mode Toggle -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="0,0,20,0" VerticalAlignment="Center">
+                    <ToggleButton IsChecked="{Binding IsReadAloudMode, Converter={x:Static BoolConverters.Not}}" Command="{Binding SetAudioModeCommand}" Classes="mode-btn" Margin="0,0,8,0">
+                        <TextBlock Text="Audio Only" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </ToggleButton>
+                    <ToggleButton IsChecked="{Binding IsReadAloudMode}" Command="{Binding SetReadAloudModeCommand}" Classes="mode-btn" Margin="0,0,8,0">
+                        <TextBlock Text="Read Aloud" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </ToggleButton>
+                    <ToggleButton IsChecked="{Binding AutoPageFlipEnabled}" Command="{Binding ToggleAutoPageFlipCommand}" Classes="mode-btn" Margin="0,0,8,0">
+                        <TextBlock Text="Auto Pages" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </ToggleButton>
+                </StackPanel>
+
+                <!-- Sidebar Toggle Button -->
+                <Button Grid.Column="2" Command="{Binding ToggleSidebarCommand}" Classes="sidebar-toggle" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <PathIcon Data="{StaticResource icon_menu}" Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Button>
+            </Grid>
+        </Border>
+
+        <!-- Main Content Area -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Text Area -->
+            <Grid Grid.Column="0" Background="#F8F9FA">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="60"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="60"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Previous Page Button -->
+                <Button Grid.Row="0" Grid.Column="0" Classes="page-flip-btn" Command="{Binding PreviousPageCommand}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20,0,0,0">
+                    <PathIcon Data="{StaticResource icon_chevron_left}" Width="24" Height="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Button>
+
+                <!-- Centered Content -->
+                <StackPanel Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" >
+                    <!-- Page Navigation -->
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,20">
+                        <TextBlock Text="Page" FontSize="16" Foreground="#666666" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <TextBlock Text="{Binding CurrentPage}" FontSize="16" FontWeight="SemiBold" Foreground="#333333" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <TextBlock Text="of" FontSize="16" Foreground="#666666" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <TextBlock Text="{Binding TotalPages}" FontSize="16" FontWeight="SemiBold" Foreground="#333333" VerticalAlignment="Center"/>
+                    </StackPanel>
+                    <!-- Text Content -->
+                    <Border Background="White" Opacity="0.9" CornerRadius="24" Padding="30" Width="800" Height="650" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <ScrollViewer MaxHeight="650">
+                            <StackPanel>
+                                <SelectableTextBlock Name="ReadingSelectableText"
+                                                     Text="{Binding BookText}"
+                                                     FontSize="24"
+                                                     Foreground="#333333"
+                                                     TextWrapping="Wrap"
+                                                     LineHeight="36"
+                                                     SelectionBrush="#FFEB3B"
+                                                     SelectionForegroundBrush="#333"
+                                                     Margin="0"
+                                                     />
+                                
+                                <!-- Debug: Show selected text -->
+                                <Border Background="#E3F2FD" CornerRadius="8" Padding="12" Margin="0,16,0,0" IsVisible="{Binding HasTextSelected}">
+                                    <StackPanel>
+                                        <TextBlock Text="Selected Text:" FontSize="14" FontWeight="Medium" Foreground="#1976D2" Margin="0,0,0,8"/>
+                                        <TextBlock Text="{Binding SelectedText}" FontSize="16" Foreground="#333333" TextWrapping="Wrap"/>
+                                        <TextBlock Text="{Binding SelectionStart, StringFormat='Start: {0}'}" FontSize="12" Foreground="#666666" Margin="0,4,0,0"/>
+                                        <TextBlock Text="{Binding SelectionEnd, StringFormat='End: {0}'}" FontSize="12" Foreground="#666666"/>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Border>
+                </StackPanel>
+
+                <!-- Next Page Button -->
+                <Button Grid.Row="0" Grid.Column="2" Classes="page-flip-btn" Command="{Binding NextPageCommand}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,20,0">
+                    <PathIcon Data="{StaticResource icon_chevron_right}" Width="24" Height="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Button>
+            </Grid>
+
+            <!-- Sidebar (no Expander, no reserved space when hidden) -->
+            <Border Grid.Column="1" Background="#F8F9FA" BorderBrush="#E9ECEF" BorderThickness="1,0,0,0" IsVisible="{Binding SidebarOpen}">
+                <TabControl TabStripPlacement="Top" Margin="0,16,0,0">
+                    <TabItem Header="Haptic">
+                        <StackPanel Orientation="Vertical" Spacing="16" Margin="16">
+                            <TextBlock Text="Haptic Feedback" FontSize="18" FontWeight="SemiBold" Foreground="#333333"/>
+                            
+                            <!-- Haptic Hardware Status -->
+                            <StackPanel Spacing="8">
+                                <TextBlock Text="Hardware Status" FontSize="14" FontWeight="Medium" Foreground="#333333"/>
+                                
+                                <!-- Connected Status -->
+                                <Border Background="#E8F5E8" CornerRadius="4" Padding="6" IsVisible="{Binding HapticHardwareConnected}">
+                                    <TextBlock Text="✓ Connected" FontSize="12" Foreground="#388E3C" HorizontalAlignment="Center"/>
+                                </Border>
+                                
+                                <!-- Disconnected Status -->
+                                <Border Background="#FFEBEE" CornerRadius="4" Padding="6" IsVisible="{Binding HapticHardwareConnected, Converter={x:Static BoolConverters.Not}}">
+                                    <TextBlock Text="✗ Disconnected" FontSize="12" Foreground="#D32F2F" HorizontalAlignment="Center"/>
+                                </Border>
+                                
+                                <!-- Test Button -->
+                                <Button Command="{Binding TestHapticDotsCommand}" 
+                                        IsEnabled="{Binding HapticHardwareConnected}"
+                                        Classes="test-btn" 
+                                        HorizontalAlignment="Stretch">
+                                    <TextBlock Text="🧪 Test Dots" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Button>
+                            </StackPanel>
+                            
+                            <!-- Haptic Sequence Status -->
+                            <StackPanel Spacing="4" IsVisible="{Binding HapticSequenceLoaded}">
+                                <TextBlock Text="F451 Sequence" FontSize="14" FontWeight="Medium" Foreground="#333333"/>
+                                <Border Background="#E8F5E8" CornerRadius="4" Padding="6">
+                                    <TextBlock Text="✓ Loaded" FontSize="12" Foreground="#388E3C" HorizontalAlignment="Center"/>
+                                </Border>
+                                <TextBlock Text="{Binding CurrentHapticEvent}" FontSize="12" Foreground="#666666" TextWrapping="Wrap"/>
+                            </StackPanel>
+                            
+                            <!-- Debug Output -->
+                            <StackPanel Spacing="4">
+                                <TextBlock Text="Debug Output" FontSize="14" FontWeight="Medium" Foreground="#333333"/>
+                                <Border Background="#F5F5F5" CornerRadius="4" Padding="8" MaxHeight="100">
+                                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                        <TextBlock Text="{Binding DebugOutput}" FontSize="10" Foreground="#444444" TextWrapping="Wrap" FontFamily="Consolas"/>
+                                    </ScrollViewer>
+                                </Border>
+                            </StackPanel>
+                            
+                            <StackPanel Spacing="8">
+                                <TextBlock Text="Intensity" FontSize="14" FontWeight="Medium" Foreground="#333333"/>
+                                <Slider Minimum="0" Maximum="100" Value="{Binding VibrationIntensity}" />
+                            </StackPanel>
+                            <StackPanel Spacing="8">
+                                <TextBlock Text="Pattern" FontSize="14" FontWeight="Medium" Foreground="#333333"/>
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <ToggleButton Classes="pattern-btn">
+                                        <TextBlock Text="Gentle" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </ToggleButton>
+                                    <ToggleButton Classes="pattern-btn">
+                                        <TextBlock Text="Strong" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </ToggleButton>
+                                    <ToggleButton Classes="pattern-btn">
+                                        <TextBlock Text="Pulse" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </ToggleButton>
+                                </StackPanel>
+                            </StackPanel>
+                            <StackPanel Spacing="8">
+                                <TextBlock Text="Enable Haptic" FontSize="14" FontWeight="Medium" Foreground="#333333"/>
+                                <ToggleButton Classes="toggle-switch" IsChecked="{Binding VibrationEnabled}">
+                                    <TextBlock Text="On/Off" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </ToggleButton>
+                            </StackPanel>
+                        </StackPanel>
+                    </TabItem>
+                    <TabItem Header="Emotions">
+                        <StackPanel Orientation="Vertical" Spacing="16" Margin="16">
+                            <TextBlock Text="Emotional Response" FontSize="18" FontWeight="SemiBold" Foreground="#333333"/>
+                            <StackPanel Spacing="8">
+                                <TextBlock Text="Current Emotion" FontSize="14" FontWeight="Medium" Foreground="#333333"/>
+                                <Border Background="#E3F2FD" CornerRadius="8" Padding="12">
+                                    <TextBlock Text="Joyful" FontSize="16" FontWeight="Medium" Foreground="#1976D2" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                            </StackPanel>
+                            <StackPanel Spacing="8">
+                                <TextBlock Text="Emotion History" FontSize="14" FontWeight="Medium" Foreground="#333333"/>
+                                <ScrollViewer MaxHeight="200">
+                                    <StackPanel Spacing="6">
+                                        <Border Background="#F3E5F5" CornerRadius="6" Padding="8">
+                                            <TextBlock Text="Excited - 2 min ago" FontSize="12" Foreground="#7B1FA2" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <Border Background="#E8F5E8" CornerRadius="6" Padding="8">
+                                            <TextBlock Text="Calm - 5 min ago" FontSize="12" Foreground="#388E3C" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <Border Background="#FFF3E0" CornerRadius="6" Padding="8">
+                                            <TextBlock Text="Curious - 8 min ago" FontSize="12" Foreground="#F57C00" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                    </StackPanel>
+                                </ScrollViewer>
+                            </StackPanel>
+                        </StackPanel>
+                    </TabItem>
+                </TabControl>
+            </Border>
+        </Grid>
+
+        <!-- Audio Player (compact, no speed controls) -->
+        <Border Grid.Row="2" Background="White" BorderBrush="#E9ECEF" BorderThickness="0,1,0,0" Padding="30,8" IsVisible="{Binding IsReadAloudMode, Converter={x:Static BoolConverters.Not}}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <!-- Draggable Progress Bar -->
+                <ProgressBar Grid.Row="0" Grid.Column="0"
+                             Minimum="0"
+                             Maximum="{Binding TotalTime.TotalSeconds}"
+                             Value="{Binding CurrentTime.TotalSeconds}"
+                             Background="#E9ECEF"
+                             Foreground="#667EEA"
+                             ShowProgressText="False"
+                             Cursor="Hand"
+                             Name="AudioProgressBar" />
+                <!-- Time Display -->
+                <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Margin="16,0,0,0" Spacing="8" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding CurrentTime, StringFormat='{}{0:mm\\:ss}'}" FontSize="12" Foreground="#666666"/>
+                    <TextBlock Text="/" FontSize="12" Foreground="#666666"/>
+                    <TextBlock Text="{Binding TotalTime, StringFormat='{}{0:mm\\:ss}'}" FontSize="12" Foreground="#666666"/>
+                </StackPanel>
+                <!-- Audio Controls -->
+                <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center" Spacing="20" Margin="0,4,0,0">
+                    <Button Classes="control-btn" Command="{Binding SeekBackwardCommand}" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <PathIcon Data="{StaticResource icon_back}" Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Button>
+                    <Button Classes="play-btn" Command="{Binding TogglePlaybackCommand}" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <PathIcon Data="{Binding IsPlaying, Converter={x:Static conv:PlayPauseIconConverter.Instance}}" Width="24" Height="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Button>
+                    <Button Classes="control-btn" Command="{Binding SeekForwardCommand}" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <PathIcon Data="{StaticResource icon_forward}" Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Button>
+                    <Button Classes="control-btn" Command="{Binding ResetAudioCommand}" HorizontalAlignment="Center" VerticalAlignment="Center" ToolTip.Tip="Reset to beginning">
+                        <PathIcon Data="{StaticResource icon_stop}" Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Read Aloud Controls -->
+        <Border Grid.Row="2" Background="White" BorderBrush="#E9ECEF" BorderThickness="0,1,0,0" Padding="30,8" IsVisible="{Binding IsReadAloudMode}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <!-- Recording Status -->
+                <TextBlock Grid.Row="0" Text="{Binding RecordingStatus}" FontSize="16" Foreground="#666666" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,8"/>
+                <!-- Recording Controls -->
+                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Spacing="30" Margin="0,4,0,0">
+                    <Button Classes="mic-btn" Command="{Binding ToggleMicrophoneCommand}" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <PathIcon Data="{StaticResource icon_mic}" Width="24" Height="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Button>
+                    <Button Classes="stop-btn" Command="{Binding StopRecordingCommand}" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <PathIcon Data="{StaticResource icon_stop}" Width="24" Height="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
 </UserControl>
