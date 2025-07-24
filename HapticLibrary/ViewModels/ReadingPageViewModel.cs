@@ -140,8 +140,8 @@ namespace HapticLibrary.ViewModels
         {
             try
             {
-                            // Load F451 content from F451_BookPages.json
-            _readingBook.LoadBook("Assets/F451_BookPages.json");
+                // Load F451 content from F451_BookPages.json
+                _readingBook.LoadBook("Assets/F451_BookPages.json");
                 UpdatePageContent();
                 TotalPages = _readingBook.GetLength();
                 CurrentPage = 1;
