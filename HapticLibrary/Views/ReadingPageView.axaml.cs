@@ -16,7 +16,6 @@ namespace HapticLibrary.Views
         public ReadingPageView()
         {
             InitializeComponent();
-            DataContext = new HapticLibrary.ViewModels.ReadingPageViewModel();
             SetupProgressBarDrag();
             SetupTextSelection();
         }

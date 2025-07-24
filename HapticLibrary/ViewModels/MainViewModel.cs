@@ -35,17 +35,17 @@ public partial class MainViewModel : ViewModelBase
     public void ShowEditorPage() => CurrentPage = new HapticEditorViewModel();
 
     /// <summary>
-    /// Navigate to reading page with a specific book
+    /// Navigate to reading page with a specific book and reading mode
     /// </summary>
     /// <param name="bookId">The ID of the book to open</param>
-    private void NavigateToReadingWithBook(string bookId)
+    /// <param name="readingMode">The reading mode ("audio" or "read-aloud")</param>
+    private void NavigateToReadingWithBook(string bookId, string readingMode)
     {
-        // Load the specific book and navigate to reading page
-        ShowReadingPage();
+        // Load the specific book and navigate to reading page with the specified mode
+        CurrentPage = new ReadingPageViewModel(bookId, readingMode);
         // Update navigation state
         NavigationBar.IsLibrarySelected = false;
         NavigationBar.IsReadingSelected = true;
         NavigationBar.IsEditorSelected = false;
-        // You can pass the bookId to ReadingPageViewModel if needed
     }
 }

@@ -127,31 +127,60 @@ namespace HapticLibrary.ViewModels
             System.Diagnostics.Debug.WriteLine(message);
         }
 
-        public ReadingPageViewModel()
+        public ReadingPageViewModel(string? bookId = null, string? readingMode = null)
         {
-            LoadBookContent();
+            // Set reading mode based on parameter
+            if (readingMode == "read-aloud")
+            {
+                _isReadAloudMode = true;
+                _readingMode = "read-aloud";
+            }
+            else
+            {
+                _isReadAloudMode = false;
+                _readingMode = "audio";
+            }
+
+            LoadBookContent(bookId);
             InitializeAudioStream();
             InitializeAudio();
             InitializeHapticSequence();
             InitializeHapticHardware();
         }
 
-        private void LoadBookContent()
+        private void LoadBookContent(string? bookId = null)
         {
             try
             {
-                            // Load F451 content from F451_BookPages.json
-            _readingBook.LoadBook("Assets/F451_BookPages.json");
+                string bookFile;
+                string chapterName;
+                
+                // Determine which book to load based on bookId
+                switch (bookId)
+                {
+                    case "LORAX":
+                        bookFile = "Assets/TheLorax_BookPages.json";
+                        chapterName = "Chapter: The Truffula Trees";
+                        break;
+                    case "F451":
+                    default:
+                        // Default to F451
+                        bookFile = "Assets/F451_BookPages.json";
+                        chapterName = "Chapter: The Chase";
+                        break;
+                }
+                
+                _readingBook.LoadBook(bookFile);
                 UpdatePageContent();
                 TotalPages = _readingBook.GetLength();
                 CurrentPage = 1;
                 CurrentBookTitle = _readingBook.BookName;
-                CurrentChapter = "Chapter: The Chase";
+                CurrentChapter = chapterName;
             }
             catch (Exception ex)
             {
                 // Use default content if loading fails
-                BookText = "Error loading F451 content: " + ex.Message;
+                BookText = "Error loading book content: " + ex.Message;
                 TotalPages = 1;
                 CurrentPage = 1;
                 CurrentBookTitle = "Error Loading Book";

@@ -16,6 +16,7 @@
     <AvaloniaResource Remove="Assets\F451_HapticSequence.json" />
     <AvaloniaResource Remove="Assets\PropSampleBook.json" />
     <AvaloniaResource Remove="Assets\PropSampleBookTextOnly.json" />
+    <AvaloniaResource Remove="Assets\TheLorax_BookPages.json" />
   </ItemGroup>
   
   <ItemGroup>
@@ -32,6 +33,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Assets\PropSampleBook.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\TheLorax_BookPages.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

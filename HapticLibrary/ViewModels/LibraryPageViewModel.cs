@@ -19,6 +19,7 @@ namespace HapticLibrary.ViewModels
         public string CoverImagePath { get; set; } = string.Empty;
         public string BookId { get; set; } = string.Empty;
         public bool IsSelected { get; set; } = false;
+        public string ReadingMode { get; set; } = "audio"; // "audio" or "read-aloud"
         public ICommand? ClickCommand { get; set; }
     }
 
@@ -58,13 +59,28 @@ namespace HapticLibrary.ViewModels
         }
     }
 
+    public class LoraxVisibilityConverter : IValueConverter
+    {
+        public static readonly LoraxVisibilityConverter Instance = new();
+
+        public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            return value?.ToString() == "LORAX";
+        }
+
+        public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class PlaceholderVisibilityConverter : IValueConverter
     {
         public static readonly PlaceholderVisibilityConverter Instance = new();
 
         public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
-            return value?.ToString() != "F451";
+            return value?.ToString() != "F451" && value?.ToString() != "LORAX";
         }
 
         public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
@@ -75,15 +91,16 @@ namespace HapticLibrary.ViewModels
 
     public class LibraryPageViewModel : ViewModelBase, IPageViewModel
     {
-        private readonly Action<string>? _navigateToReading;
+        private readonly Action<string, string>? _navigateToReading; // bookId, readingMode
 
-        public ObservableCollection<LibraryBookItem> Books { get; }
+        public ObservableCollection<LibraryBookItem> AudioOnlyBooks { get; }
+        public ObservableCollection<LibraryBookItem> ReadAloudBooks { get; }
 
-        public LibraryPageViewModel(Action<string>? navigateToReading = null)
+        public LibraryPageViewModel(Action<string, string>? navigateToReading = null)
         {
             _navigateToReading = navigateToReading;
             
-            Books = new ObservableCollection<LibraryBookItem>
+            AudioOnlyBooks = new ObservableCollection<LibraryBookItem>
             {
                 new LibraryBookItem
                 {
@@ -91,51 +108,31 @@ namespace HapticLibrary.ViewModels
                     Author = "Ray Bradbury",
                     CoverImagePath = "avares://HapticLibrary/Assets/Fahrenheit_451_Cover.jpg",
                     BookId = "F451",
-                    IsSelected = true, // Set as selected for demo
-                    ClickCommand = new RelayCommand(() => OpenBook("F451"))
-                },
+                    ReadingMode = "audio",
+                    IsSelected = false,
+                    ClickCommand = new RelayCommand(() => OpenBook("F451", "audio"))
+                }
+            };
+
+            ReadAloudBooks = new ObservableCollection<LibraryBookItem>
+            {
                 new LibraryBookItem
                 {
-                    Title = "1984",
-                    Author = "George Orwell",
-                    CoverImagePath = "", // No HTTP URL - will show placeholder
-                    BookId = "1984",
+                    Title = "The Lorax",
+                    Author = "Dr. Seuss",
+                    CoverImagePath = "avares://HapticLibrary/Assets/TheLoraxCover.jpg",
+                    BookId = "LORAX",
+                    ReadingMode = "read-aloud",
                     IsSelected = false,
-                    ClickCommand = new RelayCommand(() => OpenBook("1984"))
-                },
-                new LibraryBookItem
-                {
-                    Title = "The Great Gatsby",
-                    Author = "F. Scott Fitzgerald",
-                    CoverImagePath = "", // No HTTP URL - will show placeholder
-                    BookId = "GATSBY",
-                    IsSelected = false,
-                    ClickCommand = new RelayCommand(() => OpenBook("GATSBY"))
-                },
-                new LibraryBookItem
-                {
-                    Title = "To Kill a Mockingbird",
-                    Author = "Harper Lee",
-                    CoverImagePath = "", // No HTTP URL - will show placeholder
-                    BookId = "MOCKINGBIRD",
-                    IsSelected = false,
-                    ClickCommand = new RelayCommand(() => OpenBook("MOCKINGBIRD"))
+                    ClickCommand = new RelayCommand(() => OpenBook("LORAX", "read-aloud"))
                 }
             };
         }
 
-        private void OpenBook(string bookId)
+        private void OpenBook(string bookId, string readingMode)
         {
-            if (bookId == "F451")
-            {
-                // Navigate to reading page for F451
-                _navigateToReading?.Invoke(bookId);
-            }
-            else
-            {
-                // For other books, just show a message or do nothing for now
-                // Could show a "Coming Soon" dialog or similar
-            }
+            // Navigate to reading page with the specified book and mode
+            _navigateToReading?.Invoke(bookId, readingMode);
         }
     }
 }

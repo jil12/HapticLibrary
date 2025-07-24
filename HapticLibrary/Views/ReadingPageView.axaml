@@ -30,14 +30,8 @@
                     <TextBlock Text="{Binding CurrentChapter}" FontSize="16" Foreground="#666666"/>
                 </StackPanel>
 
-                <!-- Reading Mode Toggle -->
+                <!-- Auto Page Toggle -->
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="0,0,20,0" VerticalAlignment="Center">
-                    <ToggleButton IsChecked="{Binding IsReadAloudMode, Converter={x:Static BoolConverters.Not}}" Command="{Binding SetAudioModeCommand}" Classes="mode-btn" Margin="0,0,8,0">
-                        <TextBlock Text="Audio Only" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    </ToggleButton>
-                    <ToggleButton IsChecked="{Binding IsReadAloudMode}" Command="{Binding SetReadAloudModeCommand}" Classes="mode-btn" Margin="0,0,8,0">
-                        <TextBlock Text="Read Aloud" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    </ToggleButton>
                     <ToggleButton IsChecked="{Binding AutoPageFlipEnabled}" Command="{Binding ToggleAutoPageFlipCommand}" Classes="mode-btn" Margin="0,0,8,0">
                         <TextBlock Text="Auto Pages" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </ToggleButton>
