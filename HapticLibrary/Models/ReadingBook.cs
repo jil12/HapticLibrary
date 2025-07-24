@@ -102,6 +102,12 @@ namespace HapticLibrary.Models
                 _pageIndex--;
             }
         }
+
+        public void AddPage()
+        {
+            ReadingPage newPage = new ReadingPage("", new Dictionary<string, HapticEffect>());
+            pages.Insert(_pageIndex+1, newPage);
+        }
     }
 
     public class HapticEffect

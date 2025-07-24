@@ -7,6 +7,7 @@ using System.Linq;
 using System.Drawing;
 using System.Collections.Generic;
 using Datafeel;
+using Newtonsoft.Json.Bson;
 
 namespace HapticLibrary.ViewModels
 {
@@ -153,6 +154,20 @@ namespace HapticLibrary.ViewModels
         {
             IsTextEditing = true;
             IsPatternEditing = false;
+        }
+
+        [RelayCommand]
+        private void NewPage()
+        {
+            _readingBook.AddPage();
+            _readingBook.NextPage();
+            PopulateWordsPanel();
+        }
+
+        [RelayCommand]
+        private void ExportBook()
+        {
+
         }
     }
 }
