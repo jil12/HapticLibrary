@@ -12,7 +12,7 @@ using Datafeel;
 
 namespace HapticLibrary.ViewModels
 {
-    public partial class ReadingPageViewModel : ViewModelBase, IPageViewModel
+    public partial class ReadingPageViewModel : ViewModelBase, IPageViewModel, IDisposable
     {
         [ObservableProperty]
         private string _bookText = "";
@@ -298,21 +298,53 @@ namespace HapticLibrary.ViewModels
         {
             try
             {
-                UpdateDebugOutput("🔌 Starting Datafeel haptic hardware...");
-                bool success = await _hapticManager.StartManager();
-                
-                HapticHardwareConnected = _hapticManager.IsConnected;
-                
-                if (success && HapticHardwareConnected)
+                // Check if haptic manager is already started to avoid conflicts
+                if (_hapticManager.IsStarted)
                 {
-                    UpdateDebugOutput($"✅ Hardware connected: {_hapticManager.DotManager.Dots.Count()} dots");
+                    UpdateDebugOutput("🔌 Haptic hardware already started, checking connection...");
+                    HapticHardwareConnected = _hapticManager.IsConnected;
                     
-                    // Test all dots with a brief flash
-                    await TestAllDots();
+                    if (HapticHardwareConnected)
+                    {
+                        UpdateDebugOutput($"✅ Hardware already connected: {_hapticManager.DotManager.Dots.Count()} dots");
+                        // Don't test dots again if already connected to avoid interrupting ongoing operations
+                    }
+                    else
+                    {
+                        UpdateDebugOutput("⚠️ Hardware was started but connection lost, attempting reconnection...");
+                        // Try to restart if connection was lost
+                        bool success = await _hapticManager.StartManager();
+                        HapticHardwareConnected = _hapticManager.IsConnected;
+                        
+                        if (success && HapticHardwareConnected)
+                        {
+                            UpdateDebugOutput($"✅ Hardware reconnected: {_hapticManager.DotManager.Dots.Count()} dots");
+                            await TestAllDots();
+                        }
+                        else
+                        {
+                            UpdateDebugOutput("❌ Failed to reconnect haptic hardware");
+                        }
+                    }
                 }
                 else
                 {
-                    UpdateDebugOutput("❌ Failed to initialize haptic hardware");
+                    UpdateDebugOutput("🔌 Starting Datafeel haptic hardware for first time...");
+                    bool success = await _hapticManager.StartManager();
+                    
+                    HapticHardwareConnected = _hapticManager.IsConnected;
+                    
+                    if (success && HapticHardwareConnected)
+                    {
+                        UpdateDebugOutput($"✅ Hardware connected: {_hapticManager.DotManager.Dots.Count()} dots");
+                        
+                        // Test all dots with a brief flash
+                        await TestAllDots();
+                    }
+                    else
+                    {
+                        UpdateDebugOutput("❌ Failed to initialize haptic hardware");
+                    }
                 }
             }
             catch (Exception ex)
@@ -1276,11 +1308,37 @@ namespace HapticLibrary.ViewModels
         // Cleanup resources
         public void Dispose()
         {
-            _positionTimer?.Stop();
-            _positionTimer?.Dispose();
-            _waveOut?.Stop();
-            _waveOut?.Dispose();
-            _audioFileReader?.Dispose();
+            try
+            {
+                UpdateDebugOutput("🧹 Cleaning up ReadingPageViewModel...");
+                
+                // Stop and dispose audio resources
+                _positionTimer?.Stop();
+                _positionTimer?.Dispose();
+                _waveOut?.Stop();
+                _waveOut?.Dispose();
+                _audioFileReader?.Dispose();
+                
+                // Unsubscribe from haptic sequence events
+                if (_hapticSequenceManager != null)
+                {
+                    _hapticSequenceManager.HapticEventTriggered -= OnHapticEventTriggered;
+                    _hapticSequenceManager.PageShouldChange -= OnPageShouldChange;
+                    _hapticSequenceManager.ContinuousHapticTriggered -= OnContinuousHapticTriggered;
+                }
+                
+                // Unsubscribe from audio stream events
+                if (_audioStream != null)
+                {
+                    _audioStream.StatusChanged -= OnAudioStreamStatusChanged;
+                }
+                
+                UpdateDebugOutput("✅ ReadingPageViewModel cleanup completed");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error during ReadingPageViewModel disposal: {ex.Message}");
+            }
         }
     }
 } 
