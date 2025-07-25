@@ -16,9 +16,7 @@ namespace HapticLibrary.Views
         public ReadingPageView()
         {
             InitializeComponent();
-            DataContext = new HapticLibrary.ViewModels.ReadingPageViewModel();
             SetupProgressBarDrag();
-            SetupTextSelection();
         }
 
         private void SetupProgressBarDrag()
@@ -29,16 +27,6 @@ namespace HapticLibrary.Views
                 _audioProgressBar.PointerPressed += OnProgressBarPointerPressed;
                 _audioProgressBar.PointerMoved += OnProgressBarPointerMoved;
                 _audioProgressBar.PointerReleased += OnProgressBarPointerReleased;
-            }
-        }
-
-        private void SetupTextSelection()
-        {
-            var textBlock = this.FindControl<SelectableTextBlock>("ReadingSelectableText");
-            if (textBlock != null)
-            {
-                // Use pointer events to detect selection changes
-                textBlock.PointerReleased += OnTextBlockPointerReleased;
             }
         }
 
@@ -83,41 +71,6 @@ namespace HapticLibrary.Views
             var newTimeSeconds = progress * viewModel.TotalTime.TotalSeconds;
             var newTime = TimeSpan.FromSeconds(newTimeSeconds);
             viewModel.SeekToPosition(newTime);
-        }
-
-        private void OnTextBlockPointerReleased(object? sender, PointerReleasedEventArgs e)
-        {
-            if (DataContext is ReadingPageViewModel viewModel && sender is SelectableTextBlock textBlock)
-            {
-                // Use a timer to check selection after the pointer is released
-                // This allows the selection to be updated before we check it
-                var timer = new System.Threading.Timer(_ =>
-                {
-                    // Dispatch to UI thread
-                    Dispatcher.UIThread.Post(() =>
-                    {
-                        var selectedText = textBlock.SelectedText;
-                        var start = textBlock.SelectionStart;
-                        var end = textBlock.SelectionEnd;
-                        
-                        viewModel.OnTextSelectionChanged(selectedText);
-                        viewModel.OnSelectionChanged(start, end);
-                    });
-                }, null, 50, Timeout.Infinite); // 50ms delay
-            }
-        }
-
-        private void OnSelectionChanged(object? sender, RoutedEventArgs e)
-        {
-            if (DataContext is ReadingPageViewModel viewModel && sender is SelectableTextBlock textBlock)
-            {
-                var selectedText = textBlock.SelectedText;
-                var start = textBlock.SelectionStart;
-                var end = textBlock.SelectionEnd;
-                
-                viewModel.OnTextSelectionChanged(selectedText);
-                viewModel.OnSelectionChanged(start, end);
-            }
         }
     }
 }

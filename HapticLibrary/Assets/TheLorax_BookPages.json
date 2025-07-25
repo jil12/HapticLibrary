@@ -1,0 +1,95 @@
+{
+    "Name": "The Lorax",
+    "Pages": [
+        {
+            "Text": "At the far end of town where the Grickle-grass grows and the wind smells slow-and-sour when it blows and no birds ever sing excepting old crows... is the Street of the Lifted Lorax.\n\nAnd deep in the Grickle-grass, some people say, if you look deep enough you can still see, today, where the Lorax once stood just as long as it could before somebody lifted the Lorax away.",
+            "HapticTriggers": {
+                "wind": {
+                    "Props": [
+                        {
+                            "address": 1,
+                            "ledMode": "GlobalManual",
+                            "globalLed": {
+                                "red": 0,
+                                "green": 80,
+                                "blue": 120
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "Text": "What was the Lorax? And why was it there? And why was it lifted and taken somewhere from the far end of town where the Grickle-grass grows? The old Once-ler still lives here. Ask him. He knows.\n\nYou won't see the Once-ler. Don't knock at his door. He stays in his Lerkim on top of his store. He lurks in his Lerkim, cold under the roof, where he makes his own clothes out of miff-muffered moof.",
+            "HapticTriggers": {
+                "mystery": {
+                    "Props": [
+                        {
+                            "address": 2,
+                            "ledMode": "GlobalManual",
+                            "globalLed": {
+                                "red": 100,
+                                "green": 60,
+                                "blue": 0
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "Text": "But on certain mornings in certain seasons, the old Once-ler starts to speak of the old Truffula Trees. He tells of the brown Bar-ba-loots who played in their shade and ate Truffula Fruits.\n\nHe tells of the Humming-Fish and their underwater lake, where the Swomee-Swans sang their songs all day. He tells of the great milky way of the sky overhead. And the wind in the Truffula tree-tops said 'Swish! Swish!'",
+            "HapticTriggers": {
+                "nature": {
+                    "Props": [
+                        {
+                            "address": 1,
+                            "ledMode": "GlobalManual",
+                            "globalLed": {
+                                "red": 50,
+                                "green": 150,
+                                "blue": 50
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "Text": "Then the Lorax said, 'Sir! You are crazy with greed. There is no one on earth who would buy that fool Thneed!' But the very next minute I proved he was wrong. For, just at that minute, a chap came along, and he thought that the Thneed I had knitted was great.",
+            "HapticTriggers": {
+                "warning": {
+                    "Props": [
+                        {
+                            "address": 2,
+                            "ledMode": "GlobalManual",
+                            "globalLed": {
+                                "red": 200,
+                                "green": 100,
+                                "blue": 0
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "Text": "'UNLESS someone like you cares a whole awful lot, nothing is going to get better. It's not.'\n\nCatch! calls the Once-ler. He lets something fall. 'It's a Truffula Seed. It's the last one of all! You're in charge of the last of the Truffula Seeds. And Truffula Trees are what everyone needs. Plant a new Truffula. Treat it with care. Give it clean water. And feed it fresh air. Grow a forest. Protect it from axes that hack. Then the Lorax and all of his friends may come back.'",
+            "HapticTriggers": {
+                "hope": {
+                    "Props": [
+                        {
+                            "address": 1,
+                            "ledMode": "GlobalManual",
+                            "globalLed": {
+                                "red": 0,
+                                "green": 200,
+                                "blue": 100
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+} 

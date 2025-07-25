@@ -12,7 +12,7 @@ using Datafeel;
 
 namespace HapticLibrary.ViewModels
 {
-    public partial class ReadingPageViewModel : ViewModelBase, IPageViewModel
+    public partial class ReadingPageViewModel : ViewModelBase, IPageViewModel, IDisposable
     {
         [ObservableProperty]
         private string _bookText = "";
@@ -53,12 +53,6 @@ namespace HapticLibrary.ViewModels
         [ObservableProperty]
         private double _playbackSpeed = 1.0;
 
-        [ObservableProperty]
-        private bool _vibrationEnabled = true;
-
-        [ObservableProperty]
-        private double _vibrationIntensity = 70;
-
         // Read-aloud properties
         [ObservableProperty]
         private bool _isReadAloudMode = false;
@@ -68,19 +62,6 @@ namespace HapticLibrary.ViewModels
 
         [ObservableProperty]
         private string _recordingStatus = "Ready to record";
-
-        // Text selection properties
-        [ObservableProperty]
-        private string _selectedText = "";
-
-        [ObservableProperty]
-        private bool _hasTextSelected = false;
-
-        [ObservableProperty]
-        private int _selectionStart = 0;
-
-        [ObservableProperty]
-        private int _selectionEnd = 0;
 
         private ReadingBook _readingBook = new ReadingBook();
         private ReadingModeAudioStream _audioStream = ReadingModeAudioStream.Instance;
@@ -115,43 +96,62 @@ namespace HapticLibrary.ViewModels
         [ObservableProperty]
         private bool _hapticHardwareConnected = false;
         
-        [ObservableProperty]
-        private string _debugOutput = "Debug: Ready...";
-        
         private bool _lockDot2Red = false;
         
-        private void UpdateDebugOutput(string message)
+        public ReadingPageViewModel(string? bookId = null, string? readingMode = null)
         {
-            var timestamp = DateTime.Now.ToString("HH:mm:ss");
-            DebugOutput = $"[{timestamp}] {message}";
-            System.Diagnostics.Debug.WriteLine(message);
-        }
+            // Set reading mode based on parameter
+            if (readingMode == "read-aloud")
+            {
+                _isReadAloudMode = true;
+                _readingMode = "read-aloud";
+            }
+            else
+            {
+                _isReadAloudMode = false;
+                _readingMode = "audio";
+            }
 
-        public ReadingPageViewModel()
-        {
-            LoadBookContent();
+            LoadBookContent(bookId);
             InitializeAudioStream();
             InitializeAudio();
             InitializeHapticSequence();
             InitializeHapticHardware();
         }
 
-        private void LoadBookContent()
+        private void LoadBookContent(string? bookId = null)
         {
             try
             {
-                // Load F451 content from F451_BookPages.json
-                _readingBook.LoadBook("Assets/F451_BookPages.json");
+                string bookFile;
+                string chapterName;
+                
+                // Determine which book to load based on bookId
+                switch (bookId)
+                {
+                    case "LORAX":
+                        bookFile = "Assets/TheLorax_BookPages.json";
+                        chapterName = "Chapter: The Truffula Trees";
+                        break;
+                    case "F451":
+                    default:
+                        // Default to F451
+                        bookFile = "Assets/F451_BookPages.json";
+                        chapterName = "Chapter: The Chase";
+                        break;
+                }
+                
+                _readingBook.LoadBook(bookFile);
                 UpdatePageContent();
                 TotalPages = _readingBook.GetLength();
                 CurrentPage = 1;
                 CurrentBookTitle = _readingBook.BookName;
-                CurrentChapter = "Chapter: The Chase";
+                CurrentChapter = chapterName;
             }
             catch (Exception ex)
             {
                 // Use default content if loading fails
-                BookText = "Error loading F451 content: " + ex.Message;
+                BookText = "Error loading book content: " + ex.Message;
                 TotalPages = 1;
                 CurrentPage = 1;
                 CurrentBookTitle = "Error Loading Book";
@@ -246,7 +246,7 @@ namespace HapticLibrary.ViewModels
                             else if (_waveOut.PlaybackState == PlaybackState.Stopped && !_isExplicitlyStopped)
                             {
                                 // Audio ended naturally - stop haptics
-                                UpdateDebugOutput("🔚 Audio ended - stopping haptics");
+                                System.Diagnostics.Debug.WriteLine("🔚 Audio ended - stopping haptics");
                                 StopHapticSequence();
                                 _isExplicitlyStopped = true; // Prevent further processing
                             }
@@ -269,26 +269,58 @@ namespace HapticLibrary.ViewModels
         {
             try
             {
-                UpdateDebugOutput("🔌 Starting Datafeel haptic hardware...");
-                bool success = await _hapticManager.StartManager();
-                
-                HapticHardwareConnected = _hapticManager.IsConnected;
-                
-                if (success && HapticHardwareConnected)
+                // Check if haptic manager is already started to avoid conflicts
+                if (_hapticManager.IsStarted)
                 {
-                    UpdateDebugOutput($"✅ Hardware connected: {_hapticManager.DotManager.Dots.Count()} dots");
+                    System.Diagnostics.Debug.WriteLine("🔌 Haptic hardware already started, checking connection...");
+                    HapticHardwareConnected = _hapticManager.IsConnected;
                     
-                    // Test all dots with a brief flash
-                    await TestAllDots();
+                    if (HapticHardwareConnected)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"✅ Hardware already connected: {_hapticManager.DotManager.Dots.Count()} dots");
+                        // Don't test dots again if already connected to avoid interrupting ongoing operations
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine("⚠️ Hardware was started but connection lost, attempting reconnection...");
+                        // Try to restart if connection was lost
+                        bool success = await _hapticManager.StartManager();
+                        HapticHardwareConnected = _hapticManager.IsConnected;
+                        
+                        if (success && HapticHardwareConnected)
+                        {
+                            System.Diagnostics.Debug.WriteLine($"✅ Hardware reconnected: {_hapticManager.DotManager.Dots.Count()} dots");
+                            await TestAllDots();
+                        }
+                        else
+                        {
+                            System.Diagnostics.Debug.WriteLine("❌ Failed to reconnect haptic hardware");
+                        }
+                    }
                 }
                 else
                 {
-                    UpdateDebugOutput("❌ Failed to initialize haptic hardware");
+                    System.Diagnostics.Debug.WriteLine("🔌 Starting Datafeel haptic hardware for first time...");
+                    bool success = await _hapticManager.StartManager();
+                    
+                    HapticHardwareConnected = _hapticManager.IsConnected;
+                    
+                    if (success && HapticHardwareConnected)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"✅ Hardware connected: {_hapticManager.DotManager.Dots.Count()} dots");
+                        
+                        // Test all dots with a brief flash
+                        await TestAllDots();
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine("❌ Failed to initialize haptic hardware");
+                    }
                 }
             }
             catch (Exception ex)
             {
-                UpdateDebugOutput($"ERROR initializing hardware: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"ERROR initializing hardware: {ex.Message}");
                 HapticHardwareConnected = false;
             }
         }
@@ -355,8 +387,6 @@ namespace HapticLibrary.ViewModels
                         _hapticSequenceManager.HapticEventTriggered += OnHapticEventTriggered;
                         _hapticSequenceManager.PageShouldChange += OnPageShouldChange;
                         _hapticSequenceManager.ContinuousHapticTriggered += OnContinuousHapticTriggered;
-                        
-                        UpdateDebugOutput("✅ F451 sequence loaded with loop support");
                     }
                 }
                 else
@@ -389,7 +419,7 @@ namespace HapticLibrary.ViewModels
                 
                 CurrentHapticEvent = hapticEvent.EventName;
                 
-                UpdateDebugOutput($"🎯 HAPTIC: {hapticEvent.EventName}");
+                System.Diagnostics.Debug.WriteLine($"🎯 HAPTIC: {hapticEvent.EventName}");
                 
                 // Send haptic commands to hardware
                 SendHapticEffects(hapticEvent);
@@ -465,7 +495,7 @@ namespace HapticLibrary.ViewModels
                         break;
                 }
                 
-                UpdateDebugOutput($"🔄 {effectType}: {pattern}");
+                System.Diagnostics.Debug.WriteLine($"🔄 {effectType}: {pattern}");
             }
             catch (Exception ex)
             {
@@ -484,7 +514,7 @@ namespace HapticLibrary.ViewModels
                 }
 
                 string countNumber = eventName.Replace("EventCounting_", "");
-                UpdateDebugOutput($"🔢 {countNumber}!");
+                System.Diagnostics.Debug.WriteLine($"🔢 {countNumber}!");
                 System.Diagnostics.Debug.WriteLine($"Executing counting effect: {countNumber}");
 
                 var dotWrist = _hapticManager.DotManager.Dots.FirstOrDefault(d => d.Address == 1);
@@ -895,7 +925,7 @@ namespace HapticLibrary.ViewModels
             }
             else
             {
-                UpdateDebugOutput("▶️ STARTING PLAYBACK");
+                System.Diagnostics.Debug.WriteLine("▶️ STARTING PLAYBACK");
                 _isExplicitlyStopped = false; // Reset stop flag when starting
                 _waveOut.Play();
                 IsPlaying = true;
@@ -975,7 +1005,7 @@ namespace HapticLibrary.ViewModels
         {
             if (_waveOut != null && _audioFileReader != null)
             {
-                UpdateDebugOutput("🛑 STOP BUTTON PRESSED");
+                System.Diagnostics.Debug.WriteLine("🛑 STOP BUTTON PRESSED");
                 _isExplicitlyStopped = true; // Set flag BEFORE stopping audio
                 
                 // Update connection status
@@ -1065,7 +1095,7 @@ namespace HapticLibrary.ViewModels
         {
             try
             {
-                UpdateDebugOutput("🔄 RESETTING audio and sequencer...");
+                System.Diagnostics.Debug.WriteLine("🔄 RESETTING audio and sequencer...");
                 
                 // Stop playback if playing
                 if (IsPlaying)
@@ -1106,11 +1136,11 @@ namespace HapticLibrary.ViewModels
                 // Update connection status
                 HapticHardwareConnected = _hapticManager.IsConnected;
                 
-                UpdateDebugOutput("✅ RESET complete - ready to start");
+                System.Diagnostics.Debug.WriteLine("✅ RESET complete - ready to start");
             }
             catch (Exception ex)
             {
-                UpdateDebugOutput($"ERROR during reset: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"ERROR during reset: {ex.Message}");
             }
         }
 
@@ -1154,20 +1184,6 @@ namespace HapticLibrary.ViewModels
         public void ToggleSidebar()
         {
             SidebarOpen = !SidebarOpen;
-        }
-
-        // Text selection commands
-        [RelayCommand]
-        public void OnTextSelectionChanged(string selectedText)
-        {
-            SelectedText = selectedText ?? "";
-            HasTextSelected = !string.IsNullOrWhiteSpace(SelectedText);
-        }
-
-        public void OnSelectionChanged(int start, int end)
-        {
-            SelectionStart = start;
-            SelectionEnd = end;
         }
 
         // Read-aloud commands
@@ -1247,11 +1263,37 @@ namespace HapticLibrary.ViewModels
         // Cleanup resources
         public void Dispose()
         {
-            _positionTimer?.Stop();
-            _positionTimer?.Dispose();
-            _waveOut?.Stop();
-            _waveOut?.Dispose();
-            _audioFileReader?.Dispose();
+            try
+            {
+                System.Diagnostics.Debug.WriteLine("🧹 Cleaning up ReadingPageViewModel...");
+                
+                // Stop and dispose audio resources
+                _positionTimer?.Stop();
+                _positionTimer?.Dispose();
+                _waveOut?.Stop();
+                _waveOut?.Dispose();
+                _audioFileReader?.Dispose();
+                
+                // Unsubscribe from haptic sequence events
+                if (_hapticSequenceManager != null)
+                {
+                    _hapticSequenceManager.HapticEventTriggered -= OnHapticEventTriggered;
+                    _hapticSequenceManager.PageShouldChange -= OnPageShouldChange;
+                    _hapticSequenceManager.ContinuousHapticTriggered -= OnContinuousHapticTriggered;
+                }
+                
+                // Unsubscribe from audio stream events
+                if (_audioStream != null)
+                {
+                    _audioStream.StatusChanged -= OnAudioStreamStatusChanged;
+                }
+                
+                System.Diagnostics.Debug.WriteLine("✅ ReadingPageViewModel cleanup completed");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error during ReadingPageViewModel disposal: {ex.Message}");
+            }
         }
     }
 } 

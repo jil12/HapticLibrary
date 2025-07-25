@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using System;
 
 namespace HapticLibrary.ViewModels;
 
@@ -29,23 +30,48 @@ public partial class MainViewModel : ViewModelBase
     /// Methods called by <see cref="ViewModels.NavigationBarViewModel"/> commands
     /// to display different pages
     /// </summary>
-    public void ShowLibraryPage() => CurrentPage = new LibraryPageViewModel(NavigateToReadingWithBook);
-    public void ShowReadingPage() => CurrentPage = new ReadingPageViewModel();
+    public void ShowLibraryPage()
+    {
+        DisposeCurrentPage();
+        CurrentPage = new LibraryPageViewModel(NavigateToReadingWithBook);
+    }
+    
+    public void ShowReadingPage()
+    {
+        DisposeCurrentPage();
+        CurrentPage = new ReadingPageViewModel();
+    }
 
-    public void ShowEditorPage() => CurrentPage = new HapticEditorViewModel();
+    public void ShowEditorPage()
+    {
+        DisposeCurrentPage();
+        CurrentPage = new HapticEditorViewModel();
+    }
 
     /// <summary>
-    /// Navigate to reading page with a specific book
+    /// Navigate to reading page with a specific book and reading mode
     /// </summary>
     /// <param name="bookId">The ID of the book to open</param>
-    private void NavigateToReadingWithBook(string bookId)
+    /// <param name="readingMode">The reading mode ("audio" or "read-aloud")</param>
+    private void NavigateToReadingWithBook(string bookId, string readingMode)
     {
-        // Load the specific book and navigate to reading page
-        ShowReadingPage();
+        // Load the specific book and navigate to reading page with the specified mode
+        DisposeCurrentPage();
+        CurrentPage = new ReadingPageViewModel(bookId, readingMode);
         // Update navigation state
         NavigationBar.IsLibrarySelected = false;
         NavigationBar.IsReadingSelected = true;
         NavigationBar.IsEditorSelected = false;
-        // You can pass the bookId to ReadingPageViewModel if needed
+    }
+    
+    /// <summary>
+    /// Dispose of the current page if it implements IDisposable
+    /// </summary>
+    private void DisposeCurrentPage()
+    {
+        if (CurrentPage is IDisposable disposable)
+        {
+            disposable.Dispose();
+        }
     }
 }

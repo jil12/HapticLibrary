@@ -51,7 +51,6 @@ namespace HapticLibrary.Models
         public ReadingBook()
         {
         }
-
         public void LoadBook(string bookID) //TODO: ID or name? ID.
         {
             //TODO: Get book contents from server
