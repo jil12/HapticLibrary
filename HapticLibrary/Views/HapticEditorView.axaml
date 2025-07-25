@@ -13,6 +13,7 @@
 		<converters:DrawingColorToBrushConverter x:Key="ColorBrushConverter"/>
 		<converters:EditorWordToBrushConverter x:Key="EditorWordToBrushConverter"/>
 		<converters:EditorWordToContrastForegroundConverter x:Key="EditorWordToContrastForegroundConverter"/>
+		<converters:ReferenceEqualsConverter x:Key="ReferenceEqualsConverter"/>
 	</UserControl.Resources>
 	
 	<Grid ColumnDefinitions="5*, 1*">
@@ -61,9 +62,7 @@
 												HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
 												Foreground="{Binding, Converter={StaticResource EditorWordToContrastForegroundConverter}}"
 												Background="{Binding, Converter={StaticResource EditorWordToBrushConverter}}">
-											<Button.ContextMenu>
 
-											</Button.ContextMenu>
 										</Button>
 									</DataTemplate>
 								</ItemsControl.ItemTemplate>
@@ -79,9 +78,14 @@
 				<!-- Haptic Pattern Storage Panel -->
 				<Panel Grid.Row="2" Background="BlueViolet">
 					<StackPanel Margin="20, 10">
-						<TextBlock Text="Haptic Patterns:" FontSize="16">
-							
-						</TextBlock>
+						<Grid ColumnDefinitions="auto, *">
+							<TextBlock Grid.Column="0" Text="Haptic Patterns:" FontSize="16"/>
+							<ToggleButton Grid.Column="1"
+									Content="Erase"
+									HorizontalAlignment="Right"
+									IsChecked="{Binding EraseSelected}"
+									Command="{Binding SelectEraseCommand}"/>
+						</Grid>
 						<ItemsControl ItemsSource="{Binding Patterns}"
 									  Margin="0, 20">
 							<ItemsControl.ItemsPanel>
@@ -93,14 +97,20 @@
 							<ItemsControl.ItemTemplate>
 								<DataTemplate x:DataType="m:HapticPattern">
 									<Grid Width="60" Height="60" Margin="2">
-										<Button Content="{Binding Name}"
+										<ToggleButton Content="{Binding Name}"
 											Command="{Binding DataContext.SelectPatternCommand, ElementName=HapticEditor}"
 											CommandParameter="{Binding}"
 											HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
 											HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
 											BorderThickness="0" Padding="0"
 											Background="DarkGray">
-										</Button>
+											<ToggleButton.IsChecked>
+												<MultiBinding Converter="{StaticResource ReferenceEqualsConverter}">
+													<Binding Path="DataContext.SelectedPattern" ElementName="HapticEditor"/>
+													<Binding />
+												</MultiBinding>
+											</ToggleButton.IsChecked>
+										</ToggleButton>
 										<Canvas HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 											<Ellipse Fill="{Binding Color, Converter={StaticResource ColorBrushConverter}}" Width="10" Height="10" Canvas.Right="10" Canvas.Bottom="5"/>
 										</Canvas>
@@ -172,6 +182,34 @@
 					<Button Grid.Row="2"
 							VerticalAlignment="Bottom" Content="Update Text" Command="{Binding SaveTextCommand}"/>
 				</Grid>
+			</Panel>
+			<Panel Grid.Row="1" Margin="10"
+			IsVisible="{Binding IsPatternSelected}">
+				<!-- Haptic Properties Panel -->
+				<StackPanel   HorizontalAlignment="Left">
+					<TextBlock HorizontalAlignment="Center"
+							   FontSize="20"
+							   TextWrapping="Wrap">Haptic Pattern Properties</TextBlock>
+					<!-- Name Input -->
+					<TextBlock Text="Name:"/>
+					<TextBlock Width="200" Text="{Binding HapticName}"/>
+
+					<!-- Color Input -->
+					<TextBlock Text="Color (R, G, B):"/>
+					<StackPanel Orientation="Horizontal" Spacing="10">
+						<TextBlock Width="50" Text="{Binding HapticRed}"/>
+						<TextBlock Width="50" Text="{Binding HapticGreen}"/>
+						<TextBlock Width="50" Text="{Binding HapticBlue}"/>
+					</StackPanel>
+
+					<!-- Temperature Input -->
+					<TextBlock Text="Temperature (-1 to 1):"/>
+					<TextBlock Width="200" Text="{Binding HapticTemperature}"/>
+
+					<!-- Vibration Input -->
+					<TextBlock Text="Vibration (0 to 1):"/>
+					<TextBlock Width="200" Text="{Binding HapticVibration}"/>
+				</StackPanel>
 			</Panel>
 		</Grid>
 	</Grid>

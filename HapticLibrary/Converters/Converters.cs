@@ -1,5 +1,8 @@
-﻿using Avalonia.Data.Converters;
+﻿using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
+using Avalonia.Data.Converters;
 using Avalonia.Media;
+using HapticLibrary.Models;
 using HapticLibrary.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -71,5 +74,21 @@ namespace HapticLibrary.Converters
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
             => throw new NotSupportedException();
     }
+
+    public class ReferenceEqualsConverter : IMultiValueConverter
+    {
+        public object Convert(IList<object> values, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (values.Count >= 2)
+            {
+                return Equals(values[0], values[1]);
+            }
+            return false;
+        }
+
+        public object ConvertBack(IList<object> values, Type targetType, object parameter, CultureInfo culture)
+            => throw new NotImplementedException(); // Not needed for OneWay binding
+    }
+
 
 }

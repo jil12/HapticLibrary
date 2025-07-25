@@ -13,10 +13,12 @@ namespace HapticLibrary.ViewModels
 {
     public partial class HapticEditorViewModel : ViewModelBase, IPageViewModel
     {
-        [ObservableProperty]
+        [ObservableProperty]    //TODO: Convert to enum
         private bool isPatternEditing = true;
         [ObservableProperty]
         private bool isTextEditing = false;
+        [ObservableProperty]
+        private bool isPatternSelected = false;
         [ObservableProperty]
         private string editableText = "";
 
@@ -37,9 +39,13 @@ namespace HapticLibrary.ViewModels
         private ObservableCollection<EditorWordViewModel> words = new();
         [ObservableProperty]
         private ObservableCollection<HapticPattern> patterns = new();
-        
+
+        [ObservableProperty]
         private int _selectedPatternIndex = -1;
-        private bool _selectedPattern = false;
+        [ObservableProperty]
+        private HapticPattern _selectedPattern = null;
+        [ObservableProperty]
+        private bool _eraseSelected = false;
         private ReadingBook _readingBook = new();
 
 
@@ -91,8 +97,19 @@ namespace HapticLibrary.ViewModels
         [RelayCommand]
         public void SelectPattern(HapticPattern pattern)
         {
-            _selectedPatternIndex = Patterns.IndexOf(pattern);
-            _selectedPattern = _selectedPatternIndex != -1;
+            EraseSelected = false;
+            int index = Patterns.IndexOf(pattern);
+
+            if (SelectedPatternIndex != -1 && index == SelectedPatternIndex)
+            {
+                SelectedPatternIndex = -1;
+                SelectedPattern = null;
+            } else
+            {
+                SelectedPatternIndex = index;
+                SelectedPattern = pattern;
+                PopulateHapticPropertiesPanel(pattern);
+            }
         }
 
         [RelayCommand]
@@ -101,9 +118,10 @@ namespace HapticLibrary.ViewModels
             //TODO: add haptic to the word in _readingBook, then populate to view
             //TODO: Need a way to visually convey multiple effects on a word.
             int index = words.IndexOf(editorWord);
-            if (_selectedPattern)
+            if (_selectedPatternIndex != -1)
             {
                 string word = editorWord.Word;
+                editorWord.HapticPattern = SelectedPattern;
                 Dictionary<string, HapticEffect> effect = _readingBook.GetHaptics();
                 //if (!effect.ContainsKey(word))
                 //{
@@ -114,6 +132,16 @@ namespace HapticLibrary.ViewModels
                 effect[word].Props.Add(dotJson);
 
                 PopulateWordsPanel();
+            } else if (_eraseSelected)
+            {
+                string word = editorWord.Word;
+                editorWord.HapticPattern = null;
+                Dictionary<string, HapticEffect> effect = _readingBook.GetHaptics();
+                effect.Remove(word);
+                PopulateWordsPanel();
+            } else if (editorWord.HapticPattern != null)
+            {
+                SelectPattern(editorWord.HapticPattern);
             }
         }
 
@@ -144,7 +172,7 @@ namespace HapticLibrary.ViewModels
             {
                 if (triggerWords.ContainsKey(editorWord.Word))
                 {
-                    editorWord.HapticPattern = new HapticPattern(triggerWords[editorWord.Word].Props[0]);
+                    editorWord.HapticPattern = new HapticPattern(triggerWords[editorWord.Word].Props[0]);   //TODO: Since this overrides hapticPattern, the name is lost.
                 }
             }
             EditableText = _readingBook.GetText();
@@ -161,14 +189,18 @@ namespace HapticLibrary.ViewModels
         [RelayCommand]
         private void EnablePatternEditing()
         {
+            ResetHapticProperties();
             IsPatternEditing = true;
             IsTextEditing = false;
+            IsPatternSelected = false;
         }
         [RelayCommand]
         private void EnableTextEditing()
         {
+            ResetHapticProperties();
             IsTextEditing = true;
             IsPatternEditing = false;
+            IsPatternSelected = false;
         }
 
         [RelayCommand]
@@ -180,9 +212,40 @@ namespace HapticLibrary.ViewModels
         }
 
         [RelayCommand]
+        private void SelectErase()
+        {
+            EraseSelected = true;
+            SelectedPattern = null;
+            SelectedPatternIndex = -1;
+        }
+
+        [RelayCommand]
         private void ExportBook()
         {
 
+        }
+
+        private void ResetHapticProperties()
+        {
+            HapticName = "";
+            HapticRed = 0;
+            HapticGreen = 0;
+            HapticBlue = 0;
+            HapticTemperature = 0f;
+            HapticVibration = 0f;
+        }
+
+        private void PopulateHapticPropertiesPanel(HapticPattern hapticPattern)
+        {
+            IsTextEditing = false;
+            IsPatternEditing = false;
+            IsPatternSelected = true;
+            HapticName = hapticPattern.Name;
+            HapticRed = hapticPattern.Color.R;
+            HapticGreen = hapticPattern.Color.G;
+            HapticBlue = hapticPattern.Color.B;
+            HapticTemperature = hapticPattern.Temperature;
+            HapticVibration = hapticPattern.Vibration;
         }
     }
 }
