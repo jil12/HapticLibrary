@@ -12,6 +12,7 @@
 	<UserControl.Resources>
 		<converters:DrawingColorToBrushConverter x:Key="ColorBrushConverter"/>
 		<converters:EditorWordToBrushConverter x:Key="EditorWordToBrushConverter"/>
+		<converters:EditorWordToContrastForegroundConverter x:Key="EditorWordToContrastForegroundConverter"/>
 	</UserControl.Resources>
 	
 	<Grid ColumnDefinitions="5*, 1*">
@@ -58,7 +59,7 @@
 												Command="{Binding DataContext.SelectWordCommand, ElementName=HapticEditor}"
 												CommandParameter="{Binding}"
 												HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
-												Foreground="Black"
+												Foreground="{Binding, Converter={StaticResource EditorWordToContrastForegroundConverter}}"
 												Background="{Binding, Converter={StaticResource EditorWordToBrushConverter}}">
 											<Button.ContextMenu>
 
@@ -91,16 +92,20 @@
 
 							<ItemsControl.ItemTemplate>
 								<DataTemplate x:DataType="m:HapticPattern">
-									<Button Content="{Binding Name}" Margin="2"
+									<Grid Width="60" Height="60" Margin="2">
+										<Button Content="{Binding Name}"
 											Command="{Binding DataContext.SelectPatternCommand, ElementName=HapticEditor}"
 											CommandParameter="{Binding}"
-											Width="60" Height="60"
+											HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
 											HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
-											Background="{Binding Color, Converter={StaticResource ColorBrushConverter}}">
-										<Button.ContextMenu>
+											BorderThickness="0" Padding="0"
+											Background="DarkGray">
+										</Button>
+										<Canvas HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+											<Ellipse Fill="{Binding Color, Converter={StaticResource ColorBrushConverter}}" Width="10" Height="10" Canvas.Right="10" Canvas.Bottom="5"/>
+										</Canvas>
+									</Grid>
 
-										</Button.ContextMenu>
-									</Button>
 								</DataTemplate>
 							</ItemsControl.ItemTemplate>
 						</ItemsControl>

@@ -46,4 +46,30 @@ namespace HapticLibrary.Converters
             => throw new NotImplementedException();
     }
 
+    public class EditorWordToContrastForegroundConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is EditorWordViewModel editorWord && editorWord.HapticPattern != null)
+            {
+                // Convert to linear RGB values (0-1)
+                System.Drawing.Color color = editorWord.HapticPattern.Color;
+                double r = color.R / 255.0;
+                double g = color.G / 255.0;
+                double b = color.B / 255.0;
+
+                // Calculate luminance (perceived brightness)
+                double luminance = 0.299 * r + 0.587 * g + 0.114 * b;
+
+                // If the color is dark, return white; otherwise, black
+                return luminance < 0.5 ? Brushes.White : Brushes.Black;
+            }
+
+            return Brushes.Black;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            => throw new NotSupportedException();
+    }
+
 }

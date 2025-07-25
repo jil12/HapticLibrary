@@ -50,6 +50,21 @@ namespace HapticLibrary.ViewModels
                 _readingBook.LoadBook("Assets/PropSampleBook.json");    //TODO: Create page to select what to load.
                 PopulateWordsPanel();                                     // Split and initialize words
             }
+
+            patterns.Add(new HapticPattern("green", Color.FromArgb(106, 159, 58), 0, 0));
+            patterns.Add(new HapticPattern("water", Color.FromArgb(56, 173, 250), -1, 0));
+            patterns.Add(new HapticPattern("white", Color.FromArgb(255, 255, 255), 0, 0));
+            patterns.Add(new HapticPattern("vibrate", Color.FromArgb(0, 0, 0), 0, 1));
+            patterns.Add(new HapticPattern("rang", Color.FromArgb(106, 159, 58), 0, 1));
+            patterns.Add(new HapticPattern("morning", Color.FromArgb(255, 254, 133), 0.5f, 0));
+            patterns.Add(new HapticPattern("breeze", Color.FromArgb(0, 0, 0), 0, 1));
+            patterns.Add(new HapticPattern("brown", Color.FromArgb(139, 69, 19), 0, 0));
+            patterns.Add(new HapticPattern("shade", Color.FromArgb(50, 50, 50), -1, 0));
+            patterns.Add(new HapticPattern("splashing", Color.FromArgb(56, 173, 250), 0, 1));
+            patterns.Add(new HapticPattern("lorax", Color.FromArgb(139, 69, 19), 0, 0));
+            patterns.Add(new HapticPattern("trees", Color.FromArgb(106, 159, 58), 0, 0));
+            patterns.Add(new HapticPattern("fruits", Color.FromArgb(106, 159, 58), 0, 0));
+
         }
 
         [RelayCommand]
