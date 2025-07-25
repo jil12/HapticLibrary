@@ -13,6 +13,13 @@
                 <ResourceInclude Source="avares://HapticLibrary/Views/Icons.axaml" />
             </ResourceDictionary.MergedDictionaries>
             
+            <!-- Gradient Brush Resource -->
+            <LinearGradientBrush x:Key="AppGradientBrush" StartPoint="0%,50%" EndPoint="100%,50%">
+                <GradientStop Color="#91D4AC" Offset="0.0"/>
+                <GradientStop Color="#85CCB7" Offset="0.5"/>
+                <GradientStop Color="#62B8DB" Offset="1.0"/>
+            </LinearGradientBrush>
+            
             <!-- Resources removed - no longer needed for simplified ReadingPageView -->
         </ResourceDictionary>
     </Application.Resources>
@@ -58,9 +65,9 @@
         </Style>
         
         <Style Selector="ToggleButton.mode-btn:checked">
-            <Setter Property="Background" Value="#667EEA"/>
+            <Setter Property="Background" Value="{StaticResource AppGradientBrush}"/>
             <Setter Property="Foreground" Value="White"/>
-            <Setter Property="BorderBrush" Value="#667EEA"/>
+            <Setter Property="BorderBrush" Value="{StaticResource AppGradientBrush}"/>
         </Style>
         
         <Style Selector="Button.sidebar-toggle">
@@ -90,17 +97,17 @@
         </Style>
         
         <Style Selector="Button.page-flip-btn:pointerover">
-            <Setter Property="Background" Value="rgba(102, 126, 234, 0.1)"/>
-            <Setter Property="Foreground" Value="rgba(102, 126, 234, 0.5)"/>
+            <Setter Property="Background" Value="rgba(145, 212, 172, 0.1)"/>
+            <Setter Property="Foreground" Value="{StaticResource AppGradientBrush}"/>
         </Style>
         
         <Style Selector="Button.page-flip-btn:pressed">
-            <Setter Property="Background" Value="rgba(102, 126, 234, 0.2)"/>
-            <Setter Property="Foreground" Value="rgba(102, 126, 234, 0.7)"/>
+            <Setter Property="Background" Value="rgba(145, 212, 172, 0.2)"/>
+            <Setter Property="Foreground" Value="{StaticResource AppGradientBrush}"/>
         </Style>
         
         <Style Selector="Button.play-btn">
-            <Setter Property="Background" Value="#667EEA"/>
+            <Setter Property="Background" Value="{StaticResource AppGradientBrush}"/>
             <Setter Property="BorderBrush" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="CornerRadius" Value="50"/>
@@ -111,11 +118,13 @@
         </Style>
         
         <Style Selector="Button.play-btn:pointerover">
-            <Setter Property="Background" Value="#5A67D8"/>
+            <Setter Property="Background" Value="{StaticResource AppGradientBrush}"/>
+            <Setter Property="Opacity" Value="0.8"/>
         </Style>
         
         <Style Selector="Button.play-btn:pressed">
-            <Setter Property="Background" Value="#4C51BF"/>
+            <Setter Property="Background" Value="{StaticResource AppGradientBrush}"/>
+            <Setter Property="Opacity" Value="0.6"/>
         </Style>
         
         <!-- PathIcon inside play button inherits white color -->
@@ -165,7 +174,11 @@
         </Style>
         
         <Style Selector="Button.page-flip-btn:pointerover PathIcon">
-            <Setter Property="Foreground" Value="rgba(102, 126, 234, 0.8)"/>
+            <Setter Property="Foreground" Value="{StaticResource AppGradientBrush}"/>
+        </Style>
+        
+        <Style Selector="Button.page-flip-btn:pressed PathIcon">
+            <Setter Property="Foreground" Value="{StaticResource AppGradientBrush}"/>
         </Style>
         
         <!-- Navigation button PathIcon styles -->
@@ -194,12 +207,12 @@
         </Style>
         
         <Style Selector="ToggleButton.speed-btn:checked">
-            <Setter Property="Background" Value="#667EEA"/>
+            <Setter Property="Background" Value="{StaticResource AppGradientBrush}"/>
             <Setter Property="Foreground" Value="White"/>
         </Style>
         
         <Style Selector="Button.mic-btn">
-            <Setter Property="Background" Value="#667EEA"/>
+            <Setter Property="Background" Value="{StaticResource AppGradientBrush}"/>
             <Setter Property="BorderBrush" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="CornerRadius" Value="50"/>
@@ -210,7 +223,8 @@
         </Style>
         
         <Style Selector="Button.mic-btn:pointerover">
-            <Setter Property="Background" Value="#5A67D8"/>
+            <Setter Property="Background" Value="{StaticResource AppGradientBrush}"/>
+            <Setter Property="Opacity" Value="0.8"/>
         </Style>
         
         <Style Selector="Button.mic-btn:pressed">
@@ -252,9 +266,9 @@
         </Style>
         
         <Style Selector="ToggleButton.pattern-btn:checked">
-            <Setter Property="Background" Value="#667EEA"/>
+            <Setter Property="Background" Value="{StaticResource AppGradientBrush}"/>
             <Setter Property="Foreground" Value="White"/>
-            <Setter Property="BorderBrush" Value="#667EEA"/>
+            <Setter Property="BorderBrush" Value="{StaticResource AppGradientBrush}"/>
         </Style>
         
         <Style Selector="ToggleButton.toggle-switch">
@@ -269,7 +283,7 @@
         </Style>
         
         <Style Selector="ToggleButton.toggle-switch:checked">
-            <Setter Property="Background" Value="#667EEA"/>
+            <Setter Property="Background" Value="{StaticResource AppGradientBrush}"/>
             <Setter Property="Foreground" Value="White"/>
         </Style>
         
@@ -288,14 +302,38 @@
         </Style>
         
         <Style Selector="Button.haptic-preset-btn:pressed">
-            <Setter Property="Background" Value="#667EEA"/>
+            <Setter Property="Background" Value="{StaticResource AppGradientBrush}"/>
             <Setter Property="Foreground" Value="White"/>
+        </Style>
+        
+        <Style Selector="Button.text-btn">
+            <Setter Property="Background" Value="{StaticResource AppGradientBrush}"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Foreground" Value="#131313"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontFamily" Value="Arial, sans-serif"/>
+            <Setter Property="Padding" Value="10,0,40,0"/>
+            <Setter Property="Margin" Value="0,16,0,0"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+        <Style Selector="Button.text-btn:pointerover">
+            <Setter Property="Background" Value="{StaticResource AppGradientBrush}"/>
+            <Setter Property="Opacity" Value="0.8"/>
+        </Style>
+        <Style Selector="Button.text-btn:pressed">
+            <Setter Property="Background" Value="{StaticResource AppGradientBrush}"/>
+            <Setter Property="Opacity" Value="0.6"/>
         </Style>
         
         <!-- Custom Progress Bar Styles -->
         <Style Selector="ProgressBar#AudioProgressBar">
             <Setter Property="Background" Value="#E9ECEF"/>
-            <Setter Property="Foreground" Value="#667EEA"/>
+            <Setter Property="Foreground" Value="{StaticResource AppGradientBrush}"/>
             <Setter Property="BorderBrush" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="CornerRadius" Value="5"/>
@@ -305,12 +343,14 @@
         
         <Style Selector="ProgressBar#AudioProgressBar:pointerover">
             <Setter Property="Background" Value="#DEE2E6"/>
-            <Setter Property="Foreground" Value="#5A67D8"/>
+            <Setter Property="Foreground" Value="{StaticResource AppGradientBrush}"/>
+            <Setter Property="Opacity" Value="0.8"/>
         </Style>
         
         <Style Selector="ProgressBar#AudioProgressBar:pressed">
             <Setter Property="Background" Value="#CED4DA"/>
-            <Setter Property="Foreground" Value="#4C51BF"/>
+            <Setter Property="Foreground" Value="{StaticResource AppGradientBrush}"/>
+            <Setter Property="Opacity" Value="0.6"/>
         </Style>
     </Application.Styles>
 </Application>

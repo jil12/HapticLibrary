@@ -8,6 +8,10 @@
 			 x:DataType="vm:ReadingPageViewModel"
              x:Class="HapticLibrary.Views.ReadingPageView">
     
+    <UserControl.Resources>
+        <StaticResource x:Key="AppGradientBrush" ResourceKey="AppGradientBrush"/>
+    </UserControl.Resources>
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -16,7 +20,7 @@
         </Grid.RowDefinitions>
 
         <!-- Reading Header -->
-        <Border Grid.Row="0" Background="White" BorderBrush="#E9ECEF" BorderThickness="0,0,0,1" Padding="30,8">
+        <Border Grid.Row="0" Background="White" BorderBrush="#E9ECEF" BorderThickness="0,0,0,1" Padding="30,8" Height="65">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -91,15 +95,6 @@
                                                      Margin="0"
                                                      />
                                 
-                                <!-- Debug: Show selected text -->
-                                <Border Background="#E3F2FD" CornerRadius="8" Padding="12" Margin="0,16,0,0" IsVisible="{Binding HasTextSelected}">
-                                    <StackPanel>
-                                        <TextBlock Text="Selected Text:" FontSize="14" FontWeight="Medium" Foreground="#1976D2" Margin="0,0,0,8"/>
-                                        <TextBlock Text="{Binding SelectedText}" FontSize="16" Foreground="#333333" TextWrapping="Wrap"/>
-                                        <TextBlock Text="{Binding SelectionStart, StringFormat='Start: {0}'}" FontSize="12" Foreground="#666666" Margin="0,4,0,0"/>
-                                        <TextBlock Text="{Binding SelectionEnd, StringFormat='End: {0}'}" FontSize="12" Foreground="#666666"/>
-                                    </StackPanel>
-                                </Border>
                             </StackPanel>
                         </ScrollViewer>
                     </Border>
@@ -143,47 +138,13 @@
                             
                             <!-- Haptic Sequence Status -->
                             <StackPanel Spacing="4" IsVisible="{Binding HapticSequenceLoaded}">
-                                <TextBlock Text="F451 Sequence" FontSize="14" FontWeight="Medium" Foreground="#333333"/>
+                                <TextBlock Text="Book Sequence" FontSize="14" FontWeight="Medium" Foreground="#333333"/>
                                 <Border Background="#E8F5E8" CornerRadius="4" Padding="6">
                                     <TextBlock Text="✓ Loaded" FontSize="12" Foreground="#388E3C" HorizontalAlignment="Center"/>
                                 </Border>
                                 <TextBlock Text="{Binding CurrentHapticEvent}" FontSize="12" Foreground="#666666" TextWrapping="Wrap"/>
                             </StackPanel>
                             
-                            <!-- Debug Output -->
-                            <StackPanel Spacing="4">
-                                <TextBlock Text="Debug Output" FontSize="14" FontWeight="Medium" Foreground="#333333"/>
-                                <Border Background="#F5F5F5" CornerRadius="4" Padding="8" MaxHeight="100">
-                                    <ScrollViewer VerticalScrollBarVisibility="Auto">
-                                        <TextBlock Text="{Binding DebugOutput}" FontSize="10" Foreground="#444444" TextWrapping="Wrap" FontFamily="Consolas"/>
-                                    </ScrollViewer>
-                                </Border>
-                            </StackPanel>
-                            
-                            <StackPanel Spacing="8">
-                                <TextBlock Text="Intensity" FontSize="14" FontWeight="Medium" Foreground="#333333"/>
-                                <Slider Minimum="0" Maximum="100" Value="{Binding VibrationIntensity}" />
-                            </StackPanel>
-                            <StackPanel Spacing="8">
-                                <TextBlock Text="Pattern" FontSize="14" FontWeight="Medium" Foreground="#333333"/>
-                                <StackPanel Orientation="Horizontal" Spacing="8">
-                                    <ToggleButton Classes="pattern-btn">
-                                        <TextBlock Text="Gentle" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                    </ToggleButton>
-                                    <ToggleButton Classes="pattern-btn">
-                                        <TextBlock Text="Strong" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                    </ToggleButton>
-                                    <ToggleButton Classes="pattern-btn">
-                                        <TextBlock Text="Pulse" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                    </ToggleButton>
-                                </StackPanel>
-                            </StackPanel>
-                            <StackPanel Spacing="8">
-                                <TextBlock Text="Enable Haptic" FontSize="14" FontWeight="Medium" Foreground="#333333"/>
-                                <ToggleButton Classes="toggle-switch" IsChecked="{Binding VibrationEnabled}">
-                                    <TextBlock Text="On/Off" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </ToggleButton>
-                            </StackPanel>
                         </StackPanel>
                     </TabItem>
                     <TabItem Header="Emotions">
@@ -233,8 +194,6 @@
                              Minimum="0"
                              Maximum="{Binding TotalTime.TotalSeconds}"
                              Value="{Binding CurrentTime.TotalSeconds}"
-                             Background="#E9ECEF"
-                             Foreground="#667EEA"
                              ShowProgressText="False"
                              Cursor="Hand"
                              Name="AudioProgressBar" />

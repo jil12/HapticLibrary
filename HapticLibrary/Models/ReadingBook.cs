@@ -51,17 +51,17 @@ namespace HapticLibrary.Models
         public ReadingBook()
         {
         }
-
-        public void LoadBook(string bookName) //TODO: ID or name?
+        public void LoadBook(string bookID) //TODO: ID or name? ID.
         {
             //TODO: Get book contents from server
             //string fullPath = Path.Combine("Assets", "HapticReadingBookExample.json");
-            string fullPath = Path.Combine(Environment.CurrentDirectory, bookName);
+            string fullPath = Path.Combine(Environment.CurrentDirectory, bookID);
             string jsonString = File.ReadAllText(fullPath);
             // Parse the JSON into a JsonDocument
             using JsonDocument doc = JsonDocument.Parse(jsonString);
             ReadingBookJson readingBookJson = JsonSerializer.Deserialize<ReadingBookJson>(doc);
             pages = new List<ReadingPage>(readingBookJson.Pages);
+            _bookName = readingBookJson.Name;
             _pageIndex = 0;
         }
 

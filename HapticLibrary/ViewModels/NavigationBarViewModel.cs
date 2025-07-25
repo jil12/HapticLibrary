@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Avalonia.Data.Converters;
 using Avalonia.Media;
+using Avalonia;
 
 namespace HapticLibrary.ViewModels
 {
@@ -20,7 +21,7 @@ namespace HapticLibrary.ViewModels
             if (value is bool isSelected)
             {
                 return isSelected
-                    ? new SolidColorBrush(Color.Parse("#007AFF")) // Blue for selected
+                    ? new SolidColorBrush(Color.Parse("#85CCB7")) // Gradient middle color for selected
                     : new SolidColorBrush(Color.Parse("#f8f9fa")); // Gray for unselected
             }
             return new SolidColorBrush(Color.Parse("#f8f9fa"));
@@ -41,7 +42,7 @@ namespace HapticLibrary.ViewModels
             if (value is bool isSelected)
             {
                 return isSelected
-                    ? new SolidColorBrush(Color.Parse("#007AFF")) // Blue for selected
+                    ? new SolidColorBrush(Color.Parse("#85CCB7")) // Gradient middle color for selected
                     : new SolidColorBrush(Color.Parse("#8E8E93")); // Gray for unselected
             }
             return new SolidColorBrush(Color.Parse("#8E8E93"));

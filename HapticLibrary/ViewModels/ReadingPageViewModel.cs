@@ -53,12 +53,6 @@ namespace HapticLibrary.ViewModels
         [ObservableProperty]
         private double _playbackSpeed = 1.0;
 
-        [ObservableProperty]
-        private bool _vibrationEnabled = true;
-
-        [ObservableProperty]
-        private double _vibrationIntensity = 70;
-
         // Read-aloud properties
         [ObservableProperty]
         private bool _isReadAloudMode = false;
@@ -68,19 +62,6 @@ namespace HapticLibrary.ViewModels
 
         [ObservableProperty]
         private string _recordingStatus = "Ready to record";
-
-        // Text selection properties
-        [ObservableProperty]
-        private string _selectedText = "";
-
-        [ObservableProperty]
-        private bool _hasTextSelected = false;
-
-        [ObservableProperty]
-        private int _selectionStart = 0;
-
-        [ObservableProperty]
-        private int _selectionEnd = 0;
 
         private ReadingBook _readingBook = new ReadingBook();
         private ReadingModeAudioStream _audioStream = ReadingModeAudioStream.Instance;
@@ -115,18 +96,8 @@ namespace HapticLibrary.ViewModels
         [ObservableProperty]
         private bool _hapticHardwareConnected = false;
         
-        [ObservableProperty]
-        private string _debugOutput = "Debug: Ready...";
-        
         private bool _lockDot2Red = false;
         
-        private void UpdateDebugOutput(string message)
-        {
-            var timestamp = DateTime.Now.ToString("HH:mm:ss");
-            DebugOutput = $"[{timestamp}] {message}";
-            System.Diagnostics.Debug.WriteLine(message);
-        }
-
         public ReadingPageViewModel(string? bookId = null, string? readingMode = null)
         {
             // Set reading mode based on parameter
@@ -275,7 +246,7 @@ namespace HapticLibrary.ViewModels
                             else if (_waveOut.PlaybackState == PlaybackState.Stopped && !_isExplicitlyStopped)
                             {
                                 // Audio ended naturally - stop haptics
-                                UpdateDebugOutput("🔚 Audio ended - stopping haptics");
+                                System.Diagnostics.Debug.WriteLine("🔚 Audio ended - stopping haptics");
                                 StopHapticSequence();
                                 _isExplicitlyStopped = true; // Prevent further processing
                             }
@@ -301,55 +272,55 @@ namespace HapticLibrary.ViewModels
                 // Check if haptic manager is already started to avoid conflicts
                 if (_hapticManager.IsStarted)
                 {
-                    UpdateDebugOutput("🔌 Haptic hardware already started, checking connection...");
+                    System.Diagnostics.Debug.WriteLine("🔌 Haptic hardware already started, checking connection...");
                     HapticHardwareConnected = _hapticManager.IsConnected;
                     
                     if (HapticHardwareConnected)
                     {
-                        UpdateDebugOutput($"✅ Hardware already connected: {_hapticManager.DotManager.Dots.Count()} dots");
+                        System.Diagnostics.Debug.WriteLine($"✅ Hardware already connected: {_hapticManager.DotManager.Dots.Count()} dots");
                         // Don't test dots again if already connected to avoid interrupting ongoing operations
                     }
                     else
                     {
-                        UpdateDebugOutput("⚠️ Hardware was started but connection lost, attempting reconnection...");
+                        System.Diagnostics.Debug.WriteLine("⚠️ Hardware was started but connection lost, attempting reconnection...");
                         // Try to restart if connection was lost
                         bool success = await _hapticManager.StartManager();
                         HapticHardwareConnected = _hapticManager.IsConnected;
                         
                         if (success && HapticHardwareConnected)
                         {
-                            UpdateDebugOutput($"✅ Hardware reconnected: {_hapticManager.DotManager.Dots.Count()} dots");
+                            System.Diagnostics.Debug.WriteLine($"✅ Hardware reconnected: {_hapticManager.DotManager.Dots.Count()} dots");
                             await TestAllDots();
                         }
                         else
                         {
-                            UpdateDebugOutput("❌ Failed to reconnect haptic hardware");
+                            System.Diagnostics.Debug.WriteLine("❌ Failed to reconnect haptic hardware");
                         }
                     }
                 }
                 else
                 {
-                    UpdateDebugOutput("🔌 Starting Datafeel haptic hardware for first time...");
+                    System.Diagnostics.Debug.WriteLine("🔌 Starting Datafeel haptic hardware for first time...");
                     bool success = await _hapticManager.StartManager();
                     
                     HapticHardwareConnected = _hapticManager.IsConnected;
                     
                     if (success && HapticHardwareConnected)
                     {
-                        UpdateDebugOutput($"✅ Hardware connected: {_hapticManager.DotManager.Dots.Count()} dots");
+                        System.Diagnostics.Debug.WriteLine($"✅ Hardware connected: {_hapticManager.DotManager.Dots.Count()} dots");
                         
                         // Test all dots with a brief flash
                         await TestAllDots();
                     }
                     else
                     {
-                        UpdateDebugOutput("❌ Failed to initialize haptic hardware");
+                        System.Diagnostics.Debug.WriteLine("❌ Failed to initialize haptic hardware");
                     }
                 }
             }
             catch (Exception ex)
             {
-                UpdateDebugOutput($"ERROR initializing hardware: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"ERROR initializing hardware: {ex.Message}");
                 HapticHardwareConnected = false;
             }
         }
@@ -416,8 +387,6 @@ namespace HapticLibrary.ViewModels
                         _hapticSequenceManager.HapticEventTriggered += OnHapticEventTriggered;
                         _hapticSequenceManager.PageShouldChange += OnPageShouldChange;
                         _hapticSequenceManager.ContinuousHapticTriggered += OnContinuousHapticTriggered;
-                        
-                        UpdateDebugOutput("✅ F451 sequence loaded with loop support");
                     }
                 }
                 else
@@ -450,7 +419,7 @@ namespace HapticLibrary.ViewModels
                 
                 CurrentHapticEvent = hapticEvent.EventName;
                 
-                UpdateDebugOutput($"🎯 HAPTIC: {hapticEvent.EventName}");
+                System.Diagnostics.Debug.WriteLine($"🎯 HAPTIC: {hapticEvent.EventName}");
                 
                 // Send haptic commands to hardware
                 SendHapticEffects(hapticEvent);
@@ -526,7 +495,7 @@ namespace HapticLibrary.ViewModels
                         break;
                 }
                 
-                UpdateDebugOutput($"🔄 {effectType}: {pattern}");
+                System.Diagnostics.Debug.WriteLine($"🔄 {effectType}: {pattern}");
             }
             catch (Exception ex)
             {
@@ -545,7 +514,7 @@ namespace HapticLibrary.ViewModels
                 }
 
                 string countNumber = eventName.Replace("EventCounting_", "");
-                UpdateDebugOutput($"🔢 {countNumber}!");
+                System.Diagnostics.Debug.WriteLine($"🔢 {countNumber}!");
                 System.Diagnostics.Debug.WriteLine($"Executing counting effect: {countNumber}");
 
                 var dotWrist = _hapticManager.DotManager.Dots.FirstOrDefault(d => d.Address == 1);
@@ -956,7 +925,7 @@ namespace HapticLibrary.ViewModels
             }
             else
             {
-                UpdateDebugOutput("▶️ STARTING PLAYBACK");
+                System.Diagnostics.Debug.WriteLine("▶️ STARTING PLAYBACK");
                 _isExplicitlyStopped = false; // Reset stop flag when starting
                 _waveOut.Play();
                 IsPlaying = true;
@@ -1036,7 +1005,7 @@ namespace HapticLibrary.ViewModels
         {
             if (_waveOut != null && _audioFileReader != null)
             {
-                UpdateDebugOutput("🛑 STOP BUTTON PRESSED");
+                System.Diagnostics.Debug.WriteLine("🛑 STOP BUTTON PRESSED");
                 _isExplicitlyStopped = true; // Set flag BEFORE stopping audio
                 
                 // Update connection status
@@ -1126,7 +1095,7 @@ namespace HapticLibrary.ViewModels
         {
             try
             {
-                UpdateDebugOutput("🔄 RESETTING audio and sequencer...");
+                System.Diagnostics.Debug.WriteLine("🔄 RESETTING audio and sequencer...");
                 
                 // Stop playback if playing
                 if (IsPlaying)
@@ -1167,11 +1136,11 @@ namespace HapticLibrary.ViewModels
                 // Update connection status
                 HapticHardwareConnected = _hapticManager.IsConnected;
                 
-                UpdateDebugOutput("✅ RESET complete - ready to start");
+                System.Diagnostics.Debug.WriteLine("✅ RESET complete - ready to start");
             }
             catch (Exception ex)
             {
-                UpdateDebugOutput($"ERROR during reset: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"ERROR during reset: {ex.Message}");
             }
         }
 
@@ -1215,20 +1184,6 @@ namespace HapticLibrary.ViewModels
         public void ToggleSidebar()
         {
             SidebarOpen = !SidebarOpen;
-        }
-
-        // Text selection commands
-        [RelayCommand]
-        public void OnTextSelectionChanged(string selectedText)
-        {
-            SelectedText = selectedText ?? "";
-            HasTextSelected = !string.IsNullOrWhiteSpace(SelectedText);
-        }
-
-        public void OnSelectionChanged(int start, int end)
-        {
-            SelectionStart = start;
-            SelectionEnd = end;
         }
 
         // Read-aloud commands
@@ -1310,7 +1265,7 @@ namespace HapticLibrary.ViewModels
         {
             try
             {
-                UpdateDebugOutput("🧹 Cleaning up ReadingPageViewModel...");
+                System.Diagnostics.Debug.WriteLine("🧹 Cleaning up ReadingPageViewModel...");
                 
                 // Stop and dispose audio resources
                 _positionTimer?.Stop();
@@ -1333,7 +1288,7 @@ namespace HapticLibrary.ViewModels
                     _audioStream.StatusChanged -= OnAudioStreamStatusChanged;
                 }
                 
-                UpdateDebugOutput("✅ ReadingPageViewModel cleanup completed");
+                System.Diagnostics.Debug.WriteLine("✅ ReadingPageViewModel cleanup completed");
             }
             catch (Exception ex)
             {
