@@ -40,7 +40,7 @@ namespace HapticLibrary.Models
 
             _datafeelModbusClient = new DatafeelModbusClientConfiguration()
                 .UseWindowsSerialPortTransceiver()
-                .UseSerialPort("COM6") // Uncomment this line to specify the serial port by name
+                .UseSerialPort("COM3") // Uncomment this line to specify the serial port by name
                 .CreateClient();
         }
 
@@ -251,7 +251,7 @@ namespace HapticLibrary.Models
             }
         }
 
-        public async Task RunHeartBeatLoop(int address, int beatCount = 76)
+        public async Task RunHeartBeatLoop(int address, int beatCount = 1)
         {
             if (!_isStarted)
             {

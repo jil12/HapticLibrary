@@ -39,7 +39,7 @@
     {
       "EventName": "Event2_Realization", 
       "StartTime": "0:17",
-      "EndTime": "1:09", 
+      "EndTime": "1:08", 
       "Duration": 52000,
       "TextSection": "Of course! Why hadn't they done it before! Why, in all the years, hadn't this game been tried! Everyone up, everyone out! He couldn't be missed! The only man running alone in the night city, the only man proving his legs!",
       "HapticEffects": {
@@ -56,7 +56,7 @@
             "device": 1,
             "type": "continuous",
             "duration": 52000, 
-            "thermalIntensity": 0.5
+            "thermalIntensity": 0.2
           }
         }
       }
@@ -274,7 +274,7 @@
     {
       "EventName": "Event5_GreyFaces",
       "StartTime": "1:13.0",
-      "EndTime": "1:32.4",
+      "EndTime": "1:32.0",
       "Duration": 19400,
       "TextSection": "He imagined thousands on thousands of faces peering into yards, into alleys, and into the sky, faces hid by curtains, pale, night-frightened faces, like grey animals peering from electric caves, faces with grey colourless eyes, grey tongues and grey thoughts looking out through the numb flesh of the face.",
       "HapticEffects": {
@@ -282,7 +282,7 @@
           "Device2_Chest": {
             "vibrationMode": "Manual",
             "vibrationFrequency": 41.2,
-            "vibrationIntensity": 1.0,
+            "vibrationIntensity": 0.3,
             "vibrationGo": true,
             "duration": 19400
           }
@@ -323,7 +323,7 @@
     {
       "EventName": "Event6_River",
       "StartTime": "1:32.4",
-      "EndTime": "1:54.6", 
+      "EndTime": "2:04", 
       "Duration": 22200,
       "TextSection": "But he was at the river. He touched it, just to be sure it was real. He waded in and stripped in darkness to the skin, splashed his body, arms, legs, and head with raw liquor; drank it and snuffed some up his nose.",
       "HapticEffects": {
@@ -339,7 +339,7 @@
         "ColdThermal": {
           "Device1_Wrists": {
             "thermalMode": "Manual",
-            "thermalIntensity": -1.0,
+            "thermalIntensity": -0.6,
             "duration": 20000
           }
         },
@@ -364,23 +364,6 @@
               }
             ]
           }
-        }
-      }
-    },
-    {
-      "EventName": "Event7_FinalEscape",
-      "StartTime": "1:54.6",
-      "EndTime": "2:00.0",
-      "Duration": 5400,
-      "TextSection": "Then he dressed in Faber's old clothes and shoes. He tossed his own clothing into the river and watched it swept away. Then, holding the suitcase, he walked out in the river until there was no bottom and he was swept away in the dark.",
-      "HapticEffects": {
-        "SilenceWithCold": {
-          "Device1_Wrists": {
-            "thermalMode": "Manual",
-            "thermalIntensity": -1.0,
-            "duration": "indefinite"
-          },
-          "AllOtherEffects": "stop"
         }
       }
     }
